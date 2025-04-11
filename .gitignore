@@ -1,0 +1,44 @@
+# === GLOBAL NODE + PYTHON ===
+**/node_modules/
+**/.env
+**/.env.*
+**/*.pyc
+**/__pycache__/
+**/*.pyo
+**/*.pyd
+**/*.sqlite3
+**/*.log
+**/*.db
+
+# === VENV ===
+**/venv/
+**/.venv/
+**/.Python
+
+# === FRONTEND BUILD ARTIFACTS ===
+**/dist/
+**/build/
+**/.next/
+**/.turbo/
+**/.cache/
+**/coverage/
+
+# === BACKEND PYTHON ARTIFACTS ===
+**/instance/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.coverage
+**/coverage.xml
+**/htmlcov/
+
+# === OS + EDITOR FILES ===
+**/.DS_Store
+**/Thumbs.db
+**/.vscode/
+**/.idea/
+**/*.swp
+**/*.swo
+
+# === TESTING CACHE ===
+**/.pytest_cache/
+**/.cache/
