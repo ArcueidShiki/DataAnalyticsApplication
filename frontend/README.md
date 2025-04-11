@@ -14,6 +14,8 @@ npx eslint yourfile.js
 npm install --save-dev husky
 
 npx husky init
+
+npm install --save-dev eslint-plugin-prettier prettier
 ```
 
 [eslint](https://eslint.org/docs/latest/use/getting-started)

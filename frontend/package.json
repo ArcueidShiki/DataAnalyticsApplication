@@ -12,7 +12,8 @@
     "precommit": "lint-staged",
     "prepush": "npm run lint:check",
     "prettier": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "cd .. && husky frontend/.husky",
+    "postinstall": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +21,23 @@
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "eslint": "^9.24.0",
+    "eslint-plugin-prettier": "^5.2.6",
     "globals": "^16.0.0",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "lint-staged": "^15.5.0"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,json}": [
+      "eslint . --fix",
+      "prettier --write ."
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
