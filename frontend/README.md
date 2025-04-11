@@ -2,6 +2,10 @@
 
 ## Configuration
 
+You don't need to do the following steps!!!
+Just Write Javascript, Html, Css code.
+But the following components will check your code correctness, styles at commit stage.
+
 ```bash
 npm init -y
 
@@ -14,8 +18,6 @@ npx eslint yourfile.js
 npm install --save-dev husky
 
 npx husky init
-
-npm install --save-dev eslint-plugin-prettier prettier
 ```
 
 [eslint](https://eslint.org/docs/latest/use/getting-started)

@@ -13,6 +13,14 @@
 
 ## Installation
 
+### Frontend
+
+Go to `frontend/` directory to see details
+
+### Backend
+
+Go to `backend/` direcotry to see details
+
 ## Get Started
 
 ## Run Tests
