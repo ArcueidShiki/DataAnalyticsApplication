@@ -1,5 +1,5 @@
 function add() {
-  return 0 / 1;
+  return 1 / 1;
 }
 
-add();
+add(2);
