@@ -22,6 +22,8 @@
 **/.turbo/
 **/.cache/
 **/coverage/
+**/package.json
+**/package-lock.json
 
 # === BACKEND PYTHON ARTIFACTS ===
 **/instance/

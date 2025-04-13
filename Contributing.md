@@ -19,7 +19,7 @@
 5. git commit -m "commit message"
 
 # keep updated with remote main branch to avoid conflict
-6. git pull origin main 
+6. git pull origin main
    # or
    git merge origin main
    # if conflict with some files after running this command do following:
