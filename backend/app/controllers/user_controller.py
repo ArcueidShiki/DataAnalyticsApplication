@@ -1,48 +1,78 @@
-from app.models.user import User
-from app import db
-from werkzeug.security import check_password_hash, generate_password_hash
 import re
-from datetime import timedelta
+import uuid
+from app import db
 from flask import jsonify
 from datetime import datetime
+from datetime import timedelta
+from app.models.user import User
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies
 
 def register_user(data):
     required_fields = ['email', 'phone', 'username', 'password', 'first_name', 'last_name', 'date_of_birth']
+    valid = False
     for f in required_fields:
-        if f not in data:
+        if f == 'password' and f not in data:
             return jsonify({"msg": f"Missing field: {f}"}), 400
-    # Validate email format
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
-        return jsonify({"msg": "Invalid email format"}), 400
-    # Validate phone format (example: AU phone number)
-    if not re.match(r"^\+61\d{9}$", data['phone']):
-        return jsonify({"msg": "Invalid phone format"}), 400
-    # Validate username format (example: alphanumeric and underscores only)
-    if not re.match(r"^[a-zA-Z0-9_]+$", data['username']):
-        return jsonify({"msg": "Invalid username format"}), 400
+        if (f == 'email' or f == 'phone' or f == 'username') and f in data:
+            valid = True
+    if not valid:
+        return jsonify({"msg": "Missing field"}), 400
+
+    email = None
+    if "email" in data:
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
+            return jsonify({"msg": "Invalid email format"}), 400
+        else:
+            email = data['email']
+    phone = None
+    if "phone" in data:
+        if not re.match(r"^\+61\d{9}$", data['phone']):
+            return jsonify({"msg": "Invalid phone format"}), 400
+        else:
+            phone = data['phone']
+    username = None
+    uid = str(uuid.uuid4())
+    if "username" in data:
+        if not re.match(r"^[a-zA-Z0-9_]+$", data['username']):
+            return jsonify({"msg": "Invalid username format"}), 400
+        else:
+            username = data['username']
+    else:
+        username = f"user_{uid}"
     # Validate password strength (example: at least 8 characters, 1 uppercase, 1 lowercase, 1 digit)
     # if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$", data['password']):
     #     return jsonify({"msg": "Weak password"}), 400
     try:
-        dob = datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date()
+        dob = None
+        if "date_of_birth" in data:
+            dob = datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date()
     except ValueError:
         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD"}), 400
+
+    first_name = None
+    if "first_name" in data:
+        first_name = data['first_name']
+    last_name = None
+    if "last_name" in data:
+        last_name = data['last_name']
+
     # Check if user already exists
-    if User.query.filter_by(email=data['email']).first():
+    if email and User.query.filter_by(email=data['email']).first():
         return jsonify({"msg": "Email already registered"}), 400
-    if User.query.filter_by(phone=data['phone']).first():
+    if phone and User.query.filter_by(phone=data['phone']).first():
         return jsonify({"msg": "Phone number already registered"}), 400
-    if User.query.filter_by(username=data['username']).first():
+    if username and User.query.filter_by(username=data['username']).first():
         return jsonify({"msg": "Username already taken"}), 400
 
     user = User(
-        email=data['email'],
-        phone=data['phone'],
-        username=data['username'],
+        id=uid,
+        email=email,
+        phone=phone,
+        username=username,
         password=generate_password_hash(data['password']),
-        first_name=data['first_name'],
-        last_name=data['last_name'],
+        first_name=first_name,
+        last_name=last_name,
         date_of_birth=dob
     )
     db.session.add(user)
