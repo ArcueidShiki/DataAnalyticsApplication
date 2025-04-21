@@ -41,7 +41,42 @@ flask db migrate -m "create users table"
 flask db upgrade
 ```
 
-## API docs
+## For API TEST
+
+using postman
+
+### Request Body
+
+| Type | Content-Type | specifications | scenarios |
+|--------|----------------|------------------|---------|
+| form-data | multipart/form-data | single form, support file upload | single form submit(includes files, images) |
+| x-www-form-urlencoded | application/x-www-form-urlencoded | key-value single form（URL encoded） | form submit (browser default) |
+| raw - JSON | application/json | JSON | REST API (React Vue) |
+| raw - text/plain | text/plain | plain text | debug or self-defined |
+| raw - XML | application/xml | XML | special systems |
+| raw - HTML | text/html | HTML | Web editors |
+| GraphQL | application/graphql | GraphQL query | GraphQL API |
+| raw - JavaScript | application/javascript | JS code | remote script executio |
+
+### Generate private and public key for RSA
+
+```bash
+openssl genrsa -out rsa_private.pem 2048
+openssl rsa -in rsa_private.pem -pubout -out rsa_public.pem
+```
+
+### Authorization
+
+add this to request header in postman
+
+`Authorization: Bearer <your.jwt.token>`
+
+## HTTP STATUS CODE
+
+All the http status codes are at here.
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
+
 
 ```bash
 python run.py
@@ -61,3 +96,5 @@ https://flask-apispec.readthedocs.io/
 pip install pipreqs
 pipreqs ./your_project_path --force
 ```
+
+##
