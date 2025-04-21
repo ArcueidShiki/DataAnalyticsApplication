@@ -594,46 +594,75 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Function to fetch and display company information
-    async function fetchAndDisplayCompanyInfo(symbol) {
-        const companyTab = document.getElementById('company-tab');
+    // async function fetchAndDisplayCompanyInfo(symbol) {
+    //     const companyTab = document.getElementById('company-tab');
         
-        if (!companyTab) {
-            console.error('Company tab element not found');
-            return;
-        }
+    //     if (!companyTab) {
+    //         console.error('Company tab element not found');
+    //         return;
+    //     }
         
-      // Show loading indicator
-      companyTab.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> Loading company information...</div>';
+    //   // Show loading indicator
+    //   companyTab.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> Loading company information...</div>';
         
-      try {
-          // Fetch company profile using the Yahoo Finance Profile API
-        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-        const apiUrl = `https://yahoo-finance-real-time1.p.rapidapi.com/stock/get-profile?region=US&lang=en-US&symbol=${symbol}`;
-        const proxiedUrl = corsProxy + apiUrl;
-
-        const options = {
-            method: 'GET',
-            headers: {
-                'x-rapidapi-key': 'cb267e4695mshec871a33d8235dbp105c8djsn1d50d3d89384',
-                'x-rapidapi-host': 'yahoo-finance-real-time1.p.rapidapi.com'
-            }
-        };
+    //     const url = 'https://yahoo-finance-real-time1.p.rapidapi.com/stock/get-profile?region=US&lang=en-US&symbol=aapl';
+    //     const options = {
+    //         method: 'GET',
+    //         headers: {
+    //             'x-rapidapi-key': 'cb267e4695mshec871a33d8235dbp105c8djsn1d50d3d89384',
+    //             'x-rapidapi-host': 'yahoo-finance-real-time1.p.rapidapi.com'
+    //         }
+    //     };
+        
+    //     try {
+    //         const response = await fetch(url, options);
+    //         const result = await response.text();
+    //         console.log(result);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
           
-        const response = await fetch(proxiedUrl, options);
-        const result = await response.json();
+    //     // const response = await fetch(proxiedUrl, options);
+    //     const result = await response.json();
         
-        if (result.status === "success" && result.data) {
-            // Generate and display the HTML
-            companyTab.innerHTML = generateCompanyProfileHTML(result.data);
-        } else {
-            throw new Error('API returned unsuccessful response');
-        }
+    //     if (result.status === "success" && result.data) {
+    //         // Generate and display the HTML
+    //         companyTab.innerHTML = generateCompanyProfileHTML(result.data);
+    //     } else {
+    //         throw new Error('API returned unsuccessful response');
+    //     }
 
-        } catch (error) {
-            console.error('Error:', error);
-            companyTab.innerHTML = '<div class="error-message">Unable to load company information. Please try again later.</div>';
-        }
+    //     // } 
+    //     // catch (error) {
+    //     //     console.error('Error:', error);
+    //     //     companyTab.innerHTML = '<div class="error-message">Unable to load company information. Please try again later.</div>';
+    //     // }
+    // }
+    function testapi(){
+        var yahooFinance = require('yahoo-finance');
+
+        yahooFinance.historical({
+        symbol: 'AAPL',
+        from: '2025-01-01',
+        to: '2025-12-31',
+        // period: 'd'  // 'd' (daily), 'w' (weekly), 'm' (monthly), 'v' (dividends only)
+        }, function (err, quotes) {
+            console.log(quotes);
+        //...
+        });
+
+        // This replaces the deprecated snapshot() API
+        yahooFinance.quote({
+        symbol: 'AAPL',
+        modules: [ 'price', 'summaryDetail' ] // see the docs for the full list
+        }, function (err, quotes) {
+            console.log(quotes);
+        // ...
+        });
     }
+
+    testapi();
+    
 
     // Setup the company profile tab
     function setupCompanyTab() {
@@ -651,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         window.originalChartData = generateDummyData('1D');
         window.candlestickData = generateCandlestickData('1D');
-        // 确保candlestickData是一个数组
+        // 
         console.log('Candlestick data type:', typeof window.candlestickData);
         console.log('Is candlestick data array?', Array.isArray(window.candlestickData));
 
@@ -1078,7 +1107,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } catch (e) {
                     console.error('Error resetting chart:', e);
                     
-                    // 备用重置方法
+                    // reset 
                     if (window.priceChart) {
                         window.priceChart.updateSeries([{
                             data: window.originalChartData
@@ -1233,22 +1262,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const newCandlestickData = generateCandlestickData(timeframe);
         const newVolumeData = generateVolumeData(newCandlestickData);
 
-        // 保存原始数据以供重置使用
+        // save 
         window.originalChartData = newData;
         window.candlestickData = newCandlestickData;
         window.volumeData = newVolumeData;
 
-        // 确定价格趋势（用于颜色显示）
+        // price trend
         const isPositive = newData[0][1] < newData[newData.length-1][1];
         const tooltipFormat = getTooltipDateFormat(timeframe);
 
-        // 重置缩放和平移状态
+        // rest zomm in zoom out 
         window.chartZoomLevel = 0;
         window.chartPanPosition = 0;
 
-        // 使用新数据更新价格图表
+        // 
         try {
-            // 更新价格图表
+            // update chart
             window.priceChart.updateSeries([{
                 data: newData
             }]);
@@ -1280,12 +1309,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // 更新蜡烛图
+            // update canhlestick
             window.candlestickChart.updateSeries([{
                 data: newCandlestickData
             }]);
 
-            // 更新交易量图表
+            // update volumn
             window.volumeChart.updateSeries([{
                 data: newVolumeData
             }]);
@@ -1296,9 +1325,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 添加生成交易量数据的函数
+    // update data
     function generateVolumeData(candlestickData) {
-        // 使用蜡烛图数据生成对应的交易量数据
+        
         const data = [];
 
         if (!candlestickData || !Array.isArray(candlestickData)) {
@@ -1306,7 +1335,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return [];
         }
 
-        // 为每个蜡烛图数据点生成对应的交易量
+        
         for (let i = 0; i < candlestickData.length; i++) {
             const candle = candlestickData[i];
 
@@ -1314,12 +1343,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const timestamp = candle.x;
                 const [open, high, low, close] = candle.y;
 
-                // 根据价格波动生成交易量
+            
                 const priceChange = Math.abs(close - open);
                 const baseVolume = Math.random() * 1000000 + 500000;
                 const volume = baseVolume * (1 + priceChange / 5);
 
-                // 按照涨跌判断交易量柱状图颜色
+              
                 const isPositive = close >= open;
 
                 data.push({
