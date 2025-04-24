@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Dashboard - Watchlist</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/watchlist-individual.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <style>
+        /* Watchlist specific styles */
+        .watchlist-table {
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .watchlist-row {
+            display: grid;
+            grid-template-columns: 0.8fr 2fr 1fr 1fr 1fr 1fr;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+        
+        .watchlist-header-row {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            background-color: var(--surface-secondary);
+        }
+        
+        .watchlist-stock-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .watchlist-stock-row:hover {
+            background-color: var(--surface-hover);
+        }
+        
+        .price-change {
+            display: flex;
+            align-items: center;
+        }
+        
+        .price-change.positive {
+            color: var(--positive-color);
+        }
+        
+        .price-change.negative {
+            color: var(--negative-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar - 结构会由 sidebar.js 加载 -->
+        <div class="sidebar">
+            <!-- sidebar content will be loaded here -->
+        </div>
+
+        <!-- Main content area -->
+        <div class="main-content">
+            <div class="breadcrumb">
+                <span>Watchlist</span>
+            </div>
+
+            <div class="stock-header">
+                <div class="stock-header-left">
+                    <div class="stock-title">
+                        <div class="stock-company">My Watchlist</div>
+                        <div class="stock-details">Track your favorite stocks</div>
+                    </div>
+                </div>
+                <div class="stock-header-right">
+                    <button class="action-btn follow-btn"><i class="fas fa-plus"></i>Add Stock</button>
+                    <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                </div>
+            </div>
+
+            <!-- Watchlist Table -->
+            <div class="watchlist-table">
+                <div class="watchlist-row watchlist-header-row">
+                    <div>Symbol</div>
+                    <div>Name</div>
+                    <div>Last Price</div>
+                    <div>Change</div>
+                    <div>Change %</div>
+                    <div>Market Cap</div>
+                </div>
+                <div id="watchlistTableBody">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/watchlist.js"></script>
+</body>
+</html>

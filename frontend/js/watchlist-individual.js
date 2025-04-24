@@ -46,27 +46,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 axisBorder: {
                     color: newTheme === 'dark' ? '#30363d' : '#e1e4e8'
                 }
-            },
-            yaxis: {
-                labels: {
-                    style: {
-                        colors: newTheme === 'dark' ? '#8b949e' : '#666666'
-                    }
-                }
             }
         };
 
-            // 更新所有图表
+            // Update charts with new theme
         if (window.priceChart) {
-            window.priceChart.updateOptions(chartUpdateOptions);
+            window.priceChart.updateOptions({
+                ...chartUpdateOptions,
+                yaxis: getYAxisConfig('price') // y-axis configuration
+            },true);
         }
         
         if (window.candlestickChart) {
-            window.candlestickChart.updateOptions(chartUpdateOptions);
+            window.candlestickChart.updateOptions({
+                yaxis: getYAxisConfig('candlestick')
+            }, true);
         }
         
         if (window.volumeChart) {
-            window.volumeChart.updateOptions(chartUpdateOptions);
+            window.volumeChart.updateOptions({
+                yaxis: getYAxisConfig('volume') // y-axis configuration
+            });
         }
 
         // Update icon and text
@@ -80,14 +80,27 @@ document.addEventListener('DOMContentLoaded', function() {
             text.textContent = 'Dark Mode';
         }
         
+        updateAllChartsYAxis();
+        
         // Save preference
         localStorage.setItem('theme', newTheme);
+
 
     });
 
     // Global variable to store the chart theme
     if (typeof ApexCharts !== 'undefined') {
         Apex = {
+            grid: {
+                borderColor: currentTheme === 'dark' ? '#30363d' : '#e1e4e8',
+                strokeDashArray: 4,
+                padding: {
+                    top: 0,
+                    right: 20,
+                    bottom: 0, 
+                    left: 20
+                }
+            },
             chart: {
                 fontFamily: 'Arial, sans-serif',
             },
@@ -469,6 +482,79 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+        // Update chart y-axis configuration
+    function getYAxisConfig(chartType = 'price') {
+        const theme = document.body.getAttribute('data-theme');
+        const isHighResScreen = window.screen.width >= 2560 || window.screen.height >= 1440;
+        
+        // Define chart heights based on chart type
+        const baseLineChartHeight = 150;
+        const baseCandleChartHeight = 280;  // Candlestick chart is taller
+        const baseVolumeChartHeight = 150;
+        
+        // Apply high-res multiplier if needed
+        const lineChartHeight = isHighResScreen ? baseLineChartHeight * 1.5 : baseLineChartHeight;
+        const candleChartHeight = isHighResScreen ? baseCandleChartHeight * 1.5 : baseCandleChartHeight;
+        const volumeChartHeight = isHighResScreen ? baseVolumeChartHeight * 1.5 : baseVolumeChartHeight;
+        
+        // Calculate tick amount based on chart type's height
+        let chartHeight;
+        if (chartType === 'candlestick') {
+            chartHeight = candleChartHeight;
+        } else if (chartType === 'volume') {
+            chartHeight = volumeChartHeight;
+        } else {
+            chartHeight = lineChartHeight;
+        }
+        
+        // Calculate tick amount based on chart height
+        // For taller charts, we want more ticks (higher density)
+        const tickAmount = Math.max(4, Math.round(chartHeight / 60));
+        
+        console.log(`Calculating Y-axis for ${chartType} chart - Height: ${chartHeight}, Ticks: ${tickAmount}`);
+        
+        // Base configuration for all chart types
+        const config = {
+            labels: {
+                style: {
+                    colors: theme === 'dark' ? '#8b949e' : '#666666',
+                    fontSize: isHighResScreen ? '14px' : '12px'
+                }
+            },
+            tickAmount: tickAmount,
+            tooltip: {
+                enabled: true
+            },
+            crosshairs: {
+                show: true,
+                position: 'back',
+                stroke: {
+                    color: theme === 'dark' ? '#8b949e' : '#b6b6b6',
+                    width: 1,
+                    dashArray: 0
+                }
+            }
+        };
+        
+        // Special configuration for volume chart
+        if (chartType === 'volume') {
+            config.labels.formatter = function(value) {
+                if (value >= 100000) {
+                    return (value / 1000000).toFixed(2) + 'M';
+                }
+                return value.toFixed(0);
+            };
+        }
+        
+        // Add padding for better data visibility
+        if (isHighResScreen) {
+            config.min = function(min) { return min * 0.95; };
+            config.max = function(max) { return max * 1.05; };
+        }
+        
+        return config;
+    }
+    
     // Search functionality
     const searchInput = document.getElementById('stockSearch');
     const searchResults = document.getElementById('searchResults');
@@ -536,133 +622,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Function to dynamiccally fetch the height of monitor
+    function calculateChartHeight() {
+        // 获取视口高度并计算图表高度
+        const viewportHeight = window.innerHeight;
+        // 计算各图表占视口的百分比，同时考虑屏幕分辨率
+        const isHighResScreen = window.screen.width >= 2560 || window.screen.height >= 1440;
+        
+        // 基础高度百分比 - 可以根据需要调整
+        const lineChartHeightPercent = 0.15;    // 视口的 20%
+        const candleChartHeightPercent = 0.30;  // 视口的 40% 
+        const volumeChartHeightPercent = 0.15; // 视口的 15%
+        
+        // 高分辨率屏幕增加图表大小
+        const scaleFactor = isHighResScreen ? 1.2 : 1;
+        
+        // 计算像素高度，最小高度确保在小屏幕上也能正常显示
+        const lineHeight = Math.max(150, Math.round(viewportHeight * lineChartHeightPercent * scaleFactor));
+        const candleHeight = Math.max(250, Math.round(viewportHeight * candleChartHeightPercent * scaleFactor));
+        const volumeHeight = Math.max(150, Math.round(viewportHeight * volumeChartHeightPercent * scaleFactor));
+        
+        return {
+            lineChartHeight: lineHeight,
+            candleChartHeight: candleHeight,
+            volumeChartHeight: volumeHeight
+        };
+    }
     // Initialize chart with proper options
     initializeChart();
-    
-    // Function to generate the company profile HTML based on API data
-    function generateCompanyProfileSection(symbol, companyInfo) {
-        // If we have earnings data
-        if (companyInfo.success && companyInfo.events.length > 0) {
-            const latestEvent = companyInfo.events[0]; // Most recent earnings event
-            
-            return `
-                <div class="company-about-section">
-                    <h3>About</h3>
-                    <div class="company-description">
-                        <p>${companyInfo.description}</p>
-                    </div>
-                    
-                    <h3>Latest Earnings</h3>
-                    <div class="earnings-data">
-                        <div class="earnings-item">
-                            <span class="earnings-label">Event:</span>
-                            <span class="earnings-value">${latestEvent.eventname}</span>
-                        </div>
-                        <div class="earnings-item">
-                            <span class="earnings-label">Date:</span>
-                            <span class="earnings-value">${new Date(latestEvent.startdatetime).toLocaleDateString()}</span>
-                        </div>
-                        <div class="earnings-item">
-                            <span class="earnings-label">EPS Estimate:</span>
-                            <span class="earnings-value">$${latestEvent.epsestimate.toFixed(2)}</span>
-                        </div>
-                        <div class="earnings-item">
-                            <span class="earnings-label">EPS Actual:</span>
-                            <span class="earnings-value">$${latestEvent.epsactual.toFixed(2)}</span>
-                        </div>
-                        <div class="earnings-item">
-                            <span class="earnings-label">Surprise:</span>
-                            <span class="earnings-value ${latestEvent.epssurprisepct >= 0 ? 'positive' : 'negative'}">
-                                ${latestEvent.epssurprisepct >= 0 ? '+' : ''}${latestEvent.epssurprisepct.toFixed(2)}%
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        } else {
-            // Fallback if no earnings data is available
-            return `
-                <div class="company-about-section">
-                    <h3>About</h3>
-                    <div class="company-description">
-                        <p>${companyInfo.description || `${symbol} is a publicly traded company.`}</p>
-                    </div>
-                    <p class="no-data-message">No recent earnings data available for ${symbol}.</p>
-                </div>
-            `;
-        }
-    }
-    
-    // Function to fetch and display company information
-    // async function fetchAndDisplayCompanyInfo(symbol) {
-    //     const companyTab = document.getElementById('company-tab');
-        
-    //     if (!companyTab) {
-    //         console.error('Company tab element not found');
-    //         return;
-    //     }
-        
-    //   // Show loading indicator
-    //   companyTab.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> Loading company information...</div>';
-        
-    //     const url = 'https://yahoo-finance-real-time1.p.rapidapi.com/stock/get-profile?region=US&lang=en-US&symbol=aapl';
-    //     const options = {
-    //         method: 'GET',
-    //         headers: {
-    //             'x-rapidapi-key': 'cb267e4695mshec871a33d8235dbp105c8djsn1d50d3d89384',
-    //             'x-rapidapi-host': 'yahoo-finance-real-time1.p.rapidapi.com'
-    //         }
-    //     };
-        
-    //     try {
-    //         const response = await fetch(url, options);
-    //         const result = await response.text();
-    //         console.log(result);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-          
-    //     // const response = await fetch(proxiedUrl, options);
-    //     const result = await response.json();
-        
-    //     if (result.status === "success" && result.data) {
-    //         // Generate and display the HTML
-    //         companyTab.innerHTML = generateCompanyProfileHTML(result.data);
-    //     } else {
-    //         throw new Error('API returned unsuccessful response');
-    //     }
-
-    //     // } 
-    //     // catch (error) {
-    //     //     console.error('Error:', error);
-    //     //     companyTab.innerHTML = '<div class="error-message">Unable to load company information. Please try again later.</div>';
-    //     // }
-    // }
-    function testapi(){
-        var yahooFinance = require('yahoo-finance');
-
-        yahooFinance.historical({
-        symbol: 'AAPL',
-        from: '2025-01-01',
-        to: '2025-12-31',
-        // period: 'd'  // 'd' (daily), 'w' (weekly), 'm' (monthly), 'v' (dividends only)
-        }, function (err, quotes) {
-            console.log(quotes);
-        //...
-        });
-
-        // This replaces the deprecated snapshot() API
-        yahooFinance.quote({
-        symbol: 'AAPL',
-        modules: [ 'price', 'summaryDetail' ] // see the docs for the full list
-        }, function (err, quotes) {
-            console.log(quotes);
-        // ...
-        });
-    }
-
-    testapi();
-    
 
     // Setup the company profile tab
     function setupCompanyTab() {
@@ -678,11 +665,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const theme = document.body.getAttribute('data-theme');
         const isPositive = true; // Default to positive trend
 
+        // Adjust chart heights based on screen resolution
+        const chartHeights = calculateChartHeight();
+        const lineChartHeight = chartHeights.lineChartHeight;
+        const candleChartHeight = chartHeights.candleChartHeight;
+        const volumeChartHeight = chartHeights.volumeChartHeight;
+
         window.originalChartData = generateDummyData('1D');
         window.candlestickData = generateCandlestickData('1D');
-        // 
-        console.log('Candlestick data type:', typeof window.candlestickData);
-        console.log('Is candlestick data array?', Array.isArray(window.candlestickData));
 
         try {
             window.volumeData = generateVolumeData(window.candlestickData);
@@ -698,8 +688,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }],
             chart: {
                 type: 'area',
-                height: 150,
                 width: '100%',
+                height: lineChartHeight,
                 id: 'priceChart',
                 group: 'stock-charts',
                 toolbar: {
@@ -721,6 +711,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
                 background: 'transparent'
+            },
+            title: {
+                text: 'Price Chart',
+                align: 'left',
+                style: {
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: theme === 'dark' ? '#8b949e' : '#666666'
+                }
             },
             dataLabels: {
                 enabled: false
@@ -760,23 +759,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     show: false
                 }
             },
-            yaxis: {
-                labels: {
-                    style: {
-                        colors: theme === 'dark' ? '#8b949e' : '#666666'
-                    }
-                }
-            },
-            grid: {
-                borderColor: theme === 'dark' ? '#30363d' : '#e1e4e8',
-                strokeDashArray: 4,
-                padding: {
-                    top: 0,
-                    right: 20,
-                    bottom: 0,
-                    left: 20
-                }
-            },
+            yaxis: getYAxisConfig('price'),
             tooltip: {
                 theme: theme,
                 x: {
@@ -798,7 +781,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }],
             chart: {
                 type: 'candlestick',
-                height: 250,
+                height: candleChartHeight,
                 width: '100%',
                 id: 'candlestickChart',
                 group: 'stock-charts',
@@ -835,20 +818,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                 }
             },
-            yaxis: {
-                tooltip: {
-                    enabled: true
-                },
-                labels: {
-                    style: {
-                        colors: theme === 'dark' ? '#8b949e' : '#666666'
-                    }
-                }
-            },
-            grid: {
-                borderColor: theme === 'dark' ? '#30363d' : '#e1e4e8',
-                strokeDashArray: 4,
-            },
+            yaxis: getYAxisConfig('candlestick'),
             tooltip: {
                 theme: theme,
                 x: {
@@ -870,7 +840,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }],
             chart: {
                 type: 'bar',
-                height: 150,
+                height: volumeChartHeight,
                 width: '100%',
                 id: 'volumeChart',
                 group: 'stock-charts',
@@ -882,6 +852,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 animations: {
                     enabled: false
+                }
+            },
+            title: {
+                text: 'Trading Volume',
+                align: 'left',
+                style: {
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: theme === 'dark' ? '#8b949e' : '#666666'
                 }
             },
             plotOptions: {
@@ -910,10 +889,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             },
-            grid: {
-                borderColor: theme === 'dark' ? '#30363d' : '#e1e4e8',
-                strokeDashArray: 4
-            },
             tooltip: {
                 theme: theme,
                 shared: true,
@@ -934,7 +909,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
 
-        // 创建包含两个图表的DOM结构
+        // chartOptions.yaxis = getYAxisConfig('price');
+        // candlestickOptions.yaxis = getYAxisConfig('candlestick');
+        // volumeOptions.yaxis = getYAxisConfig('volume');
+
+
         const chartElement = document.querySelector("#priceChart");
         const candlestickElement = document.querySelector("#candlestickChart");
         const volumeElement = document.querySelector("#volumeChart");
@@ -1107,7 +1086,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } catch (e) {
                     console.error('Error resetting chart:', e);
                     
-                    // reset 
+                    // 备用重置方法
                     if (window.priceChart) {
                         window.priceChart.updateSeries([{
                             data: window.originalChartData
@@ -1121,7 +1100,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+        function setupChartScrolling() {
+            const chartContainer = document.querySelector('.chart-container');
+            
+            if (chartContainer) {
+                // 阻止滚轮事件冒泡
+                chartContainer.addEventListener('wheel', function(e) {
+                    // 阻止事件冒泡到文档
+                    e.stopPropagation();
+                    
+                    // 获取当前缩放级别
+                    const currentMin = window.priceChart.w.globals.minX;
+                    const currentMax = window.priceChart.w.globals.maxX;
+                    const range = currentMax - currentMin;
+                    
+                    // 根据滚轮方向进行缩放
+                    if (e.deltaY < 0) {
+                        // 向上滚动 - 放大
+                        const newMin = currentMin + (range * 0.1);
+                        const newMax = currentMax - (range * 0.1);
+                        zoomCharts(newMin, newMax);
+                        window.chartZoomLevel++;
+                    } else {
+                        // 向下滚动 - 缩小
+                        const newMin = currentMin - (range * 0.1);
+                        const newMax = currentMax + (range * 0.1);
+                        zoomCharts(newMin, newMax);
+                        window.chartZoomLevel--;
+                    }
+                    
+                    // 阻止默认行为（页面滚动）
+                    e.preventDefault();
+                }, { passive: false });
+            }
+        }
         
+        setupChartScrolling();
         console.log('Chart controls have been set up');
     }
 
@@ -1129,47 +1143,74 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateCandlestickData(timeframe) {
         const data = [];
         const now = new Date();
-        let points = 30;
-        let intervalHours = 24;
+        let points, intervalHours;
+
         // Determine number of points and interval based on timeframe
         switch(timeframe) {
             case '1D':
-                points = 24;
-                intervalHours = 1; // 1 hour intervals
+                points = 90;
+                intervalHours = 1/4; // 15 mins intervals
                 break;
             case '1W':
-                points = 7;
-                intervalHours = 24; // 1 day intervals
+                points = 90;
+                intervalHours = 24 * 7; // 1 day intervals
                 break;
             case '1M':
-                points = 30;
-                intervalHours = 24; // 1 day intervals
+                points = 90;
+                intervalHours = 24 * 30; // 1 day intervals
                 break;
             case '1Y':
-                points = 12;
+                points = 90;
                 intervalHours = 24 * 30; // 1 month intervals
                 break;
             case 'ALL':
-                points = 10;
+                points = 12;
                 intervalHours = 24 * 365; // 1 year intervals
                 break;
+            default:
+                points = 30;
+                intervalHours = 24; // Default to 1 day intervals
         }
+
+        // Check for high-resolution screens and adjust accordingly
+        const isHighResScreen = window.screen.width >= 2560 || window.screen.height >= 1440;
+        if (isHighResScreen) {
+            // high-res screen, double the number of points
+            points = points * 2;
+            // reduce interval to half to maintain the same time span
+            intervalHours = intervalHours / 2;
+        }
+
         // Starting price and volatility parameters
         let price = 145;
         let volatility = 0.02;
 
         // Adjust volatility based on timeframe
-        if (timeframe === '1Y' || timeframe === 'ALL') volatility = 0.05;
+        if (timeframe === '1Y' || timeframe === 'ALL' || timeframe === '1M' || timeframe === '1W') volatility = 0.05;
         
         // Generate data points
         for (let i = 0; i < points; i++) {
             const date = new Date(now);
-            date.setHours(now.getHours() - (points - i) * intervalHours);
+            
+            // 根据时间周期正确调整日期
+            if (timeframe === '1D') {
+                date.setMinutes(now.getMinutes() - (points - i) * 15); // 每15分钟
+            } else if (timeframe === '1W') {
+                date.setDate(now.getDate() - (points - i)); // 每1天
+            } else if (timeframe === '1M') {
+                date.setDate(now.getDate() - (points - i)); // 每1天
+            } else if (timeframe === '1Y') {
+                date.setDate(now.getDate() - (points - i)); // 每4天
+            } else if (timeframe === 'ALL') {
+                date.setMonth(now.getMonth() - (points - i)); // 每1个月
+            } else {
+                date.setHours(now.getHours() - (points - i) * intervalHours);
+            }
             
             // Generate OHLC data with some randomness
             const priceChange = (Math.random() - 0.5) * volatility * price;
             const open = price;
-            // 确保蜡烛图有一定的随机性，同时保持合理的价格范围
+            // Add some randomness to high and low prices
             const high = open + Math.abs(priceChange) * Math.random() * 2;
             const low = open - Math.abs(priceChange) * Math.random() * 2;
             const close = open + priceChange;
@@ -1190,48 +1231,93 @@ document.addEventListener('DOMContentLoaded', function() {
         return data;
     }
 
+    // Function to apply the Y-axis configuration to all charts
+    function updateAllChartsYAxis() {
+        if (window.priceChart) {
+            window.priceChart.updateOptions({
+                yaxis: getYAxisConfig('price')
+            }, true); // 强制重新渲染
+        }
+    
+        if (window.candlestickChart) {
+            window.candlestickChart.updateOptions({
+                yaxis: getYAxisConfig('candlestick')
+            }, true);
+        }
+    
+        if (window.volumeChart) {
+            window.volumeChart.updateOptions({
+                yaxis: getYAxisConfig('volume')
+            }, true);
+        }
+    }
     // Generate different dummy data based on timeframe
     function generateDummyData(timeframe) {
         const data = [];
         const now = new Date();
-        let points = 30;
-        let intervalHours = 24;
+        let points, intervalHours;
         
         switch(timeframe) {
             case '1D':
-                points = 24;
-                intervalHours = 1; // 1 hour intervals
+                points = 90;
+                intervalHours = 1/4; // 15 mins intervals
                 break;
             case '1W':
-                points = 7;
-                intervalHours = 24; // 1 day intervals
+                points = 90;
+                intervalHours = 24 * 7; // 1 day intervals
                 break;
             case '1M':
-                points = 30;
-                intervalHours = 24; // 1 day intervals
+                points = 90;
+                intervalHours = 24 * 30; // 1 day intervals
                 break;
             case '1Y':
-                points = 12;
+                points = 90;
                 intervalHours = 24 * 30; // 1 month intervals
                 break;
             case 'ALL':
-                points = 10;
+                points = 12;
                 intervalHours = 24 * 365; // 1 year intervals
                 break;
+            default:
+                points = 30;
+                intervalHours = 24; // Default to 1 day intervals
         }
         
+        // Check for high-resolution screens and adjust accordingly
+        const isHighResScreen = window.screen.width >= 2560 || window.screen.height >= 1440;
+        if (isHighResScreen) {
+            // high-res screen, double the number of points
+            points = points * 2;
+            // reduce interval to half to maintain the same time span
+            intervalHours = intervalHours / 2;
+        }
+
         // Starting price and trend
         let price = 145;
         let trend = Math.random() > 0.5 ? 1 : -1;
         let volatility = 0.01;
         
         // Adjust volatility based on timeframe
-        if (timeframe === '1Y' || timeframe === 'ALL') volatility = 0.05;
+        if (timeframe === '1Y' || timeframe === 'ALL' || timeframe === '1M' || timeframe === '1W') volatility = 0.05;
         
         // Generate data points
         for (let i = 0; i < points; i++) {
             const date = new Date(now);
-            date.setHours(now.getHours() - (points - i) * intervalHours);
+            
+            // 根据时间周期正确调整日期
+            if (timeframe === '1D') {
+                date.setMinutes(now.getMinutes() - (points - i) * 15); // 每15分钟
+            } else if (timeframe === '1W') {
+                date.setDate(now.getDate() - (points - i)); // 每1天
+            } else if (timeframe === '1M') {
+                date.setDate(now.getDate() - (points - i)); // 每1天
+            } else if (timeframe === '1Y') {
+                date.setDate(now.getDate() - (points - i)); // 每4天
+            } else if (timeframe === 'ALL') {
+                date.setMonth(now.getMonth() - (points - i)); // 每1个月
+            } else {
+                date.setHours(now.getHours() - (points - i) * intervalHours);
+            }
             
             // Add some randomness to the price
             const change = (Math.random() - 0.5) * volatility * price;
@@ -1262,28 +1348,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const newCandlestickData = generateCandlestickData(timeframe);
         const newVolumeData = generateVolumeData(newCandlestickData);
 
-        // save 
+        // save new data to global variables
         window.originalChartData = newData;
         window.candlestickData = newCandlestickData;
         window.volumeData = newVolumeData;
 
         // price trend
+        // Determine if the trend is positive or negative
         const isPositive = newData[0][1] < newData[newData.length-1][1];
         const tooltipFormat = getTooltipDateFormat(timeframe);
 
-        // rest zomm in zoom out 
+        // reset zoom and pan
+        // Reset zoom and pan state variables
         window.chartZoomLevel = 0;
         window.chartPanPosition = 0;
 
-        // 
+        // use new data to update chart
         try {
-            // update chart
+            // update line chart
             window.priceChart.updateSeries([{
                 data: newData
             }]);
     
             window.priceChart.updateOptions({
                 stroke: {
+                    curve: 'smooth',
                     colors: [isPositive ? 'var(--positive-color)' : 'var(--negative-color)']
                 },
                 fill: {
@@ -1306,18 +1395,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     x: {
                         format: tooltipFormat
                     }
-                }
+                },
+                yaxis: getYAxisConfig('price'), // price chart
             });
 
-            // update canhlestick
+            // 更新蜡烛图
             window.candlestickChart.updateSeries([{
                 data: newCandlestickData
             }]);
 
-            // update volumn
+            window.candlestickChart.updateOptions({
+                yaxis: getYAxisConfig('candlestick') // candlestick chart
+            });
+
+            // 更新交易量图表
             window.volumeChart.updateSeries([{
                 data: newVolumeData
             }]);
+
+            window.volumeChart.updateOptions({
+                yaxis: getYAxisConfig('volume') // volume chart
+            });
 
             console.log('Charts updated successfully for timeframe:', timeframe);
         } catch (error) {
@@ -1325,9 +1423,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // update data
+    // Generate volume data based on candlestick data
     function generateVolumeData(candlestickData) {
-        
+        // 使用蜡烛图数据生成对应的交易量数据
         const data = [];
 
         if (!candlestickData || !Array.isArray(candlestickData)) {
@@ -1335,7 +1433,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return [];
         }
 
-        
+        // 为每个蜡烛图数据点生成对应的交易量
         for (let i = 0; i < candlestickData.length; i++) {
             const candle = candlestickData[i];
 
@@ -1343,12 +1441,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const timestamp = candle.x;
                 const [open, high, low, close] = candle.y;
 
-            
+                // 根据价格波动生成交易量
                 const priceChange = Math.abs(close - open);
                 const baseVolume = Math.random() * 1000000 + 500000;
                 const volume = baseVolume * (1 + priceChange / 5);
 
-              
+                // 按照涨跌判断交易量柱状图颜色
                 const isPositive = close >= open;
 
                 data.push({
@@ -1370,44 +1468,81 @@ document.addEventListener('DOMContentLoaded', function() {
             case '1D':
                 return 'HH:mm';
             case '1W':
-                return "'yy-MM-dd";
+                return "yy-MM-dd";
             case '1M':
+                return "yy-MM-dd";
             case '1Y':
-                return "'yy/MM";
+                return "yyyy-MM";
             case 'ALL':
-                return "'yyyy";
+                return "yy/MM";
             default:
-                return "'yy-MM";
+                return "yyyy-MM-dd";
         }
     }
-    
+
     // Update chart theme when theme changes
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            if (mutation.attributeName === 'data-theme' && window.priceChart) {
+            if (mutation.attributeName === 'data-theme') {
                 const theme = document.body.getAttribute('data-theme');
-                window.priceChart.updateOptions({
-                    tooltip: {
-                        theme: theme
-                    },
-                    grid: {
-                        borderColor: theme === 'dark' ? '#444b55' : '#e1e4e8'
-                    },
-                    xaxis: {
-                        labels: {
-                            style: {
-                                colors: theme === 'dark' ? '#8b949e' : '#666666'
+                
+                // 更新所有图表的主题和Y轴配置
+                if (window.priceChart) {
+                    window.priceChart.updateOptions({
+                        tooltip: {
+                            theme: theme
+                        },
+                        grid: {
+                            borderColor: theme === 'dark' ? '#444b55' : '#e1e4e8'
+                        },
+                        xaxis: {
+                            labels: {
+                                style: {
+                                    colors: theme === 'dark' ? '#8b949e' : '#666666'
+                                }
                             }
-                        }
-                    },
-                    yaxis: {
-                        labels: {
-                            style: {
-                                colors: theme === 'dark' ? '#8b949e' : '#666666'
+                        },
+                        yaxis: getYAxisConfig('price') // 动态获取Y轴配置
+                    });
+                }
+    
+                if (window.candlestickChart) {
+                    window.candlestickChart.updateOptions({
+                        tooltip: {
+                            theme: theme
+                        },
+                        grid: {
+                            borderColor: theme === 'dark' ? '#444b55' : '#e1e4e8'
+                        },
+                        xaxis: {
+                            labels: {
+                                style: {
+                                    colors: theme === 'dark' ? '#8b949e' : '#666666'
+                                }
                             }
-                        }
-                    }
-                });
+                        },
+                        yaxis: getYAxisConfig('candlestick') // 动态获取Y轴配置
+                    });
+                }
+    
+                if (window.volumeChart) {
+                    window.volumeChart.updateOptions({
+                        tooltip: {
+                            theme: theme
+                        },
+                        grid: {
+                            borderColor: theme === 'dark' ? '#444b55' : '#e1e4e8'
+                        },
+                        xaxis: {
+                            labels: {
+                                style: {
+                                    colors: theme === 'dark' ? '#8b949e' : '#666666'
+                                }
+                            }
+                        },
+                        yaxis: getYAxisConfig('volume') // 动态获取Y轴配置
+                    });
+                }
             }
         });
     });
@@ -1415,7 +1550,7 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(document.documentElement, {
         attributes: true
     });
-    
+
     // Load saved watchlist from localStorage
     function loadSavedWatchlist() {
         const watchlistContainer = document.getElementById('watchlistContainer');
@@ -1459,6 +1594,47 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize company tab
     setupCompanyTab();
     
+    // Add resize event listener for chart rescaling
+    window.addEventListener('resize', function() {
+        // Debounce the resize event to avoid excessive updates
+        if (window.resizeTimeout) {
+            clearTimeout(window.resizeTimeout);
+        }
+
+        this.resizeTimer = setTimeout(function() {
+            // 获取新的动态高度
+            const chartHeights = calculateChartHeight();
+            
+            // 更新各图表的高度
+            if (window.priceChart) {
+                window.priceChart.updateOptions({
+                    chart: {
+                        height: chartHeights.lineChartHeight
+                    }
+                });
+            }
+            
+            if (window.candlestickChart) {
+                window.candlestickChart.updateOptions({
+                    chart: {
+                        height: chartHeights.candleChartHeight
+                    }
+                });
+            }
+            
+            if (window.volumeChart) {
+                window.volumeChart.updateOptions({
+                    chart: {
+                        height: chartHeights.volumeChartHeight
+                    }
+                });
+            }
+        }, 300);
+
+        window.resizeTimeout = setTimeout(function() {
+            updateAllChartsYAxis();
+        }, 250);
+    });
 
     
 });

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Dashboard - Apple Inc</title>
+    <!-- css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script>
+    <link rel="stylesheet" href="../css/watchlist-individual.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/watchlist-individual.js"></script>
+    
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- sidebar content will be loaded here -->
+        </div>
+
+        <!-- Main content area -->
+        <div class="main-content">
+            <div class="breadcrumb">
+                <a href="watchlist.html">Watchlist</a>
+                <i class="fas fa-chevron-right"></i>
+                <span id="stockName">Apple</span>
+            </div>
+
+
+            <!-- Two-column layout container -->
+            <div class="content-container">
+                <!-- Main column -->
+                <div class="main-column">
+                    <div class="stock-header">
+                        <div class="stock-header-left">
+                            <div class="stock-logo">
+                                <!-- api -->
+                            </div>
+                            <div class="stock-title">
+                                <div class="stock-company">Apple INC.</div>
+                                <div class="stock-details">NASDAQ: AAPL</div>
+                            </div>
+                        </div>
+                        <!-- Moved to the right side of the header -->
+                        <div class="stock-header-right">
+                            <button class="action-btn follow-btn" id="followBtn"><i class="fas fa-plus"></i>Follow</button>
+                            <button class="action-btn buy-btn">AutoTrade</button>
+                            <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="navigation-tabs">
+                        <button class="tab active">Overview</button>
+                        <button class="tab">Analyst</button>
+                        <button class="tab">Company</button>
+                        <button class="tab">Financials</button>
+                        <button class="tab">News</button>
+                    </div>
+
+                        <!-- tab content  -->
+                    <div class="tab-content">
+                        <!-- Overview tab content -->
+                        <div class="tab-pane active" id="overview-tab">
+
+                            <div class="chart-section">
+                                <div class="price-timeframes-container">
+
+                                    <div class="price-section">
+                                        <div class="price-display">
+                                            <div class="price-value" id="currentPrice">$147.04</div>
+                                        </div>
+                                        <div class="price-change">
+                                            <div class="price-change positive" id="priceChange">
+                                                <i class="fas fa-caret-up"></i>
+                                                1.47%
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="chart-timeframes">
+                                        <button class="timeframe-btn active" data-timeframe="1D">1D</button>
+                                        <button class="timeframe-btn" data-timeframe="1W">1W</button>
+                                        <button class="timeframe-btn" data-timeframe="1M">1M</button>
+                                        <button class="timeframe-btn" data-timeframe="1Y">1Y</button>
+                                        <button class="timeframe-btn" data-timeframe="ALL">All time</button>
+                                    </div>
+
+                                    <div class="chart-controls">
+                                        <button class="chart-control-btn" id="chartZoomOut" title="ZoomOut"><i class="fa-solid fa-minus"></i></button>
+                                        <button class="chart-control-btn" id="chartZoomIn" title="ZoomIn"><i class="fa-solid fa-plus"></i></button>
+                                        <button class="chart-control-btn" id="chartMoveLeft" title="Left"><i class="fa-solid fa-chevron-left"></i></button>
+                                        <button class="chart-control-btn" id="chartMoveRight" title="Right"><i class="fa-solid fa-chevron-right"></i></button>
+                                        <button class="chart-control-btn" id="chartReset" title="Reset"><i class="fas fa-sync-alt"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="chart-container">
+                                    <div id="candlestickChart"></div>
+                                    <div id="volumeChart"></div>
+                                    <div id="priceChart"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analyst tab content  -->
+                        <div class="tab-pane" id="analyst-tab">
+                            <div class="analyst-section">
+                                <div class="analyst-header">
+                                    <h2>Analyst Ratings</h2>
+                                    <button class="see-more-btn">See more</button>
+                                </div>
+                                <div class="analyst-content">
+                                    <div class="analyst-card">
+                                        <div class="analyst-name">John Doe</div>
+                                        <div class="analyst-rating">Buy</div>
+                                        <div class="analyst-price-target">$160.00</div>
+                                    </div>
+                                    <!-- More analyst cards can be added here -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Company tab content -->
+                        <div class="tab-pane" id="company-tab">
+                            <div class="about-section">
+                                <h2 class="section-title">About</h2>
+                                <p class="about-content" id="companyDescription">
+                                    Apple Inc. is an American multinational technology company that specializes in consumer electronics, 
+                                    software and online services headquartered in Cupertino, California, United States.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Financials tab -->
+                        <div class="tab-pane" id="financials-tab">
+                            <div class="financials-section">
+                                <h2 class="section-title">Financials</h2>
+                                <div class="financials-content">
+                                    <div class="financials-card">
+                                        <div class="financials-title">Revenue</div>
+                                        <div class="financials-value">$274.52B</div>
+                                    </div>
+                                    <div class="financials-card">
+                                        <div class="financials-title">Net Income</div>
+                                        <div class="financials-value">$57.41B</div>
+                                    </div>
+                                    <!-- More financial cards can be added here -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- News tab content  -->
+                        <div class="tab-pane" id="news-tab">
+                            <div class="news-section">
+                                <h2 class="section-title">Highlight</h2>
+                                <a href="#" class="see-more">
+                                    See more <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </div>
+                            <div id="newsContainer">
+                                <div class="news-item">
+                                    <div class="news-image">
+                                        <img src="/api/placeholder/200/120" alt="News image">
+                                    </div>
+                                    <div class="news-content">
+                                        <div class="news-source">bloomberg.com</div>
+                                        <div class="news-title">Apple Plans Extreme Sports Watch With Larger Screen, Metal Case</div>
+                                        <div class="news-metadata">3 days ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side column - Occupying the entire right column -->
+                <div class="side-column">
+                    <!-- Search bar moved to top -->
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search stocks..." id="stockSearch">
+                        <div class="search-dropdown" id="searchResults">
+                            <!-- Search results will be populated here by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Day Price</h2>
+                        </div>
+
+                        <div class="stats-grid">
+                            <!-- First Row -->
+                            <div class="stats-card">
+                                <div class="stats-title">Day's open</div>
+                                <div class="stats-value" id="daysOpen">145.26</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-title">Closing</div>
+                                <div class="stats-value" id="closingPrice">145.26</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-title">High</div>
+                                <div class="stats-value" id="intradayHigh">147.55</div>
+                            </div>
+                            <!-- Second Row -->
+                            <div class="stats-card">
+                                <div class="stats-title">Low</div>
+                                <div class="stats-value" id="intradayLow">145.00</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-title">Turnover</div>
+                                <div class="stats-value" id="intradayLow">20.01B</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-title">Volume</div>
+                                <div class="stats-value" id="volume">64.5M</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="big-change-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Big Trade</h2>
+                            <a href="#" class="see-more">
+                                See more <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                        <div class="change-items" id="bigChanges">
+                            <div class="change-item">
+                                <div class="change-date">
+                                    <div class="date-label">DATE</div>
+                                    <div class="date-value">30 April 2022</div>
+                                </div>
+                                <div class="change-percent">
+                                    <div class="percent-value negative">-12.56%</div>
+                                    <div class="mini-chart">
+                                        <svg width="60" height="20" viewBox="0 0 60 20">
+                                            <path d="M1,5 L10,8 L20,10 L30,7 L40,15 L50,18 L59,13" stroke="var(--negative-color)" fill="none" stroke-width="1.5" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="change-item">
+                                <div class="change-date">
+                                    <div class="date-label">DATE</div>
+                                    <div class="date-value">24 Februari 2022</div>
+                                </div>
+                                <div class="change-percent">
+                                    <div class="percent-value negative">-9.89%</div>
+                                    <div class="mini-chart">
+                                        <svg width="60" height="20" viewBox="0 0 60 20">
+                                            <path d="M1,5 L10,7 L20,12 L30,10 L40,13 L50,15 L59,18" stroke="var(--negative-color)" fill="none" stroke-width="1.5" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="change-item">
+                                <div class="change-date">
+                                    <div class="date-label">DATE</div>
+                                    <div class="date-value">1 Desember 2021</div>
+                                </div>
+                                <div class="change-percent">
+                                    <div class="percent-value positive">+24.85%</div>
+                                    <div class="mini-chart">
+                                        <svg width="60" height="20" viewBox="0 0 60 20">
+                                            <path d="M1,15 L10,13 L20,10 L30,8 L40,5 L50,3 L59,1" stroke="var(--positive-color)" fill="none" stroke-width="1.5" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
