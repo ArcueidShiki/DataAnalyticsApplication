@@ -1,9 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Script loaded and running');
 
-    
-    // Theme toggle functionality
 
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    window.isThemeChanging = false;
+    // Theme toggle functionality
     const themeToggle = document.getElementById('themeToggle');
     const icon = themeToggle.querySelector('i');
     const text = themeToggle.querySelector('span');
@@ -22,53 +30,94 @@ document.addEventListener('DOMContentLoaded', function() {
         icon.classList.add('fa-moon');
         text.textContent = 'Dark Mode';
     }
-    // Add event listener for theme toggle button
+
+    const updateChartsTheme = debounce(function(theme) {
+        if (window.isThemeChanging) return; // 防止重复更新
+        window.isThemeChanging = true;
+        
+        try {
+            // 定义所有图表的通用选项
+            const commonOptions = {
+                tooltip: { theme },
+                grid: { borderColor: theme === 'dark' ? '#30363d' : '#e1e4e8' },
+                xaxis: {
+                    labels: { style: { colors: theme === 'dark' ? '#8b949e' : '#666666' } },
+                    axisBorder: { color: theme === 'dark' ? '#30363d' : '#e1e4e8' }
+                }
+            };
+
+            let chartsExist = window.priceChart || window.candlestickChart || window.volumeChart;
+        
+            if (!chartsExist) {
+                console.log('找不到图表实例，主题更新完成');
+                window.chartState.isThemeChanging = false;
+                window.chartState.themeChangeCount = 0;
+                return;
+            }
+            
+            // 仅更新图表选项，不操作DOM，也不重新创建图表
+            // 一次性更新所有图表选项，但不立即渲染
+            if (window.priceChart) {
+                window.priceChart.updateOptions({
+                    ...commonOptions,
+                    yaxis: getYAxisConfig('price')
+                }, false);
+                console.log('已更新价格图表选项');
+            }
+            
+            if (window.candlestickChart) {
+                window.candlestickChart.updateOptions({
+                    ...commonOptions,
+                    yaxis: getYAxisConfig('candlestick')
+                }, false);
+                console.log('已更新K线图表选项');
+            }
+            
+            if (window.volumeChart) {
+                window.volumeChart.updateOptions({
+                    ...commonOptions,
+                    yaxis: getYAxisConfig('volume')
+                }, false);
+                console.log('已更新交易量图表选项');
+            }
+    
+            // 使用单一定时器进行渲染，避免多次重绘
+            setTimeout(() => {
+                // 安全地渲染每个图表
+                if (window.priceChart) {
+                    window.priceChart.render();
+                    console.log('价格图表已重新渲染');
+                }
+                if (window.candlestickChart) {
+                    window.candlestickChart.render();
+                    console.log('K线图表已重新渲染');
+                }
+                if (window.volumeChart) {
+                    window.volumeChart.render();
+                    console.log('交易量图表已重新渲染');
+                }
+                
+                // 所有图表更新完成后重置状态标志
+                window.isThemeChanging = false;
+                console.log('图表主题更新完成');
+            }, 100); // 增加延迟确保选项更新完成
+        } catch (error) {
+            console.error('更新图表主题时出错:', error);
+            window.isThemeChanging = false; // 确保出错时也重置标志
+        }
+    }, 250); // 50ms debounce delay
+
+
     // Toggle theme when button is clicked
     themeToggle.addEventListener('click', function() {
+        if (window.isThemeChanging) return;
         const currentTheme = document.body.getAttribute('data-theme');
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         
         // Update data-theme attribute
         document.body.setAttribute('data-theme', newTheme);
-            // Update chart theme if it exists
-        const chartUpdateOptions = {
-            tooltip: {
-                theme: newTheme
-            },
-            grid: {
-                borderColor: newTheme === 'dark' ? '#30363d' : '#e1e4e8'
-            },
-            xaxis: {
-                labels: {
-                    style: {
-                        colors: newTheme === 'dark' ? '#8b949e' : '#666666'
-                    }
-                },
-                axisBorder: {
-                    color: newTheme === 'dark' ? '#30363d' : '#e1e4e8'
-                }
-            }
-        };
-
-            // Update charts with new theme
-        if (window.priceChart) {
-            window.priceChart.updateOptions({
-                ...chartUpdateOptions,
-                yaxis: getYAxisConfig('price') // y-axis configuration
-            },true);
-        }
-        
-        if (window.candlestickChart) {
-            window.candlestickChart.updateOptions({
-                yaxis: getYAxisConfig('candlestick')
-            }, true);
-        }
-        
-        if (window.volumeChart) {
-            window.volumeChart.updateOptions({
-                yaxis: getYAxisConfig('volume') // y-axis configuration
-            });
-        }
+        // Update charts theme
+        updateChartsTheme(newTheme);
 
         // Update icon and text
         if (newTheme === 'light') {
@@ -80,17 +129,17 @@ document.addEventListener('DOMContentLoaded', function() {
             icon.classList.add('fa-moon');
             text.textContent = 'Dark Mode';
         }
+
+        window.skipNextObserverUpdate = true;
         
+
         // updateAllChartsYAxis();
         
         // Save preference
         setTimeout(() => {
             localStorage.setItem('theme', newTheme);
         }, 0);
-    }); 
-
-
-
+    });
 
     // Global variable to store the chart theme
     if (typeof ApexCharts !== 'undefined') {
@@ -136,6 +185,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
     }
+
+    
+    // Account section toggle functionality
+    const accountToggleButton = document.getElementById('account-toggle-button');
+    const accountSection = document.getElementById('account-section');
+    const accountArrow = document.querySelector('.account-arrow');
+    const profileToggle = document.getElementById('profile-toggle');
+    
+    // Function to toggle account section
+    function toggleAccountSection() {
+        if (accountSection.style.display === 'none') {
+            accountSection.style.display = 'block';
+            accountArrow.classList.remove('expanded');
+        } else {
+            accountSection.style.display = 'none';
+            accountArrow.classList.add('expanded');
+        }
+    }
+    
+    // Toggle account section when clicking the toggle button
+    if (accountToggleButton) {
+        accountToggleButton.addEventListener('click', toggleAccountSection);
+    }
+    
+    // Toggle account section when clicking the profile
+    if (profileToggle) {
+        profileToggle.addEventListener('click', toggleAccountSection);
+    }
+
+
     // Tab switching functionality
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
@@ -156,7 +235,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-
+    // Menu item selection
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            menuItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
     // Timeframe button selection
     const timeframeBtns = document.querySelectorAll('.timeframe-btn');
     timeframeBtns.forEach(btn => {
@@ -174,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // // Store followed stock data
+    // Store followed stock data
     let followedStocks = JSON.parse(localStorage.getItem('followedStocks')) || {};
     
     // Follow button functionality - MODIFIED
@@ -248,103 +335,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    }
-
-    // Search functionality
-    const searchInput = document.getElementById('stockSearch');
-    const searchResults = document.getElementById('searchResults');
-    
-    if (searchInput && searchResults) {
-        searchInput.addEventListener('input', function() {
-            const query = this.value.trim();
-            
-            if (query.length >= 2) {
-                // Show dummy search results
-                searchResults.innerHTML = `
-                    <div class="search-item">
-                        <div class="search-stock-icon" style="background-color: #ff9900;">
-                            A
-                        </div>
-                        <div class="search-stock-info">
-                            <div class="search-stock-name">Apple Inc.</div>
-                            <div class="search-stock-symbol">AAPL · NASDAQ</div>
-                        </div>
-                    </div>
-                    <div class="search-item">
-                        <div class="search-stock-icon" style="background-color: #3b82f6;">
-                            A
-                        </div>
-                        <div class="search-stock-info">
-                            <div class="search-stock-name">Amazon.com Inc.</div>
-                            <div class="search-stock-symbol">AMZN · NASDAQ</div>
-                        </div>
-                    </div>
-                `;
-                searchResults.classList.add('active');
-                
-                // Add click event to search items
-                setupSearchItemEvents();
-            } else {
-                searchResults.innerHTML = '';
-                searchResults.classList.remove('active');
-            }
-        });
-        
-        // Close search results when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
-                searchResults.classList.remove('active');
-            }
-        });
-    }
-
-        // Function to add click events to search items
-    function setupSearchItemEvents() {
-        document.querySelectorAll('.search-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const symbol = this.querySelector('.search-stock-symbol').textContent.split(' · ')[0];
-                const name = this.querySelector('.search-stock-name').textContent;
-                
-                // Update UI with the selected stock info
-                updateMainContentWithStock(name, symbol);
-                
-                // Update company information
-                fetchAndDisplayCompanyInfo(symbol);
-                
-                // Hide search results
-                searchResults.classList.remove('active');
-            });
-        });
-    }
-
-    // Function to guess a company's domain name
-    function guessDomainFromCompany(companyName) {
-        // Remove common corporate suffixes and spaces
-        let domain = companyName.toLowerCase()
-            .replace(/\s+inc\.?$|\s+incorporated$|\s+corp\.?$|\s+corporation$|\s+llc$|\s+ltd\.?$|\s+limited$|\s+sa$|\s+s\.a\.$/i, '')
-            .replace(/[\s\'\"\,\.\&]+/g, '')
-            .trim();
-        
-        // Special cases for common companies
-        const specialCases = {
-            'apple': 'apple.com',
-            'amazon': 'amazon.com',
-            'microsoft': 'microsoft.com',
-            'google': 'google.com',
-            'alphabet': 'abc.xyz',
-            'tesla': 'tesla.com',
-            'facebook': 'fb.com',
-            'meta': 'meta.com',
-            'netflix': 'netflix.com',
-            'spotify': 'spotify.com'
-        };
-        
-        if (specialCases[domain]) {
-            return specialCases[domain];
-        }
-        
-        // Default fallback
-        return domain + '.com';
     }
     
     // Function to add a stock to the watchlist
@@ -427,6 +417,36 @@ document.addEventListener('DOMContentLoaded', function() {
             iconElement.innerHTML = `<img src="${logoUrl}" alt="${symbol}" style="width: 100%; height: 100%; object-fit: contain;">`;
             iconElement.style.backgroundColor = 'transparent';
         }
+    }
+    
+    // Function to guess a company's domain name
+    function guessDomainFromCompany(companyName) {
+        // Remove common corporate suffixes and spaces
+        let domain = companyName.toLowerCase()
+            .replace(/\s+inc\.?$|\s+incorporated$|\s+corp\.?$|\s+corporation$|\s+llc$|\s+ltd\.?$|\s+limited$|\s+sa$|\s+s\.a\.$/i, '')
+            .replace(/[\s\'\"\,\.\&]+/g, '')
+            .trim();
+        
+        // Special cases for common companies
+        const specialCases = {
+            'apple': 'apple.com',
+            'amazon': 'amazon.com',
+            'microsoft': 'microsoft.com',
+            'google': 'google.com',
+            'alphabet': 'abc.xyz',
+            'tesla': 'tesla.com',
+            'facebook': 'fb.com',
+            'meta': 'meta.com',
+            'netflix': 'netflix.com',
+            'spotify': 'spotify.com'
+        };
+        
+        if (specialCases[domain]) {
+            return specialCases[domain];
+        }
+        
+        // Default fallback
+        return domain + '.com';
     }
     
     // Function to generate a consistent color from a string
@@ -588,6 +608,72 @@ document.addEventListener('DOMContentLoaded', function() {
         return config;
     }
     
+    // Search functionality
+    const searchInput = document.getElementById('stockSearch');
+    const searchResults = document.getElementById('searchResults');
+    
+    if (searchInput && searchResults) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            if (query.length >= 2) {
+                // Show dummy search results
+                searchResults.innerHTML = `
+                    <div class="search-item">
+                        <div class="search-stock-icon" style="background-color: #ff9900;">
+                            A
+                        </div>
+                        <div class="search-stock-info">
+                            <div class="search-stock-name">Apple Inc.</div>
+                            <div class="search-stock-symbol">AAPL · NASDAQ</div>
+                        </div>
+                    </div>
+                    <div class="search-item">
+                        <div class="search-stock-icon" style="background-color: #3b82f6;">
+                            A
+                        </div>
+                        <div class="search-stock-info">
+                            <div class="search-stock-name">Amazon.com Inc.</div>
+                            <div class="search-stock-symbol">AMZN · NASDAQ</div>
+                        </div>
+                    </div>
+                `;
+                searchResults.classList.add('active');
+                
+                // Add click event to search items
+                setupSearchItemEvents();
+            } else {
+                searchResults.innerHTML = '';
+                searchResults.classList.remove('active');
+            }
+        });
+        
+        // Close search results when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+                searchResults.classList.remove('active');
+            }
+        });
+    }
+    
+    // Function to add click events to search items
+    function setupSearchItemEvents() {
+        document.querySelectorAll('.search-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const symbol = this.querySelector('.search-stock-symbol').textContent.split(' · ')[0];
+                const name = this.querySelector('.search-stock-name').textContent;
+                
+                // Update UI with the selected stock info
+                updateMainContentWithStock(name, symbol);
+                
+                // Update company information
+                fetchAndDisplayCompanyInfo(symbol);
+                
+                // Hide search results
+                searchResults.classList.remove('active');
+            });
+        });
+    }
     
     // Function to dynamiccally fetch the height of monitor
     function calculateChartHeight() {
@@ -1476,14 +1562,46 @@ document.addEventListener('DOMContentLoaded', function() {
         attributeFilter: ['data-theme']
     });
 
-
+    // Load saved watchlist from localStorage
+    function loadSavedWatchlist() {
+        const watchlistContainer = document.getElementById('watchlistContainer');
+        if (!watchlistContainer) return;
+        
+        // Clear existing watchlist except for the "Add" button
+        watchlistContainer.innerHTML = '';
+        
+        // Loop through saved stocks and add them to the watchlist
+        for (const symbol in followedStocks) {
+            const stock = followedStocks[symbol];
+            
+            // Generate a random trend for the mini chart
+            const trendIsPositive = Math.random() > 0.5;
+            const trendPath = trendIsPositive ? 
+                'M1,15 L10,13 L20,10 L30,8 L40,5 L50,3 L59,1' : 
+                'M1,5 L10,8 L20,12 L30,10 L40,13 L50,15 L59,18';
+            const trendColor = trendIsPositive ? 'var(--positive-color)' : 'var(--negative-color)';
+            
+            // Add to watchlist
+            addToWatchlist(stock.name, symbol, trendPath, trendColor);
+            
+            // If we have a saved logo, update it
+            if (stock.logo) {
+                updateWatchlistLogo(symbol, stock.logo);
+            } else {
+                // Try to fetch logo if we don't have one saved
+                fetchCompanyLogo(stock.name, symbol);
+            }
+        }
+    }
+    
     // Initialize tab setup
     const defaultTab = document.querySelector('.tab');
     if (defaultTab) {
         defaultTab.click(); // Activate the first tab by default
     }
 
-    
+    // Load saved watchlist
+    loadSavedWatchlist();
     // Initialize company tab
     setupCompanyTab();
     

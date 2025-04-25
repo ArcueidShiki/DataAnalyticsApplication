@@ -39,7 +39,7 @@
 body {
     height: 100vh;
     overflow-x: hidden; /* Prevent horizontal scrollbars */
-    overflow-y: auto; /* Prevent scrollbars */
+    overflow-y: hidden; /* Prevent scrollbars */
     transition: background-color 0.3s ease, color 0.3s ease;
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -52,15 +52,6 @@ body {
 }
 
 
-.new-badge {
-    background-color: var(--primary-color);
-    color: #000;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    margin-left: 6px;
-    font-weight: 600;
-}
 
 .top-content-bar {
     display: flex;
@@ -157,91 +148,6 @@ body {
     color: var(--text-secondary);
 }
 
-/* Watchlist section */
-.watchlist-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px 8px;
-}
-
-.watchlist-title {
-    text-transform: uppercase;
-    font-size: 12px;
-    color: var(--text-secondary);
-    letter-spacing: 0.5px;
-}
-
-.watchlist-dropdown {
-    color: var(--text-secondary);
-    font-size: 12px;
-}
-
-.watchlist-item {
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.watchlist-item:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.watchlist-icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    color: white;
-}
-
-.watchlist-info {
-    flex: 1;
-}
-
-/* Account toggle styling */
-.account-toggle {
-    margin-top: auto;
-    border-top: 1px solid var(--border-color);
-    padding-top: 10px;
-}
-
-.account-arrow {
-    margin-left: auto;
-    transition: transform 0.3s ease;
-}
-
-.account-arrow.expanded {
-    transform: rotate(180deg);
-}
-
-#account-toggle-button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.stock-name {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.stock-symbol {
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-.stock-chart {
-    width: 60px;
-    height: 24px;
-}
 
 /* Main content layout */
 .main-content {
@@ -447,21 +353,21 @@ body {
     font-weight: 600;
 }
 
-.price-change {
+.tab-price-change {
     display: flex;
     align-items: center;
     padding: 5px 10px;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
 }
 
-.price-change.positive {
+.tab-price-change.positive {
     background-color: rgba(74, 222, 128, 0.1);
     color: var(--positive-color);
 }
 
-.price-change.negative {
+.tab-price-change.negative {
     background-color: rgba(248, 113, 113, 0.1);
     color: var(--negative-color);
 }
@@ -779,8 +685,7 @@ body {
     }
     
     .price-change {
-        font-size: 18px;
-        padding: 8px 16px;
+        font-size: 14px;
     }
     
     /* 增大按钮尺寸 */

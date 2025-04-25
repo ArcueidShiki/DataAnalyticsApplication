@@ -8,11 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.css">
     <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script>
+    <link rel="stylesheet" href="../css/sidebar-watchlist.css">
     <link rel="stylesheet" href="../css/watchlist-individual.css">
-    <link rel="stylesheet" href="../css/sidebar.css">
+    
     <!-- Scripts -->
+     
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="../js/sidebar.js"></script>
+    <script src="../js/watchlist-container.js"></script>
     <script src="../js/watchlist-individual.js"></script>
     
 </head>
@@ -20,7 +23,82 @@
     <div class="app-container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <!-- sidebar content will be loaded here -->
+            <div class="sidebar-header">
+                <div class="user-profile" id="profile-toggle">
+                    <div class="profile-avatar">
+                        <img src="../assets/user.jpeg" alt="User Avatar">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Rojo Arab Oktov</div>
+                        <div class="profile-balance">$56,320.00</div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="menu-label">MENU</div>
+            <div class="sidebar-menu">
+                <div class="menu-item" id="watchlist-menu-item">
+                    <i class="fa-solid fa-th"></i>
+                    <span>Watchlist</span>
+                </div>
+                <div class="menu-item">
+                    <i class="far fa-user"></i>
+                    <span>My asset</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Top chart</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fab fa-bitcoin"></i>
+                    <span>Crypto</span>
+                    <span class="new-badge">new</span>
+                </div>
+            </div>
+        
+            <!-- Watchlist moved up before Account -->
+            <div class="watchlist-header">
+                <div class="watchlist-title">WATCHLIST</div> 
+                <div class="watchlist-dropdown">24h</div>
+            </div>
+        
+            <div id="watchlistContainer">
+                <!-- generate by JavaScript -->
+            </div>
+            
+            <!-- Account section moved to bottom and collapsed by default -->
+            <div class="account-toggle">
+                <div class="menu-item" id="account-toggle-button">
+                    <i class="fas fa-user-circle"></i>
+                    <span>SETTINGS</span>
+                    <i class="fas fa-chevron-down account-arrow"></i>
+                </div>
+            </div>
+            <div class="account-section" id="account-section" style="display: none;">
+                <div class="sidebar-menu">
+                    <!-- Add dark mode toggle as first menu item in settings -->
+                    <div class="menu-item" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                        <span>Dark Mode</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Account setting</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Setting</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="far fa-question-circle"></i>
+                        <span>Help center</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Main content area -->
@@ -74,8 +152,8 @@
                                         <div class="price-display">
                                             <div class="price-value" id="currentPrice">$147.04</div>
                                         </div>
-                                        <div class="price-change">
-                                            <div class="price-change positive" id="priceChange">
+                                        <div class="tab-price-change">
+                                            <div class="tab-price-change positive" id="priceChange">
                                                 <i class="fas fa-caret-up"></i>
                                                 1.47%
                                             </div>

@@ -6,61 +6,94 @@
     <title>Investment Dashboard - Watchlist</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../css/watchlist-individual.css">
-    <link rel="stylesheet" href="../css/sidebar.css">
-    <style>
-        /* Watchlist specific styles */
-        .watchlist-table {
-            width: 100%;
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        
-        .watchlist-row {
-            display: grid;
-            grid-template-columns: 0.8fr 2fr 1fr 1fr 1fr 1fr;
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-            align-items: center;
-        }
-        
-        .watchlist-header-row {
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 12px;
-            text-transform: uppercase;
-            background-color: var(--surface-secondary);
-        }
-        
-        .watchlist-stock-row {
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .watchlist-stock-row:hover {
-            background-color: var(--surface-hover);
-        }
-        
-        .price-change {
-            display: flex;
-            align-items: center;
-        }
-        
-        .price-change.positive {
-            color: var(--positive-color);
-        }
-        
-        .price-change.negative {
-            color: var(--negative-color);
-        }
-    </style>
+    <link rel="stylesheet" href="../css/sidebar-watchlist.css">
+    <link rel="stylesheet" href="../css/watchtable.css">
+        <!-- Scripts -->
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/thememode.js"></script>
+    <script src="../js/watchlist-container.js"></script>
+    <script src="../js/watchlist.js"></script>
+
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar - 结构会由 sidebar.js 加载 -->
         <div class="sidebar">
-            <!-- sidebar content will be loaded here -->
+            <div class="sidebar-header">
+                <div class="user-profile" id="profile-toggle">
+                    <div class="profile-avatar">
+                        <img src="../assets/user.jpeg" alt="User Avatar">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">Rojo Arab Oktov</div>
+                        <div class="profile-balance">$56,320.00</div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="menu-label">MENU</div>
+            <div class="sidebar-menu">
+                <div class="menu-item" id="watchlist-menu-item">
+                    <i class="fa-solid fa-th"></i>
+                    <span>Watchlist</span>
+                </div>
+                <div class="menu-item">
+                    <i class="far fa-user"></i>
+                    <span>My asset</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Top chart</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fab fa-bitcoin"></i>
+                    <span>Crypto</span>
+                    <span class="new-badge">new</span>
+                </div>
+            </div>
+        
+            <!-- Watchlist moved up before Account -->
+            <div class="watchlist-header">
+                <div class="watchlist-title">WATCHLIST</div>
+                <div class="watchlist-dropdown">24h</div>
+            </div>
+        
+            <div id="watchlistContainer">
+                <!-- generate by JavaScript -->
+            </div>
+            
+            <!-- Account section moved to bottom and collapsed by default -->
+            <div class="account-toggle">
+                <div class="menu-item" id="account-toggle-button">
+                    <i class="fas fa-user-circle"></i>
+                    <span>SETTINGS</span>
+                    <i class="fas fa-chevron-down account-arrow"></i>
+                </div>
+            </div>
+            <div class="account-section" id="account-section" style="display: none;">
+                <div class="sidebar-menu">
+                    <!-- Add dark mode toggle as first menu item in settings -->
+                    <div class="menu-item" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                        <span>Dark Mode</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Account setting</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Setting</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="far fa-question-circle"></i>
+                        <span>Help center</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Main content area -->
@@ -98,9 +131,5 @@
             </div>
         </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="../js/sidebar.js"></script>
-    <script src="../js/watchlist.js"></script>
 </body>
 </html>
