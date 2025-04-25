@@ -15,7 +15,7 @@ def test_register_and_login(client):
     })
     assert response.status_code == 200
 
-    # Test login with wrong password
+    # Test login with right password
     response = client.post('/auth/login', json={
         'username': 'testuser',
         'password': 'wrongpass'
