@@ -1,23 +1,28 @@
 import unittest
 from app import create_app, db
+from flask import json
 
-
-class BasicTestCase(unittest.TestCase):
+class AuthTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
-        self.app.config["TESTING"] = True
-        self.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        self.client = self.app.test_client()
-
+        self.app.config['TESTING'] = True
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         with self.app.app_context():
             db.create_all()
+        self.client = self.app.test_client()
 
-    def tearDown(self):
-        with self.app.app_context():
-            db.session.remove()
-            db.drop_all()
+    def test_register_login(self):
+        res = self.client.post('/auth/register', json={
+            'username': 'unittest',
+            'password': '123456'
+        })
+        self.assertEqual(res.status_code, 201)
 
-    def test_post_item(self):
-        res = self.client.post("/", json={"name": "UnitTest"})
-        self.assertEqual(res.status_code, 404)
-        # self.assertIn("UnitTest", res.get_data(as_text=True))
+        res = self.client.post('/auth/login', json={
+            'username': 'unittest',
+            'password': '123456'
+        })
+        self.assertEqual(res.status_code, 200)
+
+if __name__ == '__main__':
+    unittest.main()
