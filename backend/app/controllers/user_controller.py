@@ -8,7 +8,7 @@ from app.models.user import User
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies
 
-def register_user(data):
+def register(data):
     required_fields = ['email', 'phone', 'username', 'password', 'first_name', 'last_name', 'date_of_birth']
     valid = False
     for f in required_fields:
@@ -80,7 +80,7 @@ def register_user(data):
     response = jsonify({"msg": "User registered successfully"})
     return response, 201
 
-def user_login(data):
+def login(data):
     required_fields = ['username', 'password']
     for f in required_fields:
         if f not in data:

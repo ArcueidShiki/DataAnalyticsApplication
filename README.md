@@ -2,6 +2,8 @@
 
 ## Project Description
 
+Stock Market Paper trading Web application
+
 ## Project Desgin
 
 | UWA ID | Name           | Github Username |
