@@ -97,4 +97,4 @@ pip install pipreqs
 pipreqs ./your_project_path --force
 ```
 
-##
+https://yfinance-python.org/reference/yfinance.price_history.html
