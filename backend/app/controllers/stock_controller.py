@@ -47,7 +47,7 @@ def show_news(symbol):
     return yf.Ticker(symbol).news
 
 def buy():
-    return None
+    return jsonify({"error": "Bull endpoint not implemented"}), 501
 
 def sell():
-    return None
+    return jsonify({"error": "Sell endpoint not implemented"}), 501

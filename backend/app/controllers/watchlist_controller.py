@@ -41,7 +41,7 @@ def show_watchlist():
             })
     return jsonify(stock_data), 200
 
-def add_to_watchlist(data):
+def add_to_watchlist():
     user_id = get_jwt_identity()
     data = request.get_json()
     symbol = data.get('symbol')
@@ -59,7 +59,7 @@ def add_to_watchlist(data):
     db.session.commit()
     return jsonify({"msg": "Added to watchlist"}), 201
 
-def remove_from_watchlist(data):
+def remove_from_watchlist():
     user_id = get_jwt_identity()
     data = request.get_json()
     symbol = data.get('symbol')

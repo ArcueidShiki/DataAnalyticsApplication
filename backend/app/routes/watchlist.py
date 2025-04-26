@@ -11,5 +11,9 @@ def show_watchlist():
 @stock_bp.route('/watchlist/add', methods=['POST'])
 @jwt_required()
 def add_to_watchlist():
-    data = request.get_json()
-    return controller.add_to_watchlist(data)
+    return controller.add_to_watchlist()
+
+@stock_bp.route('/watchlist/remove', methods=['POST'])
+@jwt_required()
+def remove_from_watchlist():
+    return controller.remove_from_watchlist()
