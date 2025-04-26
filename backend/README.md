@@ -7,7 +7,7 @@ python -m venv venv
 # For Linux/MacOs
 source venv/bin/activate
 
-# For windows
+# For windows only use command prompt, powershell doesn't work
 venv\Scripts\activate.bat
 
 pip install -r requirements.txt
