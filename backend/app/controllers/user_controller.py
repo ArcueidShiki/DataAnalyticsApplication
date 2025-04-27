@@ -1,30 +1,95 @@
-from flask import request, jsonify
+import re
+import uuid
+from app import db
+from flask import jsonify
+from datetime import datetime
+from datetime import timedelta
 from app.models.user import User
-from app import db, redis_client
-from app.schemas.user_schema import UserSchema
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+def register(data):
+    required_fields = ['email', 'phone', 'username', 'password', 'first_name', 'last_name', 'date_of_birth']
+    valid = False
+    for f in required_fields:
+        if f == 'password' and f not in data:
+            return jsonify({"msg": f"Missing field: {f}"}), 400
+        if (f == 'email' or f == 'phone' or f == 'username') and f in data:
+            valid = True
+    if not valid:
+        return jsonify({"msg": "Missing field"}), 400
 
+    email = None
+    if "email" in data:
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
+            return jsonify({"msg": "Invalid email format"}), 400
+        else:
+            email = data['email']
+    phone = None
+    if "phone" in data:
+        if not re.match(r"^\+61\d{9}$", data['phone']):
+            return jsonify({"msg": "Invalid phone format"}), 400
+        else:
+            phone = data['phone']
+    username = None
+    uid = str(uuid.uuid4())
+    if "username" in data:
+        if not re.match(r"^[a-zA-Z0-9_]+$", data['username']):
+            return jsonify({"msg": "Invalid username format"}), 400
+        else:
+            username = data['username']
+    else:
+        username = f"user_{uid}"
+    # Validate password strength (example: at least 8 characters, 1 uppercase, 1 lowercase, 1 digit)
+    # if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$", data['password']):
+    #     return jsonify({"msg": "Weak password"}), 400
+    try:
+        dob = None
+        if "date_of_birth" in data:
+            dob = datetime.strptime(data['date_of_birth'], '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use YYYY-MM-DD"}), 400
 
-def get_all_users():
-    cached_key = "user_all"
-    cached = redis_client.get(cached_key)
-    if cached:
-        return jsonify(eval(cached))
-    users = User.query.all()
-    data = user_schema.dump(users)
-    redis_client.set(cached_key, str(data), ex=60)
-    return jsonify(data)
+    first_name = None
+    if "first_name" in data:
+        first_name = data['first_name']
+    last_name = None
+    if "last_name" in data:
+        last_name = data['last_name']
 
+    # Check if user already exists
+    if email and User.query.filter_by(email=data['email']).first():
+        return jsonify({"msg": "Email already registered"}), 400
+    if phone and User.query.filter_by(phone=data['phone']).first():
+        return jsonify({"msg": "Phone number already registered"}), 400
+    if username and User.query.filter_by(username=data['username']).first():
+        return jsonify({"msg": "Username already taken"}), 400
 
-def create_user():
-    data = request.json
-    errors = user_schema.validate(data)
-    if errors:
-        return {"errors": errors}, 400
-
-    user = User(username=data["username"], email=data["email"])
+    user = User(
+        id=uid,
+        email=email,
+        phone=phone,
+        username=username,
+        password=generate_password_hash(data['password']),
+        first_name=first_name,
+        last_name=last_name,
+        date_of_birth=dob
+    )
     db.session.add(user)
     db.session.commit()
-    return user_schema.dump(user), 201
+    response = jsonify({"msg": "User registered successfully"})
+    return response, 201
+
+def login(data):
+    required_fields = ['username', 'password']
+    for f in required_fields:
+        if f not in data:
+            return jsonify({"msg": f"Missing field: {f}"}), 400
+
+    user = User.query.filter_by(username=data['username']).first()
+    if user is None or not check_password_hash(user.password, data['password']):
+        return jsonify({"msg": "Invalid username or password"}), 401
+    response = jsonify({"msg": "Login successful"})
+    access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=30))
+    set_access_cookies(response, access_token)
+    return response, 200
