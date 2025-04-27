@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Dashboard - Watchlist</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/watchlist-individual.css">
     <link rel="stylesheet" href="../css/sidebar-watchlist.css">
     <link rel="stylesheet" href="../css/watchtable.css">
         <!-- Scripts -->
@@ -48,6 +47,10 @@
                     <i class="fab fa-bitcoin"></i>
                     <span>Crypto</span>
                     <span class="new-badge">new</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fa-brands fa-rocketchat"></i>
+                    <span>Contact</span>
                 </div>
             </div>
         
@@ -109,9 +112,20 @@
                         <div class="stock-details">Track your favorite stocks</div>
                     </div>
                 </div>
-                <div class="stock-header-right">
-                    <button class="action-btn follow-btn"><i class="fas fa-plus"></i>Add Stock</button>
-                    <button class="more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                <div class="list-header-right">
+                    <!-- Search bar moved to top -->
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            class="search-input"
+                            placeholder="Search stocks..."
+                            id="stockSearch"
+                        />
+                        <div class="search-dropdown" id="searchResults">
+                        <!-- Search results will be populated here by JavaScript -->
+                        </div>
+                    </div>
                 </div>
             </div>
 

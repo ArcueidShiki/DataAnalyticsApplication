@@ -12,7 +12,6 @@ function updateThemeUI(theme, icon, text) {
     }
 }
 
-
 // theme toggle function
 function setupThemeToggle() {
     console.log('theme setting...');
@@ -32,22 +31,22 @@ function setupThemeToggle() {
         return;
     }
     
-    // 获取保存的主题或使用默认值
+    // retrieve current theme from localStorage or default to dark
     const currentTheme = localStorage.getItem('theme') || 'dark';
     document.body.setAttribute('data-theme', currentTheme);
     
-    // 更新图标和文本
+    // refresh UI
     updateThemeUI(currentTheme, icon, text);
     
-    // 点击切换主题
+    // click event to toggle theme
     themeToggle.addEventListener('click', function() {
         const currentTheme = document.body.getAttribute('data-theme');
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         
-        // 更新主题
+        // update theme
         document.body.setAttribute('data-theme', newTheme);
         
-        // 更新UI
+        // update UI
         updateThemeUI(newTheme, icon, text);
 
         const chartUpdateOptions = {
@@ -90,11 +89,11 @@ function setupThemeToggle() {
             });
         }
         
-        // 保存偏好
+        // save new theme to localStorage
         localStorage.setItem('theme', newTheme);
     });
     
-    // 设置全局图表主题
+    // set up global chart theme
     setupGlobalChartTheme(currentTheme);
 }
 
@@ -106,6 +105,7 @@ function initTheme() {
     console.log('theme.js initTheme completed');
 }
 
-// 在DOM加载完成后执行初始化
+// Initialize theme on DOMContentLoaded
+// This ensures that the theme is set up as soon as the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initTheme);
 
