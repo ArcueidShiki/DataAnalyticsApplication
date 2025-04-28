@@ -1,285 +1,310 @@
 /* Reset default browser styles */
 * {
-    box-sizing: border-box;
-    font-family: "Microsoft YaHei", sans-serif;
+  box-sizing: border-box;
+  font-family: "Microsoft YaHei", sans-serif;
 }
 
 /* Full page styling */
-html, body {
-    overflow: hidden;
-    background-color: #1a1a1a;
-    display: flex;
-    flex-direction: column;
-    align-items: center;      /* Centers the content vertically */
+html,
+body {
+  overflow: hidden;
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the content vertically */
 }
 
 /* Mountain background image with overlay */
 .background {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background: linear-gradient(rgba(30, 30, 40, 0.5),
-            rgba(39, 39, 51, 0.7)),
-        url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-    background-size: cover;
-    background-position: center;
-    filter: brightness(1);
-    z-index: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: linear-gradient(rgba(30, 30, 40, 0.5), rgba(39, 39, 51, 0.7)),
+    url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-size: cover;
+  background-position: center;
+  filter: brightness(1);
+  z-index: 0;
 }
 
-.left-column, .right-column {
-    height: 100%;
-    display: flex;
-    z-index: 2;
-    padding: 4rem;
+.left-column,
+.right-column {
+  height: 100%;
+  display: flex;
+  z-index: 2;
+  padding: 4rem;
 }
 
 .container-fluid {
-    height: 100vh; /* Ensures full viewport height */
-    display: flex;
-    justify-content: center; /* Centers the columns horizontally */
-    align-items: flex-end;
+  height: 100vh; /* Ensures full viewport height */
+  display: flex;
+  justify-content: center; /* Centers the columns horizontally */
+  align-items: flex-end;
 }
 
 .row {
-    display: flex;
-    justify-content: center;  /* Centers the columns horizontally */
-    align-items: flex-end;  /* Aligns items to the bottom */
-    height: 100%;
+  display: flex;
+  justify-content: center; /* Centers the columns horizontally */
+  align-items: flex-end; /* Aligns items to the bottom */
+  height: 100%;
 }
 
 .welcome-content {
-    max-width: 600px;
+  max-width: 600px;
 }
 /* Welcome header styling */
 .welcome-header {
-    margin-top: 2rem;
-    z-index: 2;
-    width: 100%;
+  margin-top: 2rem;
+  z-index: 2;
+  width: 100%;
 }
 
 /* Welcome text styling */
 .welcome-text {
-    color: #add8e6; /* Light blue */
-    font-size: 2rem;
-    text-align: center;
-    width: 100%;
+  color: #add8e6; /* Light blue */
+  font-size: 2rem;
+  text-align: center;
+  width: 100%;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.welcome-subtext {
+  color: white;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: left;
+  margin-bottom: 2rem;
 }
 
 /* Frosted glass effect */
 /* Login form container */
 .login-container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px); /* blur for frosted effect */
-    max-width: 550px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    z-index: 3;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px); /* blur for frosted effect */
+  max-width: 550px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  z-index: 3;
 }
 
 /* Label for input fields */
 .input-label {
-    display: block;
-    color: #ddd !important;
-    margin-bottom: 5px;
-    font-size: 14px;
+  display: block;
+  color: #ddd !important;
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
 /* Input field styling - Override Bootstrap */
 .input-field {
-    padding: 12px;
-    border: 1px solid #555 !important;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    font-size: 14px;
+  padding: 12px;
+  border: 1px solid #555 !important;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  font-size: 14px;
 }
 
 /* Google login button */
 .google-login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white; 
-    color: #333;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  color: #333;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 /* Hover effect for Google login button */
 .google-login:hover {
-    color: white;
-    background-color: white;
-    background-image: linear-gradient(90deg, rgba(32,244,255,1) 0%, rgba(128,100,255,1) 50%, rgba(255,55,140,1) 100%);
+  color: white;
+  background-color: white;
+  background-image: linear-gradient(
+    90deg,
+    rgba(32, 244, 255, 1) 0%,
+    rgba(128, 100, 255, 1) 50%,
+    rgba(255, 55, 140, 1) 100%
+  );
 }
 
 /* Google icon */
 .google-login img {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 /* "or" divider with lines */
 .divider {
-    display: flex;
-    align-items: center;
-    color: #999;
-    margin: 20px 0;
-    text-align: center;
+  display: flex;
+  align-items: center;
+  color: #999;
+  margin: 20px 0;
+  text-align: center;
 }
 
 /* Lines before and after "or" text */
-.divider::before, .divider::after {
-    content: "";
-    flex: 1;
-    border-bottom: 1px solid #555;
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #555;
 }
 
 .divider::before {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .divider::after {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 /* Password container for input and eye icon */
 .password-container {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 /* Eye icon button styling */
 .eye-icon-btn {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    z-index: 10;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
 }
 
 /* Style for eye icon */
 .eye-icon-btn i {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 /* Checkbox label */
 .checkbox-group label {
-    color: #bbb;
-    font-size: 14px;
+  color: #bbb;
+  font-size: 14px;
 }
 
 /* Forgot password link */
 .forgot-password {
-    color: #bbb;
-    font-size: 14px;
-    text-decoration: none;
+  color: #bbb;
+  font-size: 14px;
+  text-decoration: none;
 }
 
 /* Hover effect for forgot password */
 .forgot-password:hover {
-    color: #add8e6; /* Light blue */
+  color: #add8e6; /* Light blue */
 }
 
 /* Main login button */
 .login-button {
-    width: 100%;
-    padding: 12px;
-    background-color: white !important;
-    color: #333 !important;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-bottom: 20px;
+  width: 100%;
+  padding: 12px;
+  background-color: white !important;
+  color: #333 !important;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 20px;
 }
 
 /* Hover effect for login button */
 .login-button:hover {
-    color: white !important;
-    background-image: linear-gradient(90deg, rgba(32,244,255,1) 0%, rgba(128,100,255,1) 50%, rgba(255,55,140,1) 100%) !important;
+  color: white !important;
+  background-image: linear-gradient(
+    90deg,
+    rgba(32, 244, 255, 1) 0%,
+    rgba(128, 100, 255, 1) 50%,
+    rgba(255, 55, 140, 1) 100%
+  ) !important;
 }
 
 /* Register link at the bottom */
 .register-link {
-    color: #bbb;
-    font-size: 16px;
-    text-align: center;
+  color: #bbb;
+  font-size: 16px;
+  text-align: center;
 }
 
 /* Link within register text */
 .register-link a {
-    color: #add8e6; /* Light blue */
-    text-decoration: none;
+  color: #add8e6; /* Light blue */
+  text-decoration: none;
 }
 
 /* Hover effect for register link */
 .register-link a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Media Query for larger screens (2K and above) */
 @media (min-width: 2560px) {
-    .container-fluid {
-        padding-top: 5%; /* Adds more space from the top on very large screens */
-    }
-    .left-column, .right-column {
-        padding: 10rem; /* Adds padding to the columns */
-    }
+  .container-fluid {
+    padding-top: 5%; /* Adds more space from the top on very large screens */
+  }
+  .left-column,
+  .right-column {
+    padding: 10rem; /* Adds padding to the columns */
+  }
 }
 
 /* Responsive design for larger screens */
 @media (min-width: 769px) {
-    .login-container {
-        padding: 40px;
-    }
-    
-    .welcome-text {
-        font-size: 2.5rem;
-    }
-    
-    .login-title {
-        font-size: 28px;
-    }
-    
-    .login-subtitle {
-        font-size: 16px;
-    }
+  .login-container {
+    padding: 40px;
+  }
+
+  .welcome-text {
+    font-size: 2.5rem;
+  }
+
+  .login-title {
+    font-size: 28px;
+  }
+
+  .login-subtitle {
+    font-size: 16px;
+  }
 }
 
 /* Media Query for smaller screens (iPhone SE, etc.) */
 @media (max-width: 576px) {
-    .container-fluid {
-        flex-direction: column; /* Stacks the columns vertically on small screens */
-    }
+  .container-fluid {
+    flex-direction: column; /* Stacks the columns vertically on small screens */
+  }
 
-    .left-column, .right-column {
-        padding: 1rem; /* Adjusts padding for smaller screens */
-        width: 100%;
-    }
+  .left-column,
+  .right-column {
+    padding: 1rem; /* Adjusts padding for smaller screens */
+    width: 100%;
+  }
 
-    .login-container {
-        max-width: 90%; /* Ensures the login container isn't too wide */
-        padding: 1rem; /* Adjusts padding */
-    }
+  .login-container {
+    max-width: 90%; /* Ensures the login container isn't too wide */
+    padding: 1rem; /* Adjusts padding */
+  }
 
-    .welcome-text {
-        font-size: 1.5rem; /* Reduces font size for better fitting */
-    }
+  .welcome-text {
+    font-size: 1.5rem; /* Reduces font size for better fitting */
+  }
 
-    .input-field {
-        font-size: 14px; /* Adjust font size for smaller screens */
-    }
+  .input-field {
+    font-size: 14px; /* Adjust font size for smaller screens */
+  }
 
-    .login-button {
-        font-size: 14px; /* Adjust button font size */
-    }
+  .login-button {
+    font-size: 14px; /* Adjust button font size */
+  }
 }
-
