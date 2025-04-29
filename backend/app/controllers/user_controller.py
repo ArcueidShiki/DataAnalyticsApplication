@@ -91,5 +91,6 @@ def login(data):
         return jsonify({"msg": "Invalid username or password"}), 401
     response = jsonify({"msg": "Login successful"})
     access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=30))
+    # the access_token_cookie contains csrf_access_token, but it needs to be extract at frontend
     set_access_cookies(response, access_token)
     return response, 200
