@@ -18,7 +18,6 @@ db = SQLAlchemy()
 redis_client = FlaskRedis()
 from app.routes.auth import auth_bp
 from app.routes.stock import stock_bp
-from app.routes.index import index_bp
 
 KEY_FOLDER = "secrets"
 PRIVATE_KEY_PATH = os.path.join(KEY_FOLDER, "rsa_private.pem")
@@ -76,5 +75,4 @@ def create_app():
     redis_client.init_app(app)
     app.register_blueprint(auth_bp)
     app.register_blueprint(stock_bp)
-    app.register_blueprint(index_bp)
     return app
