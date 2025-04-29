@@ -43,32 +43,7 @@ def generate_rsa_keys():
                 format=serialization.PublicFormat.SubjectPublicKeyInfo,
             ))
 
-def generate_tls_certificates():
-    # Generate private key
-    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-
-    # Generate self-signed certificate
-    subject = issuer = x509.Name([
-        x509.NameAttribute(NameOID.COUNTRY_NAME, "AU"),
-        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "WA"),
-        x509.NameAttribute(NameOID.LOCALITY_NAME, "Perth"),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME, "My Company"),
-        x509.NameAttribute(NameOID.COMMON_NAME, "localhost"),
-    ])
-    cert = x509.CertificateBuilder().subject_name(subject).issuer_name(issuer).public_key(
-        key.public_key()).serial_number(x509.random_serial_number()).not_valid_before(
-        datetime.utcnow()).not_valid_after(datetime.utcnow() + timedelta(days=365)).add_extension(
-        x509.SubjectAlternativeName([x509.DNSName("localhost")]), critical=False).sign(key, hashes.SHA256())
-
-    # Write key and certificate to files
-    with open("secrets/key.pem", "wb") as f:
-        f.write(key.private_bytes(Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()))
-    with open("secrets/cert.pem", "wb") as f:
-        f.write(cert.public_bytes(Encoding.PEM))
-
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object('app.config.Config')
+def init_database(app):
     db_path = app.config.get('SQLALCHEMY_DATABASE_URI').replace('sqlite:///', '')
     db.init_app(app)
     if not os.path.exists(db_path):
@@ -76,16 +51,28 @@ def create_app():
             # SQLAlchemy will create the database tables for all models
             # it will check if the tables already exist and will not create them again
             db.create_all()
+
+def init_jwt_config(app):
     generate_rsa_keys()
-    generate_tls_certificates()
     app.config['JWT_ALGORITHM'] = 'RS256'
     app.config['JWT_PRIVATE_KEY'] = open(PRIVATE_KEY_PATH).read()
     app.config['JWT_PUBLIC_KEY'] = open(PUBLIC_KEY_PATH).read()
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
+    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
+    app.config["JWT_COOKIE_SECURE"] = False  # True if HTTPS only
     # This secret key is for signning symmetric algorithm "HS256" to generate JWT tokens
     # app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
-    CORS(app)
-    redis_client.init_app(app)
     jwt = JWTManager(app)
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object('app.config.Config')
+    init_database(app)
+    init_jwt_config(app)
+    # CORS(app, origins=["null", r"http://localhost:\d+"], supports_credentials=True)
+    CORS(app, supports_credentials=True)
+    redis_client.init_app(app)
     app.register_blueprint(auth_bp)
     app.register_blueprint(stock_bp)
     return app

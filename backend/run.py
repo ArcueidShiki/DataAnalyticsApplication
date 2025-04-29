@@ -4,9 +4,6 @@ from app import create_app
 app = create_app()
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 9000))
     debug = os.environ.get("DEBUG", "true").lower() == "true"
-    ssl_context = ("secrets/cert.pem", "secrets/key.pem")
-    app.run(host="0.0.0.0", port=port, debug=debug, ssl_context=ssl_context)
-
-
+    app.run(host="0.0.0.0", port=port, debug=debug)
