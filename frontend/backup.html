@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Investment Dashboard - Apple Inc</title>
-    <!-- css -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -14,15 +13,7 @@
       href="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script>
-    <link rel="stylesheet" href="../css/sidebar-watchlist.css" />
-    <link rel="stylesheet" href="../css/watchlist-individual.css" />
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="../js/sidebar.js"></script>
-    <script src="../js/watchlist-container.js"></script>
-    <script src="../js/watchlist-individual.js"></script>
-    <script src="../js/trading-interface.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <div class="app-container">
@@ -31,7 +22,7 @@
         <div class="sidebar-header">
           <div class="user-profile" id="profile-toggle">
             <div class="profile-avatar">
-              <img src="../assets/user.jpeg" alt="User Avatar" />
+              <img src="assets/user.jpeg" alt="User Avatar" />
             </div>
             <div class="profile-info">
               <div class="profile-name">Rojo Arab Oktov</div>
@@ -42,7 +33,7 @@
 
         <div class="menu-label">MENU</div>
         <div class="sidebar-menu">
-          <div class="menu-item" id="watchlist-menu-item">
+          <div class="menu-item active">
             <i class="fa-solid fa-th"></i>
             <span>Watchlist</span>
           </div>
@@ -59,10 +50,6 @@
             <span>Crypto</span>
             <span class="new-badge">new</span>
           </div>
-          <div class="menu-item">
-            <i class="fa-brands fa-rocketchat"></i>
-            <span>Contact</span>
-          </div>
         </div>
 
         <!-- Watchlist moved up before Account -->
@@ -74,12 +61,11 @@
         <div id="watchlistContainer">
           <!-- generate by JavaScript -->
         </div>
-
         <!-- Account section moved to bottom and collapsed by default -->
         <div class="account-toggle">
           <div class="menu-item" id="account-toggle-button">
             <i class="fas fa-user-circle"></i>
-            <span>SETTINGS</span>
+            <span>SETTING</span>
             <i class="fas fa-chevron-down account-arrow"></i>
           </div>
         </div>
@@ -113,9 +99,9 @@
       <!-- Main content area -->
       <div class="main-content">
         <div class="breadcrumb">
-          <a href="watchlist.html">Watchlist</a>
+          <a href="#">Watchlist</a>
           <i class="fas fa-chevron-right"></i>
-          <span id="stockName">Apple</span>
+          <span>Apple</span>
         </div>
 
         <!-- Two-column layout container -->
@@ -162,8 +148,8 @@
                       <div class="price-display">
                         <div class="price-value" id="currentPrice">$147.04</div>
                       </div>
-                      <div class="tab-price-change">
-                        <div class="tab-price-change positive" id="priceChange">
+                      <div class="price-change">
+                        <div class="price-change positive" id="priceChange">
                           <i class="fas fa-caret-up"></i>
                           1.47%
                         </div>
@@ -312,51 +298,51 @@
           <div class="side-column">
             <!-- Search bar moved to top -->
             <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input
-                    type="text"
-                    class="search-input"
-                    placeholder="Search stocks..."
-                    id="stockSearch"
-                />
-                <div class="search-dropdown" id="searchResults">
-                    <!-- Search results will be populated here by JavaScript -->
-                </div>
+              <i class="fas fa-search search-icon"></i>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search stocks..."
+                id="stockSearch"
+              />
+              <div class="search-dropdown" id="searchResults">
+                <!-- Search results will be populated here by JavaScript -->
+              </div>
             </div>
 
             <div class="stats-section">
-                <div class="section-header">
-                        <h2 class="section-title">Day Price</h2>
-                </div>
+              <div class="section-header">
+                <h2 class="section-title">Day Price</h2>
+              </div>
 
-                <div class="stats-grid">
-                    <!-- First Row -->
-                    <div class="stats-card">
-                        <div class="stats-title">Day's open</div>
-                        <div class="stats-value" id="daysOpen">145.26</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="stats-title">Closing</div>
-                        <div class="stats-value" id="closingPrice">145.26</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="stats-title">High</div>
-                        <div class="stats-value" id="intradayHigh">147.55</div>
-                    </div>
-                    <!-- Second Row -->
-                    <div class="stats-card">
-                        <div class="stats-title">Low</div>
-                        <div class="stats-value" id="intradayLow">145.00</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="stats-title">Turnover</div>
-                        <div class="stats-value" id="intradayLow">20.01B</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="stats-title">Volume</div>
-                        <div class="stats-value" id="volume">64.5M</div>
-                    </div>
+              <div class="stats-grid">
+                <!-- First Row -->
+                <div class="stats-card">
+                  <div class="stats-title">Day's open</div>
+                  <div class="stats-value" id="daysOpen">145.26</div>
                 </div>
+                <div class="stats-card">
+                  <div class="stats-title">Closing</div>
+                  <div class="stats-value" id="closingPrice">145.26</div>
+                </div>
+                <div class="stats-card">
+                  <div class="stats-title">High</div>
+                  <div class="stats-value" id="intradayHigh">147.55</div>
+                </div>
+                <!-- Second Row -->
+                <div class="stats-card">
+                  <div class="stats-title">Low</div>
+                  <div class="stats-value" id="intradayLow">145.00</div>
+                </div>
+                <div class="stats-card">
+                  <div class="stats-title">Turnover</div>
+                  <div class="stats-value" id="intradayLow">20.01B</div>
+                </div>
+                <div class="stats-card">
+                  <div class="stats-title">Volume</div>
+                  <div class="stats-value" id="volume">64.5M</div>
+                </div>
+              </div>
             </div>
 
             <div class="big-change-section">
@@ -428,91 +414,13 @@
                 </div>
               </div>
             </div>
-
-            <!-- Trading Interface Section -->
-            <div class="trading-interface-section">
-                <div class="section-header">
-                    <div class="section-title">Trading</div>
-                </div>
-
-                <div class="trading-tabs">
-                    <button class="trading-tab active" data-action="buy">
-                    Buy
-                    </button>
-                    <button class="trading-tab" data-action="sell">Sell</button>
-                </div>
-
-              <div class="trading-type-options">
-                    <button class="type-option active" data-type="stocks">
-                    Stocks
-                    </button>
-                    <button class="type-option" data-type="global">Option</button>
-                    <button class="type-option" data-type="futures">Futures</button>
-                </div>
-
-              <div class="trading-input-group">
-                <div class="trading-input-label">Price</div>
-                <div class="trading-input-container">
-                  <input
-                    type="text"
-                    class="trading-input"
-                    id="tradePrice"
-                    value="152.35"
-                  />
-                  <div class="trading-input-suffix">USDT</div>
-                  <div class="trading-input-controls">
-                    <button class="input-control decrease">
-                      <i class="fas fa-minus"></i>
-                    </button>
-                    <button class="input-control increase">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="trading-input-group">
-                <div class="trading-input-label">Quantity</div>
-                <div class="trading-input-container">
-                  <input
-                    type="text"
-                    class="trading-input"
-                    id="tradeQuantity"
-                    placeholder="0"
-                  />
-                  <button class="max-button">FAVR</button>
-                </div>
-              </div>
-
-              <div class="trading-slider-container">
-                <div class="trading-slider-track">
-                  <button class="slider-option" data-value="10">10%</button>
-                  <button class="slider-option" data-value="25">25%</button>
-                  <button class="slider-option" data-value="50">50%</button>
-                  <button class="slider-option active" data-value="75">
-                    75%
-                  </button>
-                  <button class="slider-option" data-value="100">100%</button>
-                  <div class="slider-progress" style="width: 25%"></div>
-                </div>
-              </div>
-
-              <button class="place-order-button">Place Order</button>
-
-              <div class="trading-summary">
-                <div class="summary-item">
-                  <div class="summary-label">Est. Cost</div>
-                  <div class="summary-value">114.26 USDT</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Available</div>
-                  <div class="summary-value">1,245.00 USDT</div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>
