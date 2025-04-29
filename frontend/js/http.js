@@ -58,7 +58,7 @@ const Http = {
     });
   },
 
-  // Put reuqest
+  // Put request
   put: function (api, data = {}, headers = {}) {
     return new Promise((resolve, reject) => {
       $.ajax({

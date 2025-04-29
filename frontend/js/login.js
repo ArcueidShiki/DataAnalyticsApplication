@@ -41,14 +41,14 @@ function AppleLoginHandler(e) {
 // Toggle password visibility
 function TogglePassword() {
   const passwordField = $("#password");
-  const eyeIcon = $("#eyeIcon");
+  const eyeIcon = $("#eyeIcon").get(0);
 
-  if (passwordField.type === "password") {
-    passwordField.type = "text";
+  if (passwordField.attr("type") === "password") {
+    passwordField.attr("type", "text");
     eyeIcon.classList.remove("fa-eye");
     eyeIcon.classList.add("fa-eye-slash");
   } else {
-    passwordField.type = "password";
+    passwordField.attr("type", "password");
     eyeIcon.classList.remove("fa-eye-slash");
     eyeIcon.classList.add("fa-eye");
   }
