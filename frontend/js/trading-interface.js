@@ -68,7 +68,7 @@ function initPriceControls() {
   const currentPriceEl = document.getElementById("currentPrice");
   if (currentPriceEl) {
     const currentPrice = parseFloat(
-      currentPriceEl.textContent.replace("$", "")
+      currentPriceEl.textContent.replace("$", ""),
     );
     if (!isNaN(currentPrice)) {
       priceInput.value = currentPrice.toFixed(2);
@@ -160,7 +160,7 @@ function updateProgressWidth(selectedIndex) {
   }
 
   console.log(
-    `updateprogresswidth: ${progressWidth}%, activeoption: ${selectedPosition.value}%`
+    `updateprogresswidth: ${progressWidth}%, activeoption: ${selectedPosition.value}%`,
   );
 }
 
@@ -211,7 +211,7 @@ function initSlider() {
   // Handle window resize events
   window.addEventListener("resize", function () {
     const activeIndex = Array.from(sliderOptions).findIndex((option) =>
-      option.classList.contains("active")
+      option.classList.contains("active"),
     );
     if (activeIndex >= 0) {
       updateProgressWidth(activeIndex);
@@ -270,7 +270,7 @@ function initPlaceOrderButton() {
 
     // This would typically call an API to place the order
     alert(
-      `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`
+      `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`,
     );
   });
 }
@@ -411,7 +411,7 @@ function setupResponsiveTrading() {
 function toggleTradingExpand() {
   const tradingSection = document.querySelector(".trading-interface-section");
   const collapseIndicator = document.querySelector(
-    ".trading-collapse-indicator"
+    ".trading-collapse-indicator",
   );
 
   tradingSection.classList.toggle("expanded");

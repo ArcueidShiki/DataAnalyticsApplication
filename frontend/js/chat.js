@@ -74,8 +74,8 @@ function sendMessage() {
 
   if (messageText) {
     // Create current time string
-    const now = new Date();
-    const timeString = `${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`;
+    // const now = new Date();
+    // const timeString = `${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`;
 
     // Create message HTML
     const messageHTML = `
