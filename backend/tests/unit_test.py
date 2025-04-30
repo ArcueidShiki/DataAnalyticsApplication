@@ -24,5 +24,11 @@ class AuthTestCase(unittest.TestCase):
         })
         self.assertEqual(res.status_code, 200)
 
+    def tearDown(self):
+        with self.app.app_context():
+            db.session.remove()
+            db.drop_all()
+        return super().tearDown()
+
 if __name__ == '__main__':
     unittest.main()

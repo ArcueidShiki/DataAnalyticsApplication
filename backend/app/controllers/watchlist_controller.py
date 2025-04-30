@@ -1,7 +1,7 @@
 import yfinance as yf
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity
-from app.models.watchlist import Watchlist
+from app.models.db import Watchlist
 from app import db
 
 def show_watchlist():

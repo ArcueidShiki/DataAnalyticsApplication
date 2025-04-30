@@ -17,6 +17,8 @@ python run.py
 
 ## Database Migration Operations
 
+To view the app.db, you need start the backend first, at make sure you installed the sqlite Viewer extension in the vscode or other IDE.
+
 when? When you changed table schema in the models layer
 
 The following operations will update the database without losing existing data in the tables
