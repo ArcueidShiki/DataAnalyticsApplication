@@ -4,7 +4,7 @@ from app import db
 from flask import jsonify
 from datetime import datetime
 from datetime import timedelta
-from app.models.user import User
+from app.models.db import Portfolio, User
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Update charts theme when theme changes
  * @param {string}
@@ -32,12 +33,12 @@ function setupChartControls() {
           // move line chart
           window.priceChart.zoomX(
             window.priceChart.w.globals.minX - 50000000, // Use larger value for noticeable movement
-            window.priceChart.w.globals.maxX - 50000000
+            window.priceChart.w.globals.maxX - 50000000,
           );
           // move candlestick chart
           window.candlestickChart.zoomX(
             window.candlestickChart.w.globals.minX - 50000000,
-            window.candlestickChart.w.globals.maxX - 50000000
+            window.candlestickChart.w.globals.maxX - 50000000,
           );
         } catch (e) {
           console.error("Error moving chart left:", e);
@@ -56,12 +57,12 @@ function setupChartControls() {
           // move line chart
           window.priceChart.zoomX(
             window.priceChart.w.globals.minX + 50000000,
-            window.priceChart.w.globals.maxX + 50000000
+            window.priceChart.w.globals.maxX + 50000000,
           );
           // move candlestick chart
           window.candlestickChart.zoomX(
             window.candlestickChart.w.globals.minX + 50000000,
-            window.candlestickChart.w.globals.maxX + 50000000
+            window.candlestickChart.w.globals.maxX + 50000000,
           );
         } catch (e) {
           console.error("Error moving chart right:", e);
@@ -128,9 +129,7 @@ function setupChartControls() {
 
       // Use timeframe to update charts, return to initial state
       try {
-        const activeTimeframe = document.querySelector(
-          ".timeframe-btn.active"
-        );
+        const activeTimeframe = document.querySelector(".timeframe-btn.active");
         const timeframe = activeTimeframe
           ? activeTimeframe.getAttribute("data-timeframe")
           : "1D";
@@ -157,7 +156,7 @@ function setupChartControls() {
       }
     });
   }
-  
+
   // Setup mouse wheel scrolling for chart zooming
   setupChartScrolling();
   console.log("Chart controls have been set up");
@@ -236,9 +235,7 @@ function initializeChart() {
     stroke: {
       curve: "smooth",
       width: 2,
-      colors: [
-        isPositive ? "var(--positive-color)" : "var(--negative-color)",
-      ],
+      colors: [isPositive ? "var(--positive-color)" : "var(--negative-color)"],
     },
     fill: {
       type: "gradient",
@@ -439,7 +436,7 @@ function initializeChart() {
       window.priceChart = new ApexCharts(chartElement, chartOptions);
       window.candlestickChart = new ApexCharts(
         candlestickElement,
-        candlestickOptions
+        candlestickOptions,
       );
       window.volumeChart = new ApexCharts(volumeElement, volumeOptions);
 
@@ -481,7 +478,9 @@ function initThemeObserver() {
         if (!window.isThemeChanging) {
           updateChartsTheme(theme);
         } else {
-          console.log("Theme update already in progress, skipping duplicate update");
+          console.log(
+            "Theme update already in progress, skipping duplicate update",
+          );
         }
         break;
       }
@@ -509,33 +508,45 @@ function setupResizeHandler() {
       const chartHeights = calculateChartHeight();
 
       if (window.priceChart) {
-        window.priceChart.updateOptions({
-          chart: {
-            height: chartHeights.lineChartHeight,
+        window.priceChart.updateOptions(
+          {
+            chart: {
+              height: chartHeights.lineChartHeight,
+            },
+            // Update Y-axis config directly here
+            yaxis: getYAxisConfig("price"),
           },
-          // Update Y-axis config directly here
-          yaxis: getYAxisConfig("price"),
-        }, true, true);  // Force redraw
+          true,
+          true,
+        ); // Force redraw
       }
-  
+
       if (window.candlestickChart) {
-        window.candlestickChart.updateOptions({
-          chart: {
-            height: chartHeights.candleChartHeight,
+        window.candlestickChart.updateOptions(
+          {
+            chart: {
+              height: chartHeights.candleChartHeight,
+            },
+            yaxis: getYAxisConfig("candlestick"),
           },
-          yaxis: getYAxisConfig("candlestick"),
-        }, true, true);  // Force redraw
+          true,
+          true,
+        ); // Force redraw
       }
-  
+
       if (window.volumeChart) {
-        window.volumeChart.updateOptions({
-          chart: {
-            height: chartHeights.volumeChartHeight,
+        window.volumeChart.updateOptions(
+          {
+            chart: {
+              height: chartHeights.volumeChartHeight,
+            },
+            yaxis: getYAxisConfig("volume"),
           },
-          yaxis: getYAxisConfig("volume"),
-        }, true, true);  // Force redraw
+          true,
+          true,
+        ); // Force redraw
       }
-      
+
       // Finally force re-render all charts
       setTimeout(() => {
         if (window.priceChart) window.priceChart.render();
@@ -558,7 +569,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Set global ApexCharts options
   if (typeof ApexCharts !== "undefined") {
     const currentTheme = document.body.getAttribute("data-theme") || "dark";
-    
+
     Apex = {
       grid: {
         borderColor: currentTheme === "dark" ? "#30363d" : "#e1e4e8",
@@ -607,13 +618,13 @@ document.addEventListener("DOMContentLoaded", function () {
   initTimeframeButtons();
   initFollowButton();
   initSearchFunctionality();
-  
+
   // Initialize charts
   initializeChart();
-  
+
   // Setup theme observer
   initThemeObserver();
-  
+
   // Setup window resize handler
   setupResizeHandler();
 });
@@ -662,7 +673,7 @@ function initFollowButton() {
 
         // Remove from watchlist if exists
         const watchlistItem = document.querySelector(
-          `.watchlist-item[data-symbol="${stockSymbol}"]`
+          `.watchlist-item[data-symbol="${stockSymbol}"]`,
         );
         if (watchlistItem) {
           watchlistItem.remove();
@@ -771,7 +782,7 @@ function setupSearchItemEvents() {
   document.querySelectorAll(".search-item").forEach((item) => {
     item.addEventListener("click", function () {
       const symbol = this.querySelector(
-        ".search-stock-symbol"
+        ".search-stock-symbol",
       ).textContent.split(" · ")[0];
       const name = this.querySelector(".search-stock-name").textContent;
 
@@ -838,7 +849,7 @@ function setupChartScrolling() {
         // Prevent default behavior (page scrolling)
         e.preventDefault();
       },
-      { passive: false }
+      { passive: false },
     );
   }
 }
@@ -921,7 +932,7 @@ function updateChartsTheme(theme) {
             ...chartUpdateOptions,
             yaxis: getYAxisConfig("price"), // y-axis configuration
           },
-          true
+          true,
         );
       }
 
@@ -931,7 +942,7 @@ function updateChartsTheme(theme) {
             ...chartUpdateOptions,
             yaxis: getYAxisConfig("candlestick"),
           },
-          true
+          true,
         );
       }
 
@@ -957,9 +968,9 @@ function updateChartsTheme(theme) {
  */
 function initThemeToggle() {
   const themeToggle = document.getElementById("themeToggle");
-  
+
   if (!themeToggle) return;
-  
+
   const icon = themeToggle.querySelector("i");
   const text = themeToggle.querySelector("span");
 
@@ -1244,7 +1255,7 @@ function generateVolumeData(candlestickData) {
 
     try {
       const timestamp = candle.x;
-      const [open, high, low, close] = candle.y;
+      const [open, , , close] = candle.y;
 
       // Generate volume based on price movement
       const priceChange = Math.abs(close - open);
@@ -1385,8 +1396,7 @@ function getYAxisConfig(chartType = "price") {
       ) {
         // Prioritize getting range from candlestick data
         const candleData =
-          window.candlestickData ||
-          window.candlestickChart.w.globals.series[0];
+          window.candlestickData || window.candlestickChart.w.globals.series[0];
 
         if (candleData && candleData.length > 0) {
           // Calculate min and max values from candlestick data
@@ -1396,7 +1406,7 @@ function getYAxisConfig(chartType = "price") {
           for (let i = 0; i < candleData.length; i++) {
             const candle = candleData[i];
             if (candle && candle.y) {
-              const [open, high, low, close] = candle.y;
+              const [, high, low] = candle.y;
               minPrice = Math.min(minPrice, low);
               maxPrice = Math.max(maxPrice, high);
             }
@@ -1410,8 +1420,8 @@ function getYAxisConfig(chartType = "price") {
 
             console.log(
               `Y-axis range(${chartType}): ${config.min.toFixed(
-                2
-              )} - ${config.max.toFixed(2)}`
+                2,
+              )} - ${config.max.toFixed(2)}`,
             );
           }
         }
@@ -1493,15 +1503,15 @@ function calculateChartHeight() {
   // Calculate pixel heights, with minimum heights to ensure proper display on small screens
   const lineHeight = Math.max(
     120,
-    Math.round(viewportHeight * lineChartHeightPercent * scaleFactor)
+    Math.round(viewportHeight * lineChartHeightPercent * scaleFactor),
   );
   const candleHeight = Math.max(
     200,
-    Math.round(viewportHeight * candleChartHeightPercent * scaleFactor)
+    Math.round(viewportHeight * candleChartHeightPercent * scaleFactor),
   );
   const volumeHeight = Math.max(
     100,
-    Math.round(viewportHeight * volumeChartHeightPercent * scaleFactor)
+    Math.round(viewportHeight * volumeChartHeightPercent * scaleFactor),
   );
 
   // Ensure the total height doesn't exceed viewport
@@ -1559,10 +1569,7 @@ function updateChartWithDummyData(timeframe) {
   try {
     // update line chart
     window.priceChart.updateSeries([{ data: newData }], false);
-    window.candlestickChart.updateSeries(
-      [{ data: newCandlestickData }],
-      false
-    );
+    window.candlestickChart.updateSeries([{ data: newCandlestickData }], false);
     window.volumeChart.updateSeries([{ data: newVolumeData }], false);
     setTimeout(() => {
       const priceYAxis = getYAxisConfig("price");
@@ -1574,68 +1581,83 @@ function updateChartWithDummyData(timeframe) {
       console.log("Candlestick chart Y-axis config:", candlestickYAxis);
       console.log("Volume chart Y-axis config:", volumeYAxis);
 
-      window.priceChart.updateOptions({
+      window.priceChart.updateOptions(
+        {
           stroke: {
-          curve: "smooth",
-          colors: [
+            curve: "smooth",
+            colors: [
               isPositive ? "var(--positive-color)" : "var(--negative-color)",
-          ],
+            ],
           },
           fill: {
-          gradient: {
+            gradient: {
               colorStops: [
-              {
+                {
                   offset: 0,
                   color: isPositive
-                  ? "var(--positive-color)"
-                  : "var(--negative-color)",
+                    ? "var(--positive-color)"
+                    : "var(--negative-color)",
                   opacity: 0.2,
-              },
-              {
+                },
+                {
                   offset: 100,
                   color: isPositive
-                  ? "var(--positive-color)"
-                  : "var(--negative-color)",
+                    ? "var(--positive-color)"
+                    : "var(--negative-color)",
                   opacity: 0,
-              },
+                },
               ],
-          },
+            },
           },
           tooltip: {
-          x: {
+            x: {
               format: tooltipFormat,
-          },
+            },
           },
           yaxis: priceYAxis, // price chart
-      }, true, true);
-
-     // Delay updating other charts to avoid concurrent rendering issues
-     setTimeout(() => {
-      window.candlestickChart.updateOptions({
-        tooltip: {
-          x: { format: tooltipFormat }
         },
-        yaxis: candlestickYAxis  // Use cloned configuration
-      }, true, true);  // Force redraw and maintain type
-      
+        true,
+        true,
+      );
+
+      // Delay updating other charts to avoid concurrent rendering issues
       setTimeout(() => {
-        window.volumeChart.updateOptions({
-          tooltip: {
-            x: { format: tooltipFormat }
+        window.candlestickChart.updateOptions(
+          {
+            tooltip: {
+              x: { format: tooltipFormat },
+            },
+            yaxis: candlestickYAxis, // Use cloned configuration
           },
-          yaxis: volumeYAxis  // Use cloned configuration
-        }, true, true);  // Force redraw and maintain type
-        
-        // Finally force re-render all charts
+          true,
+          true,
+        ); // Force redraw and maintain type
+
         setTimeout(() => {
-          window.priceChart.render();
-          window.candlestickChart.render();
-          window.volumeChart.render();
-          console.log("Charts updated successfully for timeframe:", timeframe);
-        }, 100);
+          window.volumeChart.updateOptions(
+            {
+              tooltip: {
+                x: { format: tooltipFormat },
+              },
+              yaxis: volumeYAxis, // Use cloned configuration
+            },
+            true,
+            true,
+          ); // Force redraw and maintain type
+
+          // Finally force re-render all charts
+          setTimeout(() => {
+            window.priceChart.render();
+            window.candlestickChart.render();
+            window.volumeChart.render();
+            console.log(
+              "Charts updated successfully for timeframe:",
+              timeframe,
+            );
+          }, 100);
+        }, 50);
       }, 50);
     }, 50);
-  }, 50);
   } catch (error) {
     console.error("Error updating charts:", error);
   }
@@ -1650,7 +1672,7 @@ function initTimeframeButtons() {
     btn.addEventListener("click", function () {
       console.log(
         "Timeframe button clicked:",
-        this.getAttribute("data-timeframe")
+        this.getAttribute("data-timeframe"),
       );
 
       // Remove all active states
@@ -1676,9 +1698,9 @@ function guessDomainFromCompany(companyName) {
     .toLowerCase()
     .replace(
       /\s+inc\.?$|\s+incorporated$|\s+corp\.?$|\s+corporation$|\s+llc$|\s+ltd\.?$|\s+limited$|\s+sa$|\s+s\.a\.$/i,
-      ""
+      "",
     )
-    .replace(/[\s\'\"\,\.\&]+/g, "")
+    .replace(/[\s'",.&]+/g, "")
     .trim();
 
   // Special cases for common companies
@@ -1735,8 +1757,9 @@ function updateStockLogo(name, symbol) {
   if (!stockLogo) return;
 
   // Check if we already have the logo in localStorage
-  const followedStocks = JSON.parse(localStorage.getItem("followedStocks")) || {};
-  
+  const followedStocks =
+    JSON.parse(localStorage.getItem("followedStocks")) || {};
+
   if (followedStocks[symbol] && followedStocks[symbol].logo) {
     stockLogo.innerHTML = `<img src="${followedStocks[symbol].logo}" alt="${name}" >`;
   } else {
@@ -1753,10 +1776,7 @@ function updateStockLogo(name, symbol) {
       // Save to followedStocks if this stock is followed
       if (followedStocks[symbol]) {
         followedStocks[symbol].logo = logoUrl;
-        localStorage.setItem(
-          "followedStocks",
-          JSON.stringify(followedStocks)
-        );
+        localStorage.setItem("followedStocks", JSON.stringify(followedStocks));
       }
     };
 
@@ -1776,7 +1796,7 @@ function updateStockLogo(name, symbol) {
  */
 function updateWatchlistLogo(symbol, logoUrl) {
   const watchlistItem = document.querySelector(
-    `.watchlist-item[data-symbol="${symbol}"]`
+    `.watchlist-item[data-symbol="${symbol}"]`,
   );
   if (!watchlistItem) return;
 
@@ -1805,7 +1825,8 @@ function fetchCompanyLogo(companyName, symbol) {
     updateWatchlistLogo(symbol, clearbitUrl);
 
     // Also update localStorage
-    const followedStocks = JSON.parse(localStorage.getItem("followedStocks")) || {};
+    const followedStocks =
+      JSON.parse(localStorage.getItem("followedStocks")) || {};
     if (followedStocks[symbol]) {
       followedStocks[symbol].logo = clearbitUrl;
       localStorage.setItem("followedStocks", JSON.stringify(followedStocks));
@@ -1844,8 +1865,8 @@ function addToWatchlist(name, symbol, trendPath, trendColor) {
 
   watchlistItem.innerHTML = `
         <div class="watchlist-icon" style="background-color: ${backgroundColor};">${name.charAt(
-    0
-  )}</div>
+          0,
+        )}</div>
         <div class="watchlist-info">
             <div class="stock-name">${name}</div>
             <div class="stock-symbol">${symbol}</div>
@@ -1882,8 +1903,9 @@ function updateMainContentWithStock(name, symbol) {
 
   // Update follow button state
   const followBtn = document.getElementById("followBtn");
-  const followedStocks = JSON.parse(localStorage.getItem("followedStocks")) || {};
-  
+  const followedStocks =
+    JSON.parse(localStorage.getItem("followedStocks")) || {};
+
   if (followBtn) {
     if (followedStocks[symbol]) {
       followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';

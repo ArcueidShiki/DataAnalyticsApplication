@@ -46,26 +46,28 @@ body {
 
 /* App container */
 .app-container {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    min-height: 100vh;
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  min-height: 100vh;
 }
 
 /* Main content area */
 .main-content {
-    position: relative;
-    flex-direction: row;
-    padding: 0;
+  position: relative;
+  flex-direction: row;
+  padding: 0;
   display: flex;
   flex: 1;
   height: 100vh;
   width: 100%;
   background-color: var(--bg-color);
   overflow: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Chat List Section */

@@ -1,3 +1,4 @@
+import logging
 import os
 from app import models
 from flask import Flask
@@ -7,14 +8,13 @@ from flask_redis import FlaskRedis
 from flask_jwt_extended import JWTManager
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography import x509
-from cryptography.x509.oid import NameOID
-from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
-from datetime import datetime, timedelta
+import subprocess
+from flask_migrate import Migrate, upgrade, migrate
+from alembic.config import Config
 
 db = SQLAlchemy()
+db_migrate = Migrate()
 redis_client = FlaskRedis()
 from app.routes.auth import auth_bp
 from app.routes.stock import stock_bp
@@ -46,11 +46,23 @@ def generate_rsa_keys():
 def init_database(app):
     db_path = app.config.get('SQLALCHEMY_DATABASE_URI').replace('sqlite:///', '')
     db.init_app(app)
+    db_migrate.init_app(app, db)
     if not os.path.exists(db_path):
         with app.app_context():
             # SQLAlchemy will create the database tables for all models
             # it will check if the tables already exist and will not create them again
+            logging.info("Creating database...")
             db.create_all()
+    else:
+        with app.app_context():
+            # Configure Alembic
+            alembic_cfg = Config("migrations/alembic.ini")
+            try:
+                migrate(directory="migrations", message="Automatic migration")
+                upgrade()
+            except Exception as e:
+                logging.error(f"Error during upgrade: {e}")
+
 
 def init_jwt_config(app):
     generate_rsa_keys()
@@ -65,9 +77,12 @@ def init_jwt_config(app):
     # app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
     jwt = JWTManager(app)
 
-def create_app():
+def create_app(TESTING=False):
     app = Flask(__name__)
-    app.config.from_object('app.config.Config')
+    if TESTING == True:
+        app.config.from_object('app.config.TestConfig')
+    else:
+        app.config.from_object('app.config.Config')
     init_database(app)
     init_jwt_config(app)
     # CORS(app, origins=["null", r"http://localhost:\d+"], supports_credentials=True)

@@ -10,10 +10,10 @@ function getCurrentPage() {
 }
 
 // retrieve the current stock symbol from URL parameters
-function getCurrentSymbol() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("symbol") || "AAPL";
-}
+// function getCurrentSymbol() {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   return urlParams.get("symbol") || "AAPL";
+// }
 
 // set to highlight the current menu item
 function setupMenuItems() {
@@ -42,31 +42,30 @@ function setupMenuItems() {
       const menuName = spanElement.textContent.trim();
       console.log("clicking menu:", menuName);
 
-      // 处理菜单导航
       switch (menuName.toLowerCase()) {
         case "watchlist":
-          window.location.href = "../html/watchlist.html";
+          window.location.href = "../watchlist.html";
           break;
         case "my asset":
-          window.location.href = "../html/myasset.html";
+          window.location.href = "../myasset.html";
           break;
         case "top chart":
-          window.location.href = "../html/analysis.html";
+          window.location.href = "../analysis.html";
           break;
         case "crypto":
-          window.location.href = "../html/crypto.html";
+          window.location.href = "../crypto.html";
           break;
         case "contact":
-          window.location.href = "../html/chat.html";
+          window.location.href = "../chat.html";
           break;
         case "account setting":
-          window.location.href = "../html/accountsetting.html";
+          window.location.href = "../accountsetting.html";
           break;
         case "setting":
-          window.location.href = "../html/settings.html";
+          window.location.href = "../settings.html";
           break;
         case "help center":
-          window.location.href = "../html/help.html";
+          window.location.href = "../help.html";
           break;
         case "logout":
           handleLogout();
@@ -113,7 +112,7 @@ function handleLogout() {
   if (confirm("Are you sure to logout?")) {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    window.location.href = "../html/login.html";
+    window.location.href = "../login.html";
     console.log("User logged out");
   } else {
     console.log("cancel logout");
@@ -121,7 +120,6 @@ function handleLogout() {
 }
 
 function initSidebar() {
-  console.log("初始化侧边栏...");
   setupMenuItems();
   setupAccountToggle();
 }
