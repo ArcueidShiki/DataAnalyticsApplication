@@ -57,7 +57,9 @@ body {
   padding: 20px 30px;
   background-color: var(--bg-color);
   overflow-y: auto;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Dashboard Cards Layout */
