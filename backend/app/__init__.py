@@ -13,6 +13,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from datetime import datetime, timedelta
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 redis_client = FlaskRedis()
@@ -46,6 +47,7 @@ def generate_rsa_keys():
 def init_database(app):
     db_path = app.config.get('SQLALCHEMY_DATABASE_URI').replace('sqlite:///', '')
     db.init_app(app)
+    migrate = Migrate(app, db)
     if not os.path.exists(db_path):
         with app.app_context():
             # SQLAlchemy will create the database tables for all models
