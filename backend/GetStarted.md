@@ -17,7 +17,7 @@ python run.py
 
 ## Database Migration Operations
 
-To view the app.db, you need start the backend first, at make sure you installed the sqlite Viewer extension in the vscode or other IDE.
+To view the app.db, start the backend and ensure you have installed the SQLite Viewer extension in VS Code or another IDE.
 
 when? When you changed table schema in the models layer
 

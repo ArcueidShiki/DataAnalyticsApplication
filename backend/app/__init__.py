@@ -1,3 +1,4 @@
+import logging
 import os
 from app import models
 from flask import Flask
@@ -50,7 +51,7 @@ def init_database(app):
         with app.app_context():
             # SQLAlchemy will create the database tables for all models
             # it will check if the tables already exist and will not create them again
-            print("Creating database...")
+            logging.info("Creating database...")
             db.create_all()
     else:
         with app.app_context():
@@ -60,7 +61,7 @@ def init_database(app):
                 migrate(directory="migrations", message="Automatic migration")
                 upgrade()
             except Exception as e:
-                print(f"Error during upgrade: {e}")
+                logging.error(f"Error during upgrade: {e}")
 
 
 def init_jwt_config(app):
@@ -76,9 +77,12 @@ def init_jwt_config(app):
     # app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
     jwt = JWTManager(app)
 
-def create_app():
+def create_app(TESTING=False):
     app = Flask(__name__)
-    app.config.from_object('app.config.Config')
+    if TESTING == True:
+        app.config.from_object('app.config.TestConfig')
+    else:
+        app.config.from_object('app.config.Config')
     init_database(app)
     init_jwt_config(app)
     # CORS(app, origins=["null", r"http://localhost:\d+"], supports_credentials=True)

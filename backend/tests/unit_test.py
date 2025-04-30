@@ -4,7 +4,7 @@ from flask import json
 
 class AuthTestCase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
+        self.app = create_app(TESTING=True)
         self.app.config['TESTING'] = True
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         with self.app.app_context():
