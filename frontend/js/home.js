@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 document.addEventListener("DOMContentLoaded", function () {
   // Tab switching functionality
   const tabs = document.querySelectorAll(".tab");

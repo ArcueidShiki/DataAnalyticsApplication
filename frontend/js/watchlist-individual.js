@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Update charts theme when theme changes
  * @param {string}
@@ -1254,7 +1255,7 @@ function generateVolumeData(candlestickData) {
 
     try {
       const timestamp = candle.x;
-      const [open, high, low, close] = candle.y;
+      const [open, , , close] = candle.y;
 
       // Generate volume based on price movement
       const priceChange = Math.abs(close - open);
@@ -1405,7 +1406,7 @@ function getYAxisConfig(chartType = "price") {
           for (let i = 0; i < candleData.length; i++) {
             const candle = candleData[i];
             if (candle && candle.y) {
-              const [open, high, low, close] = candle.y;
+              const [, high, low] = candle.y;
               minPrice = Math.min(minPrice, low);
               maxPrice = Math.max(maxPrice, high);
             }
@@ -1699,7 +1700,7 @@ function guessDomainFromCompany(companyName) {
       /\s+inc\.?$|\s+incorporated$|\s+corp\.?$|\s+corporation$|\s+llc$|\s+ltd\.?$|\s+limited$|\s+sa$|\s+s\.a\.$/i,
       "",
     )
-    .replace(/[\s\'\"\,\.\&]+/g, "")
+    .replace(/[\s'",.&]+/g, "")
     .trim();
 
   // Special cases for common companies

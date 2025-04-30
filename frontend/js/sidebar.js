@@ -10,10 +10,10 @@ function getCurrentPage() {
 }
 
 // retrieve the current stock symbol from URL parameters
-function getCurrentSymbol() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("symbol") || "AAPL";
-}
+// function getCurrentSymbol() {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   return urlParams.get("symbol") || "AAPL";
+// }
 
 // set to highlight the current menu item
 function setupMenuItems() {

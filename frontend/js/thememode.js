@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // update themeUI
 function updateThemeUI(theme, icon, text) {
   if (theme === "light") {
