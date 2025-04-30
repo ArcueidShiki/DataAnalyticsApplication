@@ -4,7 +4,7 @@ from flask import json
 
 class AuthTestCase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
+        self.app = create_app(TESTING=True)
         self.app.config['TESTING'] = True
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         with self.app.app_context():
@@ -23,6 +23,12 @@ class AuthTestCase(unittest.TestCase):
             'password': '123456'
         })
         self.assertEqual(res.status_code, 200)
+
+    def tearDown(self):
+        with self.app.app_context():
+            db.session.remove()
+            db.drop_all()
+        return super().tearDown()
 
 if __name__ == '__main__':
     unittest.main()

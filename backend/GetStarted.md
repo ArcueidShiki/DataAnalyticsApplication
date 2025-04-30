@@ -15,6 +15,28 @@ pip install -r requirements.txt
 python run.py
 ```
 
+## Database Migration Operations
+
+To view the app.db, start the backend and ensure you have installed the SQLite Viewer extension in VS Code or another IDE.
+
+when? When you changed table schema in the models layer
+
+The following operations will update the database without losing existing data in the tables
+
+```bash
+# cd to backend directory
+
+# Initialize migration directory, only once
+flask db init
+
+# Generate a migration script, every time the models changes
+flask db migrate -m "What have changed in the models?"
+
+# Apply the migration, when models changes
+flask db upgrade
+```
+
+
 
 ## Test
 
@@ -97,4 +119,4 @@ pip install pipreqs
 pipreqs ./your_project_path --force
 ```
 
-##
+https://yfinance-python.org/reference/yfinance.price_history.html
