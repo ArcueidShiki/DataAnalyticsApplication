@@ -1,7 +1,6 @@
 import yfinance as yf
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity
-from app.models.position import Position
 from app import db
 
 def show_overview(symbol):

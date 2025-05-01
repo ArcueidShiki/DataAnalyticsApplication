@@ -1,7 +1,5 @@
-# About
+# TO RUN
 
-## Configuration
+If you have Live Server Extension on your vscode, install one.
 
-1. Just using HTML, CSS, Javascript(including libraries by script tag) and Jquery
-2. Don't use npm
-3. Pre-commit hook of git was setted in `.git/hooks/pre-commit`
+You have to Open the htmls With Live Server.

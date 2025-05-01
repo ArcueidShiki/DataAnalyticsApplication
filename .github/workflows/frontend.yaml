@@ -1,0 +1,39 @@
+name: Frontend CI
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  lint:
+    name: Run ESLint and Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          npm install globals eslint prettier eslint-plugin-prettier
+
+      # Step 4: Run ESLint
+      - name: Run ESLint
+        working-directory: frontend
+        run: |
+          npx eslint . --ext .js,.jsx,.ts,.tsx --fix --max-warnings 0
+
+      # Step 5: Run Prettier
+      - name: Run Prettier
+        working-directory: frontend
+        run: |
+          npx prettier --write "**/*.{js,jsx,ts,tsx,css,html,json,md}"
