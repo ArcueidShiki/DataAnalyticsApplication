@@ -12,6 +12,9 @@ venv\Scripts\activate.bat
 
 pip install -r requirements.txt
 
+mkdir migrations
+flask db init
+
 python run.py
 ```
 
