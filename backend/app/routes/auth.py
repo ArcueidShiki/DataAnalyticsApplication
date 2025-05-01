@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-import app.controllers.user_controller as controller
+from app.controllers.user_controller import register_user, user_login
 from flasgger import Swagger, swag_from
 
 # all the api return json response
