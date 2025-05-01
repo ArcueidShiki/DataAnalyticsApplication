@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+
 function getCurrentPage() {
   const path = window.location.pathname;
   // pop out the last element in the path
@@ -6,64 +7,40 @@ function getCurrentPage() {
   return pageName || "watchlist";
 }
 
-// retrieve the current stock symbol from URL parameters
-function getCurrentSymbol() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("symbol") || "AAPL";
-}
-
-// set to highlight the current menu item
 function setupMenuItems() {
 
   const currentPage = getCurrentPage();
-  const menuItems = document.querySelectorAll(".menu-item");
+  const menuItems = $(".menu-item");
 
-  menuItems.forEach((item) => {
-    const spanElement = item.querySelector("span");
+  const meuActions = {
+    "watchlist": () => (window.location.href = "watchlist.html"),
+    "my asset": () => (window.location.href = "myasset.html"),
+    "top chart": () => (window.location.href = "analysis.html"),
+    "contact": () => (window.location.href = "chat.html"),
+    "account setting": () => (window.location.href = "accountsetting.html"),
+    "setting": () => (window.location.href = "settings.html"),
+    "help center": () => (window.location.href = "help.html"),
+    "logout": handleLogout,
+  }
+  menuItems.each(function (){
+    const spanElement = $(this).find("span");
 
-    const menuText = spanElement.textContent.trim().toLowerCase();
+    const menuText = spanElement.text().trim().toLowerCase();
     const menuTextNoSpace = menuText.replace(/\s+/g, "");
 
-    // highlight the current menu item
     if (
       currentPage.includes(menuTextNoSpace) ||
       menuTextNoSpace.includes(currentPage)
     ) {
-      item.classList.add("active");
+      $(this).addClass("active");
     }
 
-    item.addEventListener("click", () => {
-      const menuName = spanElement.textContent.trim();
-      console.log("clicking menu:", menuName);
-
-      switch (menuName.toLowerCase()) {
-        case "watchlist":
-          window.location.href = "watchlist.html";
-          break;
-        case "my asset":
-          window.location.href = "myasset.html";
-          break;
-        case "top chart":
-          window.location.href = "analysis.html";
-          break;
-        case "contact":
-          window.location.href = "chat.html";
-          break;
-        case "account setting":
-          window.location.href = "accountsetting.html";
-          break;
-        case "setting":
-          window.location.href = "settings.html";
-          break;
-        case "help center":
-          window.location.href = "help.html";
-          break;
-        case "logout":
-          handleLogout();
-          break;
-        default:
-          console.warn(`undefined menu item: ${menuName}`);
-          break;
+    $(this).on("click", function () {
+      const action = meuActions[menuText];
+      if (action) {
+        action();
+      } else {
+        console.warn(`undefined menu item: ${menuText}`);
       }
     });
   });
@@ -71,10 +48,10 @@ function setupMenuItems() {
 
 // setup the account toggle functionality
 function setupAccountToggle() {
-  const accountToggleButton = document.getElementById("account-toggle-button");
-  const accountSection = document.getElementById("account-section");
-  const accountArrow = document.querySelector(".account-arrow");
-  const profileToggle = document.getElementById("profile-toggle");
+  const accountToggleButton = $("#account-toggle-button");
+  const accountSection = $("#account-section");
+  const accountArrow = $(".account-arrow");
+  const profileToggle = $("#profile-toggle");
 
   // Function to toggle account section
   function toggleAccountSection() {
@@ -87,14 +64,12 @@ function setupAccountToggle() {
     }
   }
 
-  // Toggle account section when clicking the toggle button
   if (accountToggleButton) {
-    accountToggleButton.addEventListener("click", toggleAccountSection);
+    accountToggleButton.on("click", toggleAccountSection);
   }
 
-  // Toggle account section when clicking the profile
   if (profileToggle) {
-    profileToggle.addEventListener("click", toggleAccountSection);
+    profileToggle.on("click", toggleAccountSection);
   }
 }
 
@@ -153,23 +128,24 @@ function getWatchlistStocks() {
   ];
 }
 
-function LoadTopFiveStocks() {
-  Http.get("api/stock/top5")
-    .then((response) => {
-      const stocks = response.data;
-      const stockList = document.getElementById("top5-stocks");
-      stockList.innerHTML = ""; // Clear existing content
+// function LoadTopFiveStocks() {
+  // TODO: Fetch top 5 stocks from the server
+  // Http.get("api/stock/top5")
+  //   .then((response) => {
+  //     const stocks = response.data;
+  //     const stockList = $("#top5-stocks");
+  //     stockList.innerHTML = ""; // Clear existing content
 
-      stocks.forEach((stock) => {
-        const stockItem = document.createElement("li");
-        stockItem.textContent = `${stock.symbol} - ${stock.price}`;
-        stockList.appendChild(stockItem);
-      });
-    })
-    .catch((error) => {
-      console.error("Error loading top 5 stocks:", error);
-    });
-}
+  //     stocks.forEach((stock) => {
+  //       const stockItem = document.createElement("li");
+  //       stockItem.textContent = `${stock.symbol} - ${stock.price}`;
+  //       stockList.appendChild(stockItem);
+  //     });
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error loading top 5 stocks:", error);
+  //   });
+// }
 
 /**
  * Populate the stock watchlist
@@ -182,19 +158,12 @@ function populateWatchlist(
   currentPage = null,
 ) {
 
-  // Get current page name (if not provided)
   if (!currentPage) {
-    const path = window.location.pathname;
-    currentPage = path.split("/").pop().split(".")[0] || "watchlist";
+    currentPage = getCurrentPage();
   }
-
-  // Get current stock symbol
   const urlParams = new URLSearchParams(window.location.search);
   const currentSymbol = urlParams.get("symbol") || "AAPL";
-
-  // Get stock data
   const watchlistStocks = getWatchlistStocks();
-
   const watchlistContainer = document.getElementById(containerId);
   if (!watchlistContainer) {
     console.error(`Container with ID "${containerId}" not found`);
@@ -206,7 +175,6 @@ function populateWatchlist(
     const stockItem = document.createElement("div");
     stockItem.className = "watchlist-item";
 
-    // Highlight the current stock if on individual stock page
     if (
       currentPage === "watchlist-individual" &&
       stock.symbol === currentSymbol
@@ -233,7 +201,6 @@ function populateWatchlist(
             </div>
         `;
 
-    // Add click event
     stockItem.addEventListener("click", () => {
       window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
     });
@@ -242,8 +209,17 @@ function populateWatchlist(
   });
 }
 
+function getWatchlist() {
+
+}
+
+function getHotStocks() {
+
+}
+
 $(document).ready(function () {
-  populateWatchlist();
+  // populateWatchlist();
+  getWatchlist();
   setupMenuItems();
   setupAccountToggle();
 });
