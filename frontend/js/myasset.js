@@ -78,10 +78,6 @@ function initPortfolioChart() {
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("MyAsset page loaded");
-
-  // Initialize view control buttons
   initViewControls();
-  // Initialize the portfolio chart
   initPortfolioChart();
 });

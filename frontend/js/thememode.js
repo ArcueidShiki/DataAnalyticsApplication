@@ -14,8 +14,6 @@ function updateThemeUI(theme, icon, text) {
 
 // theme toggle function
 function setupThemeToggle() {
-  console.log("theme setting...");
-
   const themeToggle = document.getElementById("themeToggle");
 
   if (!themeToggle) {
@@ -99,15 +97,11 @@ function setupThemeToggle() {
   });
 
   // set up global chart theme
-  setupGlobalChartTheme(currentTheme);
+  // setupGlobalChartTheme(currentTheme);
 }
 
 function initTheme() {
-  console.log("theme.js initTheme");
-
   setupThemeToggle();
-
-  console.log("theme.js initTheme completed");
 }
 
 // Initialize theme on DOMContentLoaded
