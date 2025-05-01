@@ -9,6 +9,7 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 @auth_bp.route('/register', methods=('POST',))
 def register():
     data = request.get_json()
+    #Validating the data for register
     if not data:
         return jsonify({'error': 'Missing or invalid JSON'}), 400
     response, status_code = controller.register(data)
@@ -17,6 +18,7 @@ def register():
 @auth_bp.route('/login',  methods=('POST',))
 def login():
     data = request.get_json()
+    #Validating the data for login
     if not data:
         return jsonify({'error': 'Missing or invalid JSON'}), 400
     response, status_code = controller.login(data)
