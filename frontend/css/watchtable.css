@@ -1,5 +1,7 @@
 /* Watchlist css */
-
+* {
+  scrollbar-width: none;
+}
 /* base styles */
 /* dark mode */
 :root {
@@ -49,7 +51,8 @@
   flex: 1;
   padding: 20px 30px;
   background-color: var(--bg-color);
-  overflow-y: auto;
+  overflow: scroll;
+  scrollbar-width: none;
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
@@ -208,7 +211,9 @@
 .watchlist-table {
   background-color: var(--card-bg);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: scroll;
+  height: 80vh;
+  scrollbar-width: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border-color);
   transition:
@@ -219,11 +224,14 @@
 
 .watchlist-row {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1.5fr;
+  grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1.5fr;
   padding: 16px 20px;
+  gap: 10px;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
   transition: background-color 0.2s ease;
+  overflow: scroll;
+  scrollbar-width: none;
 }
 
 .watchlist-row:last-child {
@@ -248,7 +256,6 @@
 /* grid styles */
 .watchlist-row > div {
   padding: 0 8px;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--text-color);
@@ -483,7 +490,9 @@
 
 @media (max-width: 992px) {
   .watchlist-row {
-    grid-template-columns: 1fr 2fr 1fr 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr 2fr 1fr 1fr;
+    gap: 10px;
   }
 
   .watchlist-header-row > div:nth-child(5),

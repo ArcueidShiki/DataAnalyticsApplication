@@ -73,6 +73,7 @@ def init_jwt_config(app):
     app.config["JWT_COOKIE_CSRF_PROTECT"] = True
     app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
     app.config["JWT_COOKIE_SECURE"] = False  # True if HTTPS only
+    app.config["JWT_COOKIE_SAMESITE"] = "None"
     # This secret key is for signning symmetric algorithm "HS256" to generate JWT tokens
     # app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
     jwt = JWTManager(app)
@@ -85,8 +86,10 @@ def create_app(TESTING=False):
         app.config.from_object('app.config.Config')
     init_database(app)
     init_jwt_config(app)
+    # CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}}, supports_credentials=True)
     # CORS(app, origins=["null", r"http://localhost:\d+"], supports_credentials=True)
-    CORS(app, supports_credentials=True)
+    CORS(app, origins=["http://127.0.0.1:5500"], supports_credentials=True)
+    # CORS(app, supports_credentials=True)
     redis_client.init_app(app)
     app.register_blueprint(auth_bp)
     app.register_blueprint(stock_bp)

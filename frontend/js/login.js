@@ -18,8 +18,19 @@ function LoginHandler(e) {
     .then((response) => {
       // access_token_cookie csrf_access_token in response header, type Set-Cookie
       console.log("Login response:", response);
+      const { access_token, csrf_token } = response;
+      console.log("Access token:", access_token);
+      console.log("CSRF token:", csrf_token);
+      Http.setCookie("access_token_cookie", access_token);
+      Http.setCookie("csrf_access_token", csrf_token);
+
+      const accessToken = Http.getCookie("access_token_cookie");
+      console.log("Access Token:", accessToken);
+
+      const csrfToken = Http.getCookie("csrf_access_token");
+      console.log("CSRF Token:", csrfToken);
       window.open("watchlist.html", "_blank"); // Redirect to dashboard
-      window.location.href = "watchlist.html"; // Redirect to dashboard
+      // window.location.href = "watchlist.html"; // Redirect to dashboard
     })
     .catch((error) => {
       console.error("Login error:", error);

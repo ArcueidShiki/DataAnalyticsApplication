@@ -6,7 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 from app.models.db import Portfolio, User
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies
+from flask_jwt_extended import create_access_token, get_csrf_token, jwt_required, set_access_cookies, unset_jwt_cookies
 
 def register(data):
     required_fields = ['email', 'phone', 'username', 'password', 'first_name', 'last_name', 'date_of_birth']
@@ -91,8 +91,13 @@ def login(data):
     # if user is None or not check_password_hash(user.password, data['password']):
     if user.password != data['password']:
         return jsonify({"msg": "Invalid username or password"}), 401
-    response = jsonify({"msg": "Login successful"})
     access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=30))
+    csrf_token = get_csrf_token(access_token)
     # the access_token_cookie contains csrf_access_token, but it needs to be extract at frontend
+    response = jsonify({
+        "msg": "Login successful",
+        "access_token": access_token,
+        "csrf_token": csrf_token
+    })
     set_access_cookies(response, access_token)
     return response, 200

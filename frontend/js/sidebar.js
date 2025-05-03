@@ -9,7 +9,6 @@ function setupMenuItems() {
     "top chart": () => (window.location.href = "analysis.html"),
     "contact": () => (window.location.href = "chat.html"),
     "account setting": () => (window.location.href = "accountsetting.html"),
-    "settings": () => (window.location.href = "settings.html"),
     "help center": () => (window.location.href = "help.html"),
     "logout": handleLogout,
   };

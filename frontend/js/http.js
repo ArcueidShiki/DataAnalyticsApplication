@@ -18,17 +18,13 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "GET",
+        headers: Http._addAuthHeaders(headers),
         xhrFields: {
           withCredentials: true, // Send cookies with the request
         },
-        headers: Http._addCSRFHeaders(headers),
         contentType: this.CONTENT_TYPE_JSON,
         success: function (response) {
-          console.log("Response:", response);
-          console.log("CSRF token:", response.headers["csrf_access_token"]);
-          console.log("Access token:", response.headers["access_token_cookie"]);
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -46,12 +42,14 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "POST",
-        headers: Http._addCSRFHeaders(headers),
+        headers: Http._addAuthHeaders(headers),
+        xhrFields: {
+          withCredentials: true, // Send cookies with the request
+        },
         contentType: this.CONTENT_TYPE_JSON,
         data: JSON.stringify(data),
         success: function (response) {
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -69,12 +67,14 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "PUT",
-        headers: Http._addCSRFHeaders(headers),
+        headers: Http._addAuthHeaders(headers),
+        xhrFields: {
+          withCredentials: true, // Send cookies with the request
+        },
         contentType: this.CONTENT_TYPE_JSON,
         data: JSON.stringify(data),
         success: function (response) {
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -92,11 +92,13 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "DELETE",
-        headers: Http._addCSRFHeaders(headers),
+        headers: Http._addAuthHeaders(headers),
+        xhrFields: {
+          withCredentials: true, // Send cookies with the request
+        },
         contentType: this.CONTENT_TYPE_JSON,
         success: function (response) {
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -108,18 +110,10 @@ const Http = {
     });
   },
 
-  _addJwtHeaders: function (headers) {
-    const jwt = Http.getAccessTokenFromCookie();
-    if (jwt) {
-      headers["Authorization"] = `Bearer ${jwt}`;
-    }
-    return headers;
-  },
-
-  _addCSRFHeaders: function (headers) {
-    if (this.CSRF_TOKEN) {
-      headers["X-CSRF-Token"] = this.CSRF_TOKEN;
-    }
+  _addAuthHeaders: function (headers) {
+    const jwt = this.getCookie("access_token_cookie");
+    headers["Authorization"] = `Bearer ${jwt}`;
+    // headers["X-CSRF-Token"] = this.getCookie("csrf_access_token");
     return headers;
   },
 
@@ -127,7 +121,6 @@ const Http = {
     if (this.CSRF_TOKEN) {
       return this.CSRF_TOKEN; // Return the cached token if it exists
     }
-    console.log("Cookie:", document.cookie);
     const match = document.cookie.match(/csrf_access_token=([^;]+)/);
     if (match) {
       console.log("CSRF token found in cookies:", match[1]);
