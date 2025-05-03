@@ -1,7 +1,8 @@
-import yfinance as yf
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity
 from app import db
+from app.utils.yftool import StockUtils, convert_website_to_domain
+import yfinance as yf
 
 def show_overview(symbol):
     print(symbol)
@@ -9,8 +10,7 @@ def show_overview(symbol):
     hist = stock.history(period="1d")  # Fetch historical data for 1 day
     if not hist.empty:
         # Attempt to get the company domain from yfinance
-        domain = stock.info.get('website', '').replace('http://', '').replace('https://', '').split('/')[0]
-        logo_url = f"https://www.google.com/s2/favicons?sz=64&domain={domain}" if domain else "No logo available"
+        domain = convert_website_to_domain(stock.info.get('website', ''))
 
         return jsonify({
             'Symbol': symbol,
@@ -30,7 +30,7 @@ def show_overview(symbol):
             '52WeekHigh': stock.info.get('fiftyTwoWeekHigh', 'N/A'),
             '52WeekLow': stock.info.get('fiftyTwoWeekLow', 'N/A'),
             '52WeekChange': stock.info.get('52WeekChange', 'N/A'),
-            'Logo': logo_url,
+            'domain': domain,
         }), 200
 
 def show_analyst(symbol):
@@ -50,3 +50,13 @@ def buy():
 
 def sell():
     return jsonify({"error": "Sell endpoint not implemented"}), 501
+
+def get_top_hot_stocks():
+    """
+    Fetch the top 5 hot stocks based on their percentage change.
+    """
+    try:
+        hot_stocks = StockUtils.get_top_hot_stocks()
+        return jsonify(hot_stocks), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

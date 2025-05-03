@@ -1,78 +1,46 @@
-/**
- * sidebar setting JS
- */
+/* eslint-disable no-undef */
 
-// retrieve the current page name
 function getCurrentPage() {
   const path = window.location.pathname;
+  // pop out the last element in the path
   const pageName = path.split("/").pop().split(".")[0];
   return pageName || "watchlist";
 }
 
-// retrieve the current stock symbol from URL parameters
-// function getCurrentSymbol() {
-//   const urlParams = new URLSearchParams(window.location.search);
-//   return urlParams.get("symbol") || "AAPL";
-// }
-
-// set to highlight the current menu item
 function setupMenuItems() {
-  console.log("setting menu item...");
 
   const currentPage = getCurrentPage();
-  const menuItems = document.querySelectorAll(".menu-item");
+  const menuItems = $(".menu-item");
 
-  menuItems.forEach((item) => {
-    const spanElement = item.querySelector("span");
+  const meuActions = {
+    "watchlist": () => (window.location.href = "watchlist.html"),
+    "my asset": () => (window.location.href = "myasset.html"),
+    "top chart": () => (window.location.href = "analysis.html"),
+    "contact": () => (window.location.href = "chat.html"),
+    "account setting": () => (window.location.href = "accountsetting.html"),
+    "setting": () => (window.location.href = "settings.html"),
+    "help center": () => (window.location.href = "help.html"),
+    "logout": handleLogout,
+  }
+  menuItems.each(function (){
+    const spanElement = $(this).find("span");
 
-    const menuText = spanElement.textContent.trim().toLowerCase();
+    const menuText = spanElement.text().trim().toLowerCase();
     const menuTextNoSpace = menuText.replace(/\s+/g, "");
 
-    // highlight the current menu item
     if (
       currentPage.includes(menuTextNoSpace) ||
       menuTextNoSpace.includes(currentPage)
     ) {
-      item.classList.add("active");
-      console.log("menu item has been active:", menuText);
+      $(this).addClass("active");
     }
 
-    // add click event to each menu item
-    item.addEventListener("click", () => {
-      const menuName = spanElement.textContent.trim();
-      console.log("clicking menu:", menuName);
-
-      switch (menuName.toLowerCase()) {
-        case "watchlist":
-          window.location.href = "../watchlist.html";
-          break;
-        case "my asset":
-          window.location.href = "../myasset.html";
-          break;
-        case "top chart":
-          window.location.href = "../analysis.html";
-          break;
-        case "crypto":
-          window.location.href = "../crypto.html";
-          break;
-        case "contact":
-          window.location.href = "../chat.html";
-          break;
-        case "account setting":
-          window.location.href = "../accountsetting.html";
-          break;
-        case "setting":
-          window.location.href = "../settings.html";
-          break;
-        case "help center":
-          window.location.href = "../help.html";
-          break;
-        case "logout":
-          handleLogout();
-          break;
-        default:
-          console.warn(`undefined menu item: ${menuName}`);
-          break;
+    $(this).on("click", function () {
+      const action = meuActions[menuText];
+      if (action) {
+        action();
+      } else {
+        console.warn(`undefined menu item: ${menuText}`);
       }
     });
   });
@@ -80,10 +48,10 @@ function setupMenuItems() {
 
 // setup the account toggle functionality
 function setupAccountToggle() {
-  const accountToggleButton = document.getElementById("account-toggle-button");
-  const accountSection = document.getElementById("account-section");
-  const accountArrow = document.querySelector(".account-arrow");
-  const profileToggle = document.getElementById("profile-toggle");
+  const accountToggleButton = $("#account-toggle-button");
+  const accountSection = $("#account-section");
+  const accountArrow = $(".account-arrow");
+  const profileToggle = $("#profile-toggle");
 
   // Function to toggle account section
   function toggleAccountSection() {
@@ -96,44 +64,197 @@ function setupAccountToggle() {
     }
   }
 
-  // Toggle account section when clicking the toggle button
   if (accountToggleButton) {
-    accountToggleButton.addEventListener("click", toggleAccountSection);
+    accountToggleButton.on("click", toggleAccountSection);
   }
 
-  // Toggle account section when clicking the profile
   if (profileToggle) {
-    profileToggle.addEventListener("click", toggleAccountSection);
+    profileToggle.on("click", toggleAccountSection);
   }
 }
 
-// setup the logout functionality
 function handleLogout() {
   if (confirm("Are you sure to logout?")) {
+    // TODO Http.post("api/logout")
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     window.location.href = "../login.html";
     console.log("User logged out");
-  } else {
-    console.log("cancel logout");
   }
 }
 
-function initSidebar() {
-  setupMenuItems();
-  setupAccountToggle();
+/**
+ * Load Hot Stocks
+ * @param {string} containerId - Container element ID
+ * @param {string} currentPage - Current page name
+ * @returns {void}
+ */
+function LoadHotTopStocks(
+  containerId = "watchlistContainer",
+  currentPage = null,
+) {
+
+  if (!currentPage) {
+    currentPage = getCurrentPage();
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSymbol = urlParams.get("symbol") || "AAPL";
+
+  Http.get("/stock/hot")
+    .then((stocks) => {
+      const watchlistContainer = document.getElementById(containerId);
+      if (!watchlistContainer) {
+        console.error(`Container with ID "${containerId}" not found`);
+        return;
+      }
+      watchlistContainer.innerHTML = "";
+      console.log("Hot stocks:", stocks);
+      stocks.forEach((stock) => {
+        const stockItem = document.createElement("div");
+        stockItem.className = "watchlist-item";
+        if (
+          currentPage === "watchlist-individual" &&
+          stock.symbol === currentSymbol
+        ) {
+          stockItem.classList.add("active");
+        }
+        const changeClass = stock.percent_change >= 0 ? "positive" : "negative";
+        const changeIcon = stock.percent_change >= 0 ? "fa-caret-up" : "fa-caret-down";
+        stockItem.innerHTML = `
+                <div class="watchlist-icon">
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
+                </div>
+                <div class="watchlist-info">
+                    <div class="stock-name">${stock.symbol}</div>
+                    <div class="stock-symbol">${stock.price}</div>
+                </div>
+                <div class="price-change ${changeClass}">
+                    <i class="fas ${changeIcon}"></i>
+                    ${Math.abs(stock.percent_change)}%
+                </div>
+            `;
+        stockItem.addEventListener("click", () => {
+          window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
+        });
+        watchlistContainer.appendChild(stockItem);
+      });
+      return true;
+    })
+    .catch((error) => {
+      console.error("Error loading hot stocks:", error);
+      return false;
+    });
+    ;
+}
+
+function getWatchlistStocks() {
+  return [
+    {
+      symbol: "AAPL",
+      name: "AAPL",
+      price: 147.04,
+      change: 1.47,
+      changeDirection: "up",
+    },
+    {
+      symbol: "MSFT",
+      name: "MSFT",
+      price: 290.12,
+      change: 0.89,
+      changeDirection: "up",
+    },
+    {
+      symbol: "GOOGL",
+      name: "GOOGL",
+      price: 2300.45,
+      change: -1.23,
+      changeDirection: "down",
+    },
+    {
+      symbol: "AMZN",
+      name: "AMZN",
+      price: 3380.5,
+      change: 2.15,
+      changeDirection: "up",
+    },
+    {
+      symbol: "TSLA",
+      name: "TSLA",
+      price: 687.2,
+      change: -0.75,
+      changeDirection: "down",
+    },
+  ];
 }
 
 /**
- * Initialize the sidebar and other components
+ * Populate the stock watchlist
+ * @param {string} containerId - Container element ID
+ * @param {string} currentPage - Current page name
+ * @returns {void}
  */
-function initSidepage() {
-  console.log("Page loading...");
+function populateWatchlist(
+  containerId = "watchlistContainer",
+  currentPage = null,
+) {
 
-  initSidebar();
+  if (!currentPage) {
+    currentPage = getCurrentPage();
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSymbol = urlParams.get("symbol") || "AAPL";
+  const watchlistStocks = getWatchlistStocks();
+  const watchlistContainer = document.getElementById(containerId);
+  if (!watchlistContainer) {
+    console.error(`Container with ID "${containerId}" not found`);
+    return;
+  }
 
-  console.log("Page loaded");
+  watchlistContainer.innerHTML = "";
+  watchlistStocks.forEach((stock) => {
+    const stockItem = document.createElement("div");
+    stockItem.className = "watchlist-item";
+
+    if (
+      currentPage === "watchlist-individual" &&
+      stock.symbol === currentSymbol
+    ) {
+      stockItem.classList.add("active");
+    }
+
+    const changeClass =
+      stock.changeDirection === "up" ? "positive" : "negative";
+    const changeIcon =
+      stock.changeDirection === "up" ? "fa-caret-up" : "fa-caret-down";
+
+    stockItem.innerHTML = `
+            <div class="watchlist-icon">
+                ${stock.symbol.charAt(0)}
+            </div>
+            <div class="watchlist-info">
+                <div class="stock-name">${stock.name}</div>
+                <div class="stock-symbol">${stock.price}</div>
+            </div>
+            <div class="price-change ${changeClass}">
+                <i class="fas ${changeIcon}"></i>
+                ${Math.abs(stock.change)}%
+            </div>
+        `;
+
+    stockItem.addEventListener("click", () => {
+      window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
+    });
+
+    watchlistContainer.appendChild(stockItem);
+  });
 }
 
-// Initialize the sidebar when the DOM is fully loaded
-document.addEventListener("DOMContentLoaded", initSidepage);
+$(document).ready(function () {
+  if (!LoadHotTopStocks()) // from server
+  {
+    populateWatchlist(); // with dummy data
+  }
+  getWatchlist();
+  setupMenuItems();
+  setupAccountToggle();
+});

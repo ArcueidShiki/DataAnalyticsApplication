@@ -35,3 +35,8 @@ def buy():
 def sell():
     data = request.get_json()
     return controller.sell(data)
+
+
+@stock_bp.route('/hot', methods=['GET'])
+def get_top_hot_stocks():
+    return controller.get_top_hot_stocks()

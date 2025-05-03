@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 // Define HTTP class to handle ajax requests and reponses
 
@@ -147,3 +148,8 @@ const Http = {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   },
 };
+
+function getCurrentSymbol() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("symbol") || "AAPL";
+}
