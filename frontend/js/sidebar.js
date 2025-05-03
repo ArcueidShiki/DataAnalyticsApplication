@@ -84,10 +84,69 @@ function handleLogout() {
 }
 
 /**
- * Get watchlist stocks data
- * In real applications, this data should be fetched from an API
- * @returns {Array} Array of stock data
+ * Load Hot Stocks
+ * @param {string} containerId - Container element ID
+ * @param {string} currentPage - Current page name
+ * @returns {void}
  */
+function LoadHotTopStocks(
+  containerId = "watchlistContainer",
+  currentPage = null,
+) {
+
+  if (!currentPage) {
+    currentPage = getCurrentPage();
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSymbol = urlParams.get("symbol") || "AAPL";
+
+  Http.get("/stock/hot")
+    .then((stocks) => {
+      const watchlistContainer = document.getElementById(containerId);
+      if (!watchlistContainer) {
+        console.error(`Container with ID "${containerId}" not found`);
+        return;
+      }
+      watchlistContainer.innerHTML = "";
+      console.log("Hot stocks:", stocks);
+      stocks.forEach((stock) => {
+        const stockItem = document.createElement("div");
+        stockItem.className = "watchlist-item";
+        if (
+          currentPage === "watchlist-individual" &&
+          stock.symbol === currentSymbol
+        ) {
+          stockItem.classList.add("active");
+        }
+        const changeClass = stock.percent_change >= 0 ? "positive" : "negative";
+        const changeIcon = stock.percent_change >= 0 ? "fa-caret-up" : "fa-caret-down";
+        stockItem.innerHTML = `
+                <div class="watchlist-icon">
+                    <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
+                </div>
+                <div class="watchlist-info">
+                    <div class="stock-name">${stock.symbol}</div>
+                    <div class="stock-symbol">${stock.price}</div>
+                </div>
+                <div class="price-change ${changeClass}">
+                    <i class="fas ${changeIcon}"></i>
+                    ${Math.abs(stock.percent_change)}%
+                </div>
+            `;
+        stockItem.addEventListener("click", () => {
+          window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
+        });
+        watchlistContainer.appendChild(stockItem);
+      });
+      return true;
+    })
+    .catch((error) => {
+      console.error("Error loading hot stocks:", error);
+      return false;
+    });
+    ;
+}
+
 function getWatchlistStocks() {
   return [
     {
@@ -127,25 +186,6 @@ function getWatchlistStocks() {
     },
   ];
 }
-
-// function LoadTopFiveStocks() {
-  // TODO: Fetch top 5 stocks from the server
-  // Http.get("api/stock/top5")
-  //   .then((response) => {
-  //     const stocks = response.data;
-  //     const stockList = $("#top5-stocks");
-  //     stockList.innerHTML = ""; // Clear existing content
-
-  //     stocks.forEach((stock) => {
-  //       const stockItem = document.createElement("li");
-  //       stockItem.textContent = `${stock.symbol} - ${stock.price}`;
-  //       stockList.appendChild(stockItem);
-  //     });
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error loading top 5 stocks:", error);
-  //   });
-// }
 
 /**
  * Populate the stock watchlist
@@ -209,16 +249,11 @@ function populateWatchlist(
   });
 }
 
-function getWatchlist() {
-
-}
-
-function getHotStocks() {
-
-}
-
 $(document).ready(function () {
-  // populateWatchlist();
+  if (!LoadHotTopStocks()) // from server
+  {
+    populateWatchlist(); // with dummy data
+  }
   getWatchlist();
   setupMenuItems();
   setupAccountToggle();
