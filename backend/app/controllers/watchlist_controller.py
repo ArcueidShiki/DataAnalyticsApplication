@@ -1,11 +1,13 @@
 import yfinance as yf
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity
+from app.utils.yftool import convert_website_to_domain
 from app.models.db import Watchlist
 from app import db
 
 def show_watchlist():
     user_id = get_jwt_identity()
+    print("user id from jwt:", user_id)
     watchlist = Watchlist.query.filter_by(user_id=user_id).all()
     print(watchlist)
     stock_data = []
@@ -15,29 +17,29 @@ def show_watchlist():
         hist = stock.history(period="1d")  # Fetch historical data for 1 day
         if not hist.empty:
             # Attempt to get the company domain from yfinance
-            domain = stock.info.get('website', '').replace('http://', '').replace('https://', '').split('/')[0]
+            domain = convert_website_to_domain(stock.info.get('website', ''))
             logo_url = f"https://www.google.com/s2/favicons?sz=64&domain={domain}" if domain else "No logo available"
 
             stock_data.append({
-                'Symbol': item.symbol,
-                'Info': stock.info.get('shortName', 'N/A'),
-                'Close': float(hist['Close'].iloc[-1]),
-                'High': float(hist['High'].iloc[-1]),
-                'Low': float(hist['Low'].iloc[-1]),
-                'Open': float(hist['Open'].iloc[-1]),
-                'Volume': int(hist['Volume'].iloc[-1]),
-                'Turnover': float(hist['Volume'].iloc[-1] * hist['Close'].iloc[-1]),  # Convert to float
-                'Change': float(hist['Close'].iloc[-1] - hist['Open'].iloc[-1]),
-                'Change%': float(((hist['Close'].iloc[-1] - hist['Open'].iloc[-1]) / hist['Open'].iloc[-1]) * 100),
-                'MarketCap': stock.info.get('marketCap', 'N/A'),
-                'PE': stock.info.get('forwardPE', 'N/A'),
-                'EPS': stock.info.get('trailingEps', 'N/A'),
-                'DividendYield': stock.info.get('dividendYield', 'N/A'),
-                '52WeekHigh': stock.info.get('fiftyTwoWeekHigh', 'N/A'),
-                '52WeekLow': stock.info.get('fiftyTwoWeekLow', 'N/A'),
-                '52WeekChange': stock.info.get('52WeekChange', 'N/A'),
-                'Logo': logo_url,
-                'is_favorite': item.is_favorite
+                'symbol': item.symbol,
+                'info': stock.info.get('shortName', 'N/A'),
+                'close': float(hist['Close'].iloc[-1]),
+                'high': float(hist['High'].iloc[-1]),
+                'low': float(hist['Low'].iloc[-1]),
+                'open': float(hist['Open'].iloc[-1]),
+                'volume': int(hist['Volume'].iloc[-1]),
+                'turnover': float(hist['Volume'].iloc[-1] * hist['Close'].iloc[-1]),  # Convert to float
+                'change': float(hist['Close'].iloc[-1] - hist['Open'].iloc[-1]),
+                'percent_change': float(((hist['Close'].iloc[-1] - hist['Open'].iloc[-1]) / hist['Open'].iloc[-1]) * 100),
+                'marketCap': stock.info.get('marketCap', 'N/A'),
+                # 'PE': stock.info.get('forwardPE', 'N/A'),
+                # 'EPS': stock.info.get('trailingEps', 'N/A'),
+                # 'DividendYield': stock.info.get('dividendYield', 'N/A'),
+                # '52WeekHigh': stock.info.get('fiftyTwoWeekHigh', 'N/A'),
+                # '52WeekLow': stock.info.get('fiftyTwoWeekLow', 'N/A'),
+                # '52WeekChange': stock.info.get('52WeekChange', 'N/A'),
+                'domain': domain,
+                # 'is_favorite': item.is_favorite
             })
     return jsonify(stock_data), 200
 

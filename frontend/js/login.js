@@ -14,12 +14,11 @@ function LoginHandler(e) {
     return;
   }
 
-  console.log("Login form submitted:", { username, password, remember });
   Http.post("/auth/login", { username, password })
     .then((response) => {
-      // server didn't send jwt in the response body rather set-cookie in the response header.
-      // Http.setCookie("jwt", response.token);
-      // window.open("watchlist.html", "_blank"); // Redirect to dashboard
+      // access_token_cookie csrf_access_token in response header, type Set-Cookie
+      console.log("Login response:", response);
+      window.open("watchlist.html", "_blank"); // Redirect to dashboard
       window.location.href = "watchlist.html"; // Redirect to dashboard
     })
     .catch((error) => {

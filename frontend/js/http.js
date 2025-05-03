@@ -6,6 +6,7 @@
 // the jwt in the cookies will be sended by the browser automatically, there's no need to do anything.
 const Http = {
   CSRF_TOKEN: null,
+  ACCESS_TOKEN: null,
   protocol: "http", // https, SSL/TLS is handler by cloud provider. self-signed certs are not supported.
   ip: "127.0.0.1",
   port: "9000",
@@ -23,6 +24,9 @@ const Http = {
         headers: Http._addCSRFHeaders(headers),
         contentType: this.CONTENT_TYPE_JSON,
         success: function (response) {
+          console.log("Response:", response);
+          console.log("CSRF token:", response.headers["csrf_access_token"]);
+          console.log("Access token:", response.headers["access_token_cookie"]);
           resolve(response);
           Http.getCSRFTokenFromCookie();
         },
@@ -105,7 +109,7 @@ const Http = {
   },
 
   _addJwtHeaders: function (headers) {
-    const jwt = Http.getCookie("jwt");
+    const jwt = Http.getAccessTokenFromCookie();
     if (jwt) {
       headers["Authorization"] = `Bearer ${jwt}`;
     }
@@ -123,12 +127,24 @@ const Http = {
     if (this.CSRF_TOKEN) {
       return this.CSRF_TOKEN; // Return the cached token if it exists
     }
+    console.log("Cookie:", document.cookie);
     const match = document.cookie.match(/csrf_access_token=([^;]+)/);
     if (match) {
       console.log("CSRF token found in cookies:", match[1]);
       this.CSRF_TOKEN = match[1]; // Save for future requests
     } else {
       console.error("CSRF token not found in cookies.");
+    }
+  },
+
+  getAccessTokenFromCookie: function () {
+    const match = document.cookie.match(/access_token_cookie=([^;]+)/);
+    if (match) {
+      console.log("Access token found in cookies:", match[1]);
+      return match[1]; // Save for future requests
+    } else {
+      console.error("Access token not found in cookies.");
+      return null;
     }
   },
 
