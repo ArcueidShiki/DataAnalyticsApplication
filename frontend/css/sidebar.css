@@ -45,12 +45,14 @@ body {
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+  display: flex;
 }
 
 /* Sidebar Styles */
 .sidebar {
   position: sticky;
   top: 0;
+  left: 0;
   width: 230px;
   height: 100vh;
   background-color: var(--sidebar-bg);
@@ -122,6 +124,7 @@ body {
 .sidebar-menu {
   padding: 0;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .sidebar .menu-item a {
@@ -265,10 +268,14 @@ body {
 }
 
 /* Account Toggle Styles */
-.account-toggle {
+.settings {
   margin-top: auto;
   border-top: 1px solid var(--border-color);
   padding-top: 10px;
+  overflow: hidden;
+  height: 5vh;
+  width: 100%;
+  background-color: green;
 }
 
 .account-arrow {
@@ -280,11 +287,16 @@ body {
   transform: rotate(180deg);
 }
 
-#account-toggle-button {
+.menu-item.settings {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  height: 5vh;
+  position: absolute;
+  bottom: 0;
+  background-color: var(--sidebar-bg);
+  z-index: 10;
 }
 
 /* Account Section */
@@ -303,11 +315,35 @@ body {
   letter-spacing: 0.5px;
 }
 
-#account-section {
+.setting-section.hidden {
   padding: 0 12px;
+  width: 100%;
+  height: auto;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(100%);
+  transition: transform 1s ease;
+  background-color: var(--sidebar-bg);
+  z-index: 5;
 }
 
-/* Theme Toggle Button */
+.setting-section.expanded {
+  padding: 0 12px;
+  width: 100%;
+  height: auto;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(-20%);
+  transition: transform 1s ease;
+  background-color: var(--sidebar-bg);
+  z-index: 5;
+}
+
+#watchlistContainer {
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
 .theme-toggle {
   margin-top: auto;
   padding: 16px 20px;

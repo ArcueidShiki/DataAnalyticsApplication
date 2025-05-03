@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="css/chat.css" />
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/http.js"></script>
+    <script src="js/mockdata.js"></script>
     <script src="js/thememode.js"></script>
     <script src="js/chat.js"></script>
     <script src="js/sidebar.js"></script>
@@ -61,7 +64,7 @@
 
         <!-- Watchlist moved up before Account -->
         <div class="watchlist-header">
-          <div class="watchlist-title">WATCHLIST</div>
+          <div class="watchlist-title">TOP HOT</div>
           <div class="watchlist-dropdown">24h</div>
         </div>
 
@@ -70,35 +73,35 @@
         </div>
 
         <!-- Account section moved to bottom and collapsed by default -->
-        <div class="account-toggle">
-          <div class="menu-item" id="account-toggle-button">
+        <div class="settings">
+          <div class="menu-item settings">
             <i class="fas fa-user-circle"></i>
             <span>SETTINGS</span>
             <i class="fas fa-chevron-down account-arrow"></i>
           </div>
-        </div>
-        <div class="account-section" id="account-section" style="display: none">
-          <div class="sidebar-menu">
-            <!-- Add dark mode toggle as first menu item in settings -->
-            <div class="menu-item" id="themeToggle">
-              <i class="fas fa-moon"></i>
-              <span>Dark Mode</span>
-            </div>
-            <div class="menu-item">
-              <i class="fas fa-cog"></i>
-              <span>Account setting</span>
-            </div>
-            <div class="menu-item">
-              <i class="fas fa-sliders-h"></i>
-              <span>Setting</span>
-            </div>
-            <div class="menu-item">
-              <i class="far fa-question-circle"></i>
-              <span>Help center</span>
-            </div>
-            <div class="menu-item">
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Logout</span>
+          <div class="setting-section">
+            <div class="sidebar-menu">
+              <!-- Add dark mode toggle as first menu item in settings -->
+              <div class="menu-item" id="themeToggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Account setting</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-sliders-h"></i>
+                <span>Setting</span>
+              </div>
+              <div class="menu-item">
+                <i class="far fa-question-circle"></i>
+                <span>Help center</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </div>
             </div>
           </div>
         </div>
