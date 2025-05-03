@@ -64,7 +64,7 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition:
     background-color 0.3s ease,
-    color 0.3s ease,
+    color 0.3s ease;
 }
 
 .sidebar-header {
@@ -275,7 +275,7 @@ body {
   overflow: hidden;
   height: 5vh;
   width: 100%;
-  background-color: green
+  background-color: green;
 }
 
 .account-arrow {

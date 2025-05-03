@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 function popluateWatchlistTable(stocks) {
-  const table = $('#watchlistTableBody')
+  const table = $("#watchlistTableBody");
   table.empty();
   stocks.forEach((stock) => {
     const changeClass = stock.change >= 0 ? "positive" : "negative";
@@ -23,45 +23,43 @@ function popluateWatchlistTable(stocks) {
           </div>
           <div>${stock.marketCap}</div>
       <div>
-    `)
-    row.on('click', () => {
+    `);
+    row.on("click", () => {
       window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
     });
     table.append(row);
   });
 }
 
-
 function loadWatchlist() {
-  Http.get('/stock/watchlist')
+  Http.get("/stock/watchlist")
     .then((stocks) => {
       popluateWatchlistTable(stocks);
-      localStorage.setItem('watchlistStocks', JSON.stringify(stocks));
+      localStorage.setItem("watchlistStocks", JSON.stringify(stocks));
       return true;
     })
     .catch((error) => {
-      console.error('Error loading watchlist:', error);
+      console.error("Error loading watchlist:", error);
       return false;
     });
 }
 
 function loadWatchlistFromCache() {
-  const cachedStocks = localStorage.getItem('watchlistStocks');
+  const cachedStocks = localStorage.getItem("watchlistStocks");
   if (cachedStocks) {
     try {
       const stocks = JSON.parse(cachedStocks);
       popluateWatchlistTable(stocks);
       return true;
     } catch (error) {
-      console.error('Error parsing cached watchlist:', error);
+      console.error("Error parsing cached watchlist:", error);
       return false;
     }
   }
   return false;
 }
 
-function loadWatchlistFromMockData()
-{
+function loadWatchlistFromMockData() {
   const stocks = getMockStocks();
   popluateWatchlistTable(stocks);
 }

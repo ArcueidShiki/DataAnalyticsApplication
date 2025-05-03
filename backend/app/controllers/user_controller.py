@@ -87,9 +87,9 @@ def login(data):
             return jsonify({"msg": f"Missing field: {f}"}), 400
 
     user = User.query.filter_by(username=data['username']).first()
+    if user is None or not check_password_hash(user.password, data['password']):
     # For testing:
-    # if user is None or not check_password_hash(user.password, data['password']):
-    if user.password != data['password']:
+    # if user.password != data['password']:
         return jsonify({"msg": "Invalid username or password"}), 401
     access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=30))
     csrf_token = get_csrf_token(access_token)
