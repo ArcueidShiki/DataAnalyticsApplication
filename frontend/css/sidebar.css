@@ -122,6 +122,7 @@ body {
 .sidebar-menu {
   padding: 0;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .sidebar .menu-item a {
@@ -265,10 +266,11 @@ body {
 }
 
 /* Account Toggle Styles */
-.account-toggle {
+.settings {
   margin-top: auto;
   border-top: 1px solid var(--border-color);
   padding-top: 10px;
+  overflow: hidden;
 }
 
 .account-arrow {
@@ -280,11 +282,15 @@ body {
   transform: rotate(180deg);
 }
 
-#account-toggle-button {
+.menu-item.settings {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: var(--sidebar-bg);
+  z-index: 1;
 }
 
 /* Account Section */
@@ -303,11 +309,27 @@ body {
   letter-spacing: 0.5px;
 }
 
-#account-section {
+.setting-section.hidden {
   padding: 0 12px;
+  translate: 0 -100;
+  width: 100%;
+  transform: translateY(100%);
+  transition: transform 1s ease;
 }
 
-/* Theme Toggle Button */
+.setting-section.expanded {
+  padding: 0 12px;
+  height: 300px;
+  translate: 0 100%;
+  transform: translateY(-100%);
+  transition: transform 1s ease;
+}
+
+#watchlistContainer {
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
 .theme-toggle {
   margin-top: auto;
   padding: 16px 20px;
