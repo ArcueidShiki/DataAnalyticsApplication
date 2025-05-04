@@ -65,15 +65,12 @@ def get_top_hot_stocks():
 
 def show_watchlist():
     user_id = get_jwt_identity()
-    # print("user id from jwt:", user_id)
     watchlist = Watchlist.query.filter_by(user_id=user_id).all()
-    # print(watchlist)
     stock_data = []
     for item in watchlist:
         stock = yf.Ticker(item.symbol)
-        hist = stock.history(period="1d")  # Fetch historical data for 1 day
+        hist = stock.history(period="1d")
         if not hist.empty:
-            # Attempt to get the company domain from yfinance
             domain = convert_website_to_domain(stock.info.get('website', ''))
 
             stock_data.append({

@@ -80,3 +80,17 @@ def convert_website_to_domain(website):
         return website.split('www.')[1]
     if 'http://' in website or 'https://' in website:
         return website.split('://')[1]
+
+def get_intraday_data(symbol, interval='1m', period='1d'):
+    """
+    Fetch intraday data for a given stock symbol.
+    """
+    try:
+        ticker = yf.Ticker(symbol)
+        intraday_data = ticker.history(period=period, interval=interval)
+        formatted_data = intraday_data[['Open', 'High', 'Low', 'Close', 'Volume']]
+        print(formatted_data)
+        return intraday_data
+    except Exception as e:
+        logger.error(f"Error fetching intraday data for {symbol}: {e}")
+        return None

@@ -25,7 +25,7 @@ function popluateWatchlistTable(stocks) {
       <div>
     `);
     row.on("click", () => {
-      window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
+      window.location.href = `ticker.html?symbol=${stock.symbol}`;
     });
     table.append(row);
   });

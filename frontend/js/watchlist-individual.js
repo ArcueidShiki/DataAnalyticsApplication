@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
+
 /**
  * Update charts theme when theme changes
  * @param {string}
@@ -556,78 +558,6 @@ function setupResizeHandler() {
     }, 300);
   });
 }
-
-/**
- * Initialize event handlers for document ready
- */
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("Script loaded and running");
-
-  // Initialize theme system
-  initThemeToggle();
-
-  // Set global ApexCharts options
-  if (typeof ApexCharts !== "undefined") {
-    const currentTheme = document.body.getAttribute("data-theme") || "dark";
-
-    Apex = {
-      grid: {
-        borderColor: currentTheme === "dark" ? "#30363d" : "#e1e4e8",
-        strokeDashArray: 4,
-        padding: {
-          top: 0,
-          right: 20,
-          bottom: 0,
-          left: 20,
-        },
-      },
-      chart: {
-        fontFamily: "Arial, sans-serif",
-      },
-      xaxis: {
-        labels: {
-          style: {
-            fontSize: "14px",
-          },
-        },
-        axisBorder: {
-          show: true,
-          color: currentTheme === "dark" ? "#30363d" : "#e1e4e8",
-          offsetX: 0,
-          offsetY: 0,
-          strokeDashArray: 4,
-        },
-      },
-      yaxis: {
-        labels: {
-          style: {
-            fontSize: "14px",
-          },
-          formatter: function (value) {
-            if (value >= 100000) return (value / 1000000).toFixed(2) + "M";
-            return value.toFixed(2);
-          },
-        },
-        decimalsInFloat: 2,
-      },
-    };
-  }
-
-  // Initialize UI components
-  initTabSwitching();
-  initTimeframeButtons();
-  initFollowButton();
-  initSearchFunctionality();
-
-  // Initialize charts
-  initializeChart();
-
-  // Setup theme observer
-  initThemeObserver();
-
-  // Setup window resize handler
-  setupResizeHandler();
-});
 
 /**
  * Initialize follow button functionality
@@ -1928,3 +1858,86 @@ function updateMainContentWithStock(name, symbol) {
   // Update stock logo
   updateStockLogo(name, symbol);
 }
+
+function drawCandleStickChart() {}
+
+function drawVolumeChart() {}
+
+function drawPriceChart() {}
+
+function drawCharts() {
+  drawCandleStickChart();
+  drawVolumeChart();
+  drawPriceChart();
+}
+
+/**
+ * Initialize event handlers for document ready
+ */
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize theme system
+  // initThemeToggle();
+  var Chart = echarts.init(document.getElementById("candlestickChart"));
+  // Set global ApexCharts options
+  if (typeof ApexCharts !== "undefined") {
+    const currentTheme = document.body.getAttribute("data-theme") || "dark";
+
+    Apex = {
+      grid: {
+        borderColor: currentTheme === "dark" ? "#30363d" : "#e1e4e8",
+        strokeDashArray: 4,
+        padding: {
+          top: 0,
+          right: 20,
+          bottom: 0,
+          left: 20,
+        },
+      },
+      chart: {
+        fontFamily: "Arial, sans-serif",
+      },
+      xaxis: {
+        labels: {
+          style: {
+            fontSize: "14px",
+          },
+        },
+        axisBorder: {
+          show: true,
+          color: currentTheme === "dark" ? "#30363d" : "#e1e4e8",
+          offsetX: 0,
+          offsetY: 0,
+          strokeDashArray: 4,
+        },
+      },
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: "14px",
+          },
+          formatter: function (value) {
+            if (value >= 100000) return (value / 1000000).toFixed(2) + "M";
+            return value.toFixed(2);
+          },
+        },
+        decimalsInFloat: 2,
+      },
+    };
+  }
+
+  // Initialize UI components
+  initTabSwitching();
+  initTimeframeButtons();
+  initFollowButton();
+  initSearchFunctionality();
+
+  // Initialize charts old version
+  initializeChart();
+
+  // drawCharts();
+  // Setup theme observer
+  initThemeObserver();
+
+  // Setup window resize handler
+  // setupResizeHandler();
+});
