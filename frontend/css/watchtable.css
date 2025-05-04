@@ -259,6 +259,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--text-color);
+  text-align: left;
 }
 
 .stock-cell {

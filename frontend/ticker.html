@@ -14,19 +14,23 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/watchlist-individual.css" />
+    <link rel="stylesheet" href="css/ticker.css" />
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/http.js"></script>
+    <script src="js/stock.js"></script>
     <script src="js/mockdata.js"></script>
     <script src="js/sidebar.js"></script>
+    <script src="js/thememode.js"></script>
     <script src="js/watchlist-individual.js"></script>
-    <script src="js/trading-interface.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/trade.js"></script>
   </head>
   <body>
     <div class="app-container">
@@ -86,7 +90,7 @@
             <span>SETTINGS</span>
             <i class="fas fa-chevron-down account-arrow"></i>
           </div>
-          <div class="setting-section">
+          <div class="setting-section hidden">
             <div class="sidebar-menu">
               <!-- Add dark mode toggle as first menu item in settings -->
               <div class="menu-item" id="themeToggle">
@@ -116,11 +120,11 @@
 
       <!-- Main content area -->
       <div class="main-content">
-        <div class="breadcrumb">
-          <a href="watchlist.html">Watchlist</a>
+        <!-- <div class="breadcrumb">
+          <a href="watchlist.html">Quote</a>
           <i class="fas fa-chevron-right"></i>
-          <span id="stockName">Apple</span>
-        </div>
+          <span id="stockName">{{symbol}}</span>
+        </div> -->
 
         <!-- Two-column layout container -->
         <div class="content-container">
@@ -132,16 +136,16 @@
                   <!-- api -->
                 </div>
                 <div class="stock-title">
-                  <div class="stock-company">Apple INC.</div>
-                  <div class="stock-details">NASDAQ: AAPL</div>
+                  <div class="stock-company">{{placeholder}}</div>
+                  <div class="stock-details">{{placeholder}}</div>
                 </div>
               </div>
               <!-- Moved to the right side of the header -->
               <div class="stock-header-right">
                 <button class="action-btn follow-btn" id="followBtn">
-                  <i class="fas fa-plus"></i>Follow
+                  <i class="fas fa-plus"></i>Add to Watchlist
                 </button>
-                <button class="action-btn buy-btn">AutoTrade</button>
+                <button class="action-btn buy-btn">Trade</button>
                 <button class="more-btn">
                   <i class="fas fa-ellipsis-v"></i>
                 </button>
@@ -164,12 +168,14 @@
                   <div class="price-timeframes-container">
                     <div class="price-section">
                       <div class="price-display">
-                        <div class="price-value" id="currentPrice">$147.04</div>
+                        <div class="price-value" id="currentPrice">
+                          {{placeholder}}
+                        </div>
                       </div>
                       <div class="tab-price-change">
                         <div class="tab-price-change positive" id="priceChange">
                           <i class="fas fa-caret-up"></i>
-                          1.47%
+                          {{placeholder}}
                         </div>
                       </div>
                     </div>
@@ -432,7 +438,6 @@
                 </div>
               </div>
             </div>
-
             <!-- Trading Interface Section -->
             <div class="trading-interface-section">
               <div class="section-header">

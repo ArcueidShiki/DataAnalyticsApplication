@@ -70,60 +70,10 @@ function handleLogout() {
   }
 }
 
-/**
- * Load Hot Stocks
- * @param {string} containerId - Container element ID
- * @param {string} currentPage - Current page name
- * @returns {void}
- */
-function loadHotTopStocks(
-  containerId = "watchlistContainer",
-  currentPage = null,
-) {
-  if (!currentPage) {
-    currentPage = getCurrentPage();
-  }
-  const urlParams = new URLSearchParams(window.location.search);
-  const currentSymbol = urlParams.get("symbol") || "AAPL";
-
+function loadHotTopStocks() {
   Http.get("/stock/hot")
     .then((stocks) => {
-      const watchlistContainer = $(`#${containerId}`);
-      if (!watchlistContainer.length) {
-        console.error(`Container with ID "${containerId}" not found`);
-        return;
-      }
-      watchlistContainer.empty();
-      stocks.forEach((stock) => {
-        const changeClass = stock.percent_change >= 0 ? "positive" : "negative";
-        const changeIcon =
-          stock.percent_change >= 0 ? "fa-caret-up" : "fa-caret-down";
-        const stockItem = $(`
-              <div class="watchlist-item">
-                <div class="watchlist-icon">
-                    <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
-                </div>
-                <div class="watchlist-info">
-                    <div class="stock-name">${stock.symbol}</div>
-                    <div class="stock-symbol">${stock.price}</div>
-                </div>
-                <div class="price-change ${changeClass}">
-                    <i class="fas ${changeIcon}"></i>
-                    ${Math.abs(stock.percent_change)}%
-                </div>
-              </div>
-            `);
-        if (
-          currentPage === "watchlist-individual" &&
-          stock.symbol === currentSymbol
-        ) {
-          stockItem.classList.add("active");
-        }
-        stockItem.on("click", () => {
-          window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
-        });
-        watchlistContainer.append(stockItem);
-      });
+      populateHotStocks(stocks);
       localStorage.setItem("hotStocks", JSON.stringify(stocks));
       return true;
     })
@@ -133,50 +83,12 @@ function loadHotTopStocks(
     });
 }
 
-function loadHotTopStocksFromCache(
-  containerId = "watchlistContainer",
-  currentPage = null,
-) {
+function loadHotTopStocksFromCache() {
   const cachedStocks = localStorage.getItem("hotStocks");
   if (cachedStocks) {
     try {
       const stocks = JSON.parse(cachedStocks);
-      const watchlistContainer = $(`#${containerId}`);
-      if (!watchlistContainer.length) {
-        console.error(`Container with ID "${containerId}" not found`);
-        return false;
-      }
-      watchlistContainer.empty();
-      stocks.forEach((stock) => {
-        const changeClass = stock.percent_change >= 0 ? "positive" : "negative";
-        const changeIcon =
-          stock.percent_change >= 0 ? "fa-caret-up" : "fa-caret-down";
-        const stockItem = $(`
-              <div class="watchlist-item">
-                <div class="watchlist-icon">
-                    <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
-                </div>
-                <div class="watchlist-info">
-                    <div class="stock-name">${stock.symbol}</div>
-                    <div class="stock-symbol">${stock.price}</div>
-                </div>
-                <div class="price-change ${changeClass}">
-                    <i class="fas ${changeIcon}"></i>
-                    ${Math.abs(stock.percent_change)}%
-                </div>
-              </div>
-            `);
-        if (
-          currentPage === "watchlist-individual" &&
-          stock.symbol === currentSymbol
-        ) {
-          stockItem.addClass("active");
-        }
-        stockItem.on("click", () => {
-          window.location.href = `../watchlist-individual.html?symbol=${stock.symbol}`;
-        });
-        watchlistContainer.append(stockItem);
-      });
+      populateHotStocks(stocks);
       return true;
     } catch (error) {
       console.error("Error parsing cached stocks:", error);
@@ -190,10 +102,52 @@ function loadHotTopStocksFromCache(
 // download the image resources if it the first time to load
 // check image resource existence, otherwise download it.
 
+function populateHotStocks(stocks) {
+  currentPage = getCurrentPage();
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSymbol = urlParams.get("symbol") || "AAPL";
+  const watchlistContainer = $("#watchlistContainer");
+  watchlistContainer.empty();
+  stocks.forEach((stock) => {
+    const changeClass = stock.percent_change >= 0 ? "positive" : "negative";
+    const changeIcon =
+      stock.percent_change >= 0 ? "fa-caret-up" : "fa-caret-down";
+    const stockItem = $(`
+          <div class="watchlist-item">
+            <div class="watchlist-icon">
+                <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
+            </div>
+            <div class="watchlist-info">
+                <div class="stock-name">${stock.symbol}</div>
+                <div class="stock-symbol">${stock.price}</div>
+            </div>
+            <div class="price-change ${changeClass}">
+                <i class="fas ${changeIcon}"></i>
+                ${Math.abs(stock.percent_change)}%
+            </div>
+          </div>
+        `);
+    if (
+      currentPage === "watchlist-individual" &&
+      stock.symbol === currentSymbol
+    ) {
+      stockItem.addClass("active");
+    }
+    stockItem.on("click", () => {
+      window.location.href = `watchlist-individual.html?symbol=${stock.symbol}`;
+    });
+    watchlistContainer.append(stockItem);
+  });
+}
+
+function loadHotTopStocksFromMockData() {
+  const stocks = getMockStocks();
+  populateHotStocks(stocks);
+}
+
 $(document).ready(function () {
-  // Attempt to load from cache first
   if (!loadHotTopStocksFromCache() && !loadHotTopStocks()) {
-    populateHotStocks(); // with dummy data
+    loadHotTopStocksFromMockData();
   }
   setupMenuItems();
   setupSettingToggle();
