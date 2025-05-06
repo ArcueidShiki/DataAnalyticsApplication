@@ -1,7 +1,17 @@
 from venv import logger
+from flask import jsonify, logging
 import yfinance as yf
+# https://ranaroussi.github.io/yfinance/reference/yfinance.price_history.html
+# Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max Either Use period parameter or use start and end
+# Valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo Intraday data cannot extend last 60 days
+# start: str Download start date string (YYYY-MM-DD) or _datetime, inclusive. Default is 99 years ago E.g. for start=”2020-01-01”, the first data point will be on “2020-01-01”
+# end: str Download end date string (YYYY-MM-DD) or _datetime, exclusive. Default is now E.g. for end=”2023-01-01”, the last data point will be on “2022-12-31”
 
+periods = ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
+intervals = ["1m", "2m", "5m", "15m", "30m", "60m", "90m", "1d", "5d", "1wk", "1mo", "3mo"]
+intraday_intervals = ["1m", "2m", "5m", "15m", "30m", "60m", "90m"]
 class StockUtils:
+
     def stockquoteDaily(symbol, start_date, end_date):
         """
         Fetch daily stock data for a given symbol within a date range.
@@ -78,7 +88,7 @@ def convert_website_to_domain(website):
         return None
     if 'www' in website:
         return website.split('www.')[1]
-    if 'http://' in website or 'https://' in website:
+    if '://' in website:
         return website.split('://')[1]
 
 def get_intraday_data(symbol, interval='1m', period='1d'):
@@ -94,3 +104,41 @@ def get_intraday_data(symbol, interval='1m', period='1d'):
     except Exception as e:
         logger.error(f"Error fetching intraday data for {symbol}: {e}")
         return None
+
+def check_period_interval(period, interval):
+    if period not in periods or interval not in intervals:
+        return False
+    if interval in intraday_intervals and period not in ["1d", "5d", "1mo", "2mo"]:
+        logging.error(f"Invalid period {period} for interval {interval}, Intraday data cannot extend last 60 days")
+        return True
+
+def get_ticker(symbol, interval='15m', period='1d'):
+    if check_period_interval(period, interval):
+        return jsonify({"error": f"Invalid period {period} for interval {interval}, Intraday data cannot extend last 60 days"}), 400
+    stock = yf.Ticker(symbol)
+    data = stock.history(period=period, interval=interval)
+
+    if data.empty:
+        return jsonify({"error": f"No data found for symbol: {symbol}"}), 404
+
+    formatted_data = data[['Open', 'High', 'Low', 'Close', 'Volume']]
+    print(formatted_data)
+    # candlestick_data = []
+    # volume_data = []
+    # for index, row in data.iterrows():
+    #     timestamp = int(index.timestamp() * 1000)  # Convert to milliseconds
+    #     candlestick_data.append([
+    #         timestamp,  # X-axis (time)
+    #         row["Open"],  # Open
+    #         row["Close"],  # Close
+    #         row["Low"],  # Low
+    #         row["High"],  # High
+    #     ])
+    #     volume_data.append([timestamp, row["Volume"]])  # Volume data
+
+    # return jsonify({
+    #     "symbol": symbol,
+    #     "interval": interval,
+    #     "candlestick": candlestick_data,
+    #     "volume": volume_data,
+    # }), 200

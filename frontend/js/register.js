@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 function RegisterHandler(e) {
   e.preventDefault();
