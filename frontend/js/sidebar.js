@@ -29,8 +29,6 @@ function setupMenuItems() {
       const action = meuActions[menuText];
       if (action) {
         action();
-      } else {
-        console.warn(`undefined menu item: ${menuText}`);
       }
     });
   });

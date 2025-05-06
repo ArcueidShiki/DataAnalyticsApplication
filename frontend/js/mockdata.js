@@ -10,7 +10,7 @@ class Stock {
     percent_change,
     marketCap,
     domain,
-    changeDirection
+    changeDirection,
   ) {
     this.symbol = symbol;
     this.name = name;
@@ -35,8 +35,8 @@ function getStockObjects() {
         stock.percent_change,
         stock.marketCap,
         stock.domain,
-        stock.changeDirection
-      )
+        stock.changeDirection,
+      ),
   );
 }
 
@@ -50,7 +50,7 @@ function getMockStocks() {
       1.47,
       "2.45T",
       "apple.com",
-      "up"
+      "up",
     ),
     new Stock(
       "MSFT",
@@ -60,7 +60,7 @@ function getMockStocks() {
       0.31,
       "2.17T",
       "microsoft.com",
-      "up"
+      "up",
     ),
     new Stock(
       "GOOGL",
@@ -70,7 +70,7 @@ function getMockStocks() {
       -1.01,
       "1.54T",
       "google.com",
-      "down"
+      "down",
     ),
     new Stock("AMZN", "AMZN", 3380.5, 2.15, 2.15, "1.72T", "amazon.com", "up"),
     new Stock(
@@ -81,7 +81,7 @@ function getMockStocks() {
       -0.75,
       "692.4B",
       "tesla.com",
-      "down"
+      "down",
     ),
   ];
 }
@@ -96,7 +96,7 @@ function generateDummyData(timeframe) {
     "1W": { points: 90, intervalHours: 24 * 7 }, // 1 day intervals
     "1M": { points: 90, intervalHours: 24 * 30 }, // 1 day intervals
     "1Y": { points: 90, intervalHours: 24 * 30 }, // 1 month intervals
-    "ALL": { points: 12, intervalHours: 24 * 365 }, // 1 year intervals
+    ALL: { points: 12, intervalHours: 24 * 365 }, // 1 year intervals
     default: { points: 30, intervalHours: 24 }, // Default to 1 day intervals
   };
 
@@ -120,7 +120,7 @@ function generateDummyData(timeframe) {
     timeframe === "1M" ||
     timeframe === "1W"
   )
-  volatility = 0.05;
+    volatility = 0.05;
 
   for (let i = 0; i < points; i++) {
     const date = new Date(now);
@@ -130,8 +130,9 @@ function generateDummyData(timeframe) {
       "1W": () => date.setDate(now.getDate() - (points - i)),
       "1M": () => date.setDate(now.getDate() - (points - i)),
       "1Y": () => date.setDate(now.getDate() - (points - i)),
-      "ALL": () => date.setMonth(now.getMonth() - (points - i)),
-      default: () => date.setHours(now.getHours() - (points - i) * intervalHours),
+      ALL: () => date.setMonth(now.getMonth() - (points - i)),
+      default: () =>
+        date.setHours(now.getHours() - (points - i) * intervalHours),
     };
 
     (timeframeAdjustments[timeframe] || timeframeAdjustments.default)();
@@ -160,7 +161,7 @@ function generateCandlestickData(timeframe) {
     "1W": { points: 90, intervalHours: 24 * 7 }, // 1 day intervals
     "1M": { points: 90, intervalHours: 24 * 30 }, // 1 day intervals
     "1Y": { points: 90, intervalHours: 24 * 30 }, // 1 month intervals
-    "ALL": { points: 12, intervalHours: 24 * 365 }, // 1 year intervals
+    ALL: { points: 12, intervalHours: 24 * 365 }, // 1 year intervals
     default: { points: 30, intervalHours: 24 }, // Default to 1 day intervals
   };
 
@@ -199,8 +200,9 @@ function generateCandlestickData(timeframe) {
       "1W": () => date.setDate(now.getDate() - (points - i)),
       "1M": () => date.setDate(now.getDate() - (points - i)),
       "1Y": () => date.setDate(now.getDate() - (points - i)),
-      "ALL": () => date.setMonth(now.getMonth() - (points - i)),
-      default: () => date.setHours(now.getHours() - (points - i) * intervalHours),
+      ALL: () => date.setMonth(now.getMonth() - (points - i)),
+      default: () =>
+        date.setHours(now.getHours() - (points - i) * intervalHours),
     };
 
     (timeframeAdjustments[timeframe] || timeframeAdjustments.default)();

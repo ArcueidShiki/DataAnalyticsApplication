@@ -129,3 +129,17 @@ def remove_from_watchlist():
     db.session.delete(watchlist_item)
     db.session.commit()
     return jsonify({"msg": "Removed from watchlist"}), 200
+
+# default 1 day period, interval 15min
+def get_ticker(symbol, interval='15m', period='1d'):
+    try:
+        data = request.get_json()
+        symbol = data.get('symbol')
+        if not symbol:
+            return jsonify({"error": "Missing required parameter: symbol"}), 400
+        interval = data.get('interval', '15m')
+        period = data.get('period', '1d')
+        return StockUtils.get_ticker(symbol, interval=interval, period=period)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

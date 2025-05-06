@@ -22,13 +22,22 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://echarts.apache.org/zh/js/vendors/jquery@3.7.1/dist/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"
+    ></script>
     <script src="js/utils.js"></script>
     <script src="js/http.js"></script>
     <script src="js/stock.js"></script>
     <script src="js/mockdata.js"></script>
-    <script src="js/sidebar.js"></script>
     <script src="js/thememode.js"></script>
+    <script src="js/sidebar.js"></script>
     <script src="js/watchlist-individual.js"></script>
+    <script src="js/ticker.js"></script>
     <script src="js/search.js"></script>
     <script src="js/trade.js"></script>
   </head>
@@ -134,10 +143,15 @@
               <div class="stock-header-left">
                 <div class="stock-logo">
                   <!-- api -->
+                  <img
+                    src="https://logo.clearbit.com/{{symbol}}.com"
+                    alt="Company Logo"
+                    id="companyLogo"
+                  />
                 </div>
                 <div class="stock-title">
-                  <div class="stock-company">{{placeholder}}</div>
-                  <div class="stock-details">{{placeholder}}</div>
+                  <div class="stock-company"></div>
+                  <div class="stock-details"></div>
                 </div>
               </div>
               <!-- Moved to the right side of the header -->
@@ -168,14 +182,11 @@
                   <div class="price-timeframes-container">
                     <div class="price-section">
                       <div class="price-display">
-                        <div class="price-value" id="currentPrice">
-                          {{placeholder}}
-                        </div>
+                        <div class="price-value" id="currentPrice"></div>
                       </div>
                       <div class="tab-price-change">
                         <div class="tab-price-change positive" id="priceChange">
                           <i class="fas fa-caret-up"></i>
-                          {{placeholder}}
                         </div>
                       </div>
                     </div>
@@ -239,7 +250,6 @@
 
                   <div class="chart-container">
                     <div id="candlestickChart"></div>
-                    <div id="volumeChart"></div>
                     <div id="priceChart"></div>
                   </div>
                 </div>
@@ -266,12 +276,54 @@
               <div class="tab-pane" id="company-tab">
                 <div class="about-section">
                   <h2 class="section-title">About</h2>
-                  <p class="about-content" id="companyDescription">
-                    Apple Inc. is an American multinational technology company
-                    that specializes in consumer electronics, software and
-                    online services headquartered in Cupertino, California,
-                    United States.
-                  </p>
+                  <p id="list_data"></p>
+                  <p class="about-content" id="companyDescription"></p>
+                  <div class="info-section">
+                    <h2>Company Information</h2>
+                    <div>
+                      <strong>Name:</strong> <span id="company-name"></span>
+                    </div>
+                    <div>
+                      <strong>Ticker:</strong> <span id="company-ticker"></span>
+                    </div>
+                    <div>
+                      <strong>Description:</strong>
+                      <span id="company-description"></span>
+                    </div>
+                    <div>
+                      <strong>Market Cap:</strong>
+                      <span id="company-market-cap"></span>
+                    </div>
+                    <div>
+                      <strong>Employees:</strong>
+                      <span id="company-employees"></span>
+                    </div>
+                    <div>
+                      <strong>Phone:</strong> <span id="company-phone"></span>
+                    </div>
+                    <div>
+                      <strong>Homepage:</strong>
+                      <a id="company-homepage" href="#" target="_blank"></a>
+                    </div>
+                  </div>
+
+                  <div class="info-section">
+                    <h2>Address</h2>
+                    <div>
+                      <strong>Address:</strong>
+                      <span id="company-address"></span>
+                    </div>
+                    <div>
+                      <strong>City:</strong> <span id="company-city"></span>
+                    </div>
+                    <div>
+                      <strong>State:</strong> <span id="company-state"></span>
+                    </div>
+                    <div>
+                      <strong>Postal Code:</strong>
+                      <span id="company-postal-code"></span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <!-- Financials tab -->
@@ -343,28 +395,28 @@
                 <!-- First Row -->
                 <div class="stats-card">
                   <div class="stats-title">Day's open</div>
-                  <div class="stats-value" id="daysOpen">145.26</div>
+                  <div class="stats-value" id="daysOpen"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">Closing</div>
-                  <div class="stats-value" id="closingPrice">145.26</div>
+                  <div class="stats-value" id="closingPrice"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">High</div>
-                  <div class="stats-value" id="intradayHigh">147.55</div>
+                  <div class="stats-value" id="intradayHigh"></div>
                 </div>
                 <!-- Second Row -->
                 <div class="stats-card">
                   <div class="stats-title">Low</div>
-                  <div class="stats-value" id="intradayLow">145.00</div>
+                  <div class="stats-value" id="intradayLow"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">Turnover</div>
-                  <div class="stats-value" id="intradayLow">20.01B</div>
+                  <div class="stats-value" id="turnover"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">Volume</div>
-                  <div class="stats-value" id="volume">64.5M</div>
+                  <div class="stats-value" id="volume"></div>
                 </div>
               </div>
             </div>

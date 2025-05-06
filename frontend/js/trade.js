@@ -190,7 +190,6 @@ function initSlider() {
       const maxQuantity = 10000000; // User's available funds
       quantityInput.value = ((maxQuantity * percentage) / 100).toFixed(2);
       updateTradingSummary();
-
     });
   });
 
