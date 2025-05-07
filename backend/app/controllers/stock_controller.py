@@ -185,7 +185,7 @@ def populate_asset_table(csv_rows):
             assets_data.append(Asset(
                 symbol=row['symbol'],
                 name=row['name'] if row['name'] else None,
-                type="stock",
+                type="currency",
             ))
     db.session.bulk_save_objects(assets_data)
     db.session.commit()
