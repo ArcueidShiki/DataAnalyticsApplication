@@ -4,13 +4,13 @@ function setupMenuItems() {
   const menuItems = $(".menu-item");
 
   const meuActions = {
-    watchlist: () => (window.location.href = "watchlist.html"),
+    "watchlist": () => (window.location.href = "watchlist.html"),
     "my asset": () => (window.location.href = "myasset.html"),
     "top chart": () => (window.location.href = "analysis.html"),
-    contact: () => (window.location.href = "chat.html"),
+    "contact": () => (window.location.href = "chat.html"),
     "account setting": () => (window.location.href = "accountsetting.html"),
     "help center": () => (window.location.href = "help.html"),
-    logout: handleLogout,
+    "logout": handleLogout,
   };
   menuItems.each(function () {
     const spanElement = $(this).find("span");
@@ -126,13 +126,13 @@ function populateHotStocks(stocks) {
           </div>
         `);
     if (
-      currentPage === "watchlist-individual" &&
+      currentPage === "ticker" &&
       stock.symbol === currentSymbol
     ) {
       stockItem.addClass("active");
     }
     stockItem.on("click", () => {
-      window.location.href = `watchlist-individual.html?symbol=${stock.symbol}`;
+      window.location.href = `ticker.html?symbol=${stock.symbol}`;
     });
     watchlistContainer.append(stockItem);
   });

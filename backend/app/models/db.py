@@ -36,12 +36,12 @@ class Asset(db.Model):
 class Portfolio(db.Model):
     __tablename__ = 'portfolio'
     # composite primary key ensures primary key(user_id, asset_id) is unique
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'), primary_key=True)
     asset_id = Column(Integer, ForeignKey('assets.id'), primary_key=True)
     quantity = Column(Float, nullable=False, default=0.0)
-    avg_cost = Column(Float, nullable=False, default=0.0) # for stocks, bonds, etc.
-    last_updated = Column(DateTime, nullable=False) # for stocks, bonds, etc.
-    cur_price = Column(Float, nullable=False) # get from API
+    avg_cost = Column(Float, default=0.0) # for stocks, bonds, etc.
+    last_updated = Column(DateTime) # for stocks, bonds, etc.
+    cur_price = Column(Float) # get from API
 
     # access each other through: user.portfolio; portfolio.user
     user = db.relationship('User', back_populates='portfolio')

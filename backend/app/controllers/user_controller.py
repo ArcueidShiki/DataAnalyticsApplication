@@ -4,9 +4,24 @@ from app import db
 from flask import jsonify
 from datetime import datetime
 from datetime import timedelta
-from app.models.db import Portfolio, User
+from app.models.db import Asset, Portfolio, User
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, get_csrf_token, jwt_required, set_access_cookies, unset_jwt_cookies
+
+def init_new_user_funds(user_id):
+    usd_asset = Asset.query.filter_by(type='currency', name='USD').first()
+    if not usd_asset:
+        return jsonify({"msg": "USD asset not found"}), 400
+
+    new_portfolio = Portfolio(
+        user_id=user_id,
+        asset_id=usd_asset.id,
+        type='currency',
+        quantity=1000000  # 1 million USD
+    )
+
+    db.session.add(new_portfolio)
+    db.session.commit()
 
 def register(data):
     required_fields = ['email', 'phone', 'username', 'password', 'first_name', 'last_name', 'date_of_birth']
@@ -75,8 +90,10 @@ def register(data):
         last_name=last_name,
         date_of_birth=dob
     )
+
     db.session.add(user)
     db.session.commit()
+    init_new_user_funds(user.id)
     response = jsonify({"msg": "User registered successfully"})
     return response, 201
 
