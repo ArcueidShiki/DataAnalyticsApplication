@@ -1,9 +1,14 @@
+import csv
+from datetime import datetime, timedelta
+import logging
+import os
 from flask import jsonify, make_response, request
 from flask_jwt_extended import get_jwt_identity
-from app.models.db import Watchlist
+from app.models.db import Asset, Market, Watchlist
 from app import db
 from app.utils.yftool import StockUtils, convert_website_to_domain
 import yfinance as yf
+from app.utils.polygontool import get_market_summary
 
 def show_overview(symbol):
     print(symbol)
@@ -47,9 +52,15 @@ def show_news(symbol):
     return yf.Ticker(symbol).news
 
 def buy():
+    data = request.json()
     return jsonify({"error": "Bull endpoint not implemented"}), 501
 
 def sell():
+    data = request.json()
+    user_id = get_jwt_identity()
+    symbol = data.symbol
+    quantity = data.quantity
+
     return jsonify({"error": "Sell endpoint not implemented"}), 501
 
 def get_top_hot_stocks():
@@ -63,8 +74,7 @@ def get_top_hot_stocks():
         return jsonify({"error": str(e)}), 500
 
 
-def show_watchlist():
-    user_id = get_jwt_identity()
+def show_watchlist(user_id):
     watchlist = Watchlist.query.filter_by(user_id=user_id).all()
     stock_data = []
     for item in watchlist:
@@ -130,7 +140,6 @@ def remove_from_watchlist():
     db.session.commit()
     return jsonify({"msg": "Removed from watchlist"}), 200
 
-# default 1 day period, interval 15min
 def get_ticker(symbol, interval='15m', period='1d'):
     try:
         data = request.get_json()
@@ -141,5 +150,166 @@ def get_ticker(symbol, interval='15m', period='1d'):
         period = data.get('period', '1d')
         return StockUtils.get_ticker(symbol, interval=interval, period=period)
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def get_common_currencies():
+    return [
+        {'symbol': 'AUD', 'name': 'Australian Dollar'},
+        {'symbol': 'USD', 'name': 'United States Dollar'},
+        {'symbol': 'JPN', 'name': 'Japanese Yen'},
+        {'symbol': 'HKD', 'name': 'Hong Kong Dollar'},
+        {'symbol': 'SGD', 'name': 'Singapore Dollar'},
+        {'symbol': 'CNY', 'name': 'Chinese Yuan'},
+        {'symbol': 'MYR', 'name': 'Malaysian Ringgit'},
+        {'symbol': 'CAD', 'name': 'Canadian Dollar'},
+        {'symbol': 'EUR', 'name': 'Euro'},
+        {'symbol': 'CHF', 'name': 'Swiss Franc'},
+        {'symbol': 'FRF', 'name': 'French Franc'}
+    ]
+
+def populate_common_currencies():
+    assets_data = []
+    for currency in get_common_currencies():
+        if not Asset.query.filter_by(symbol=currency['symbol']).first():
+            # Check if the currency already exists in the database
+            assets_data.append(Asset(
+                symbol=currency['symbol'],
+                name=currency['name'],
+                type="currency",
+            ))
+    db.session.bulk_save_objects(assets_data)
+    db.session.commit()
+
+def populate_asset_table(csv_rows):
+    populate_common_currencies()
+    assets_data = []
+    for row in csv_rows:
+        existing_asset = Asset.query.filter_by(symbol=row['symbol']).first()
+        if not existing_asset:
+            assets_data.append(Asset(
+                symbol=row['symbol'],
+                name=row['name'] if row['name'] else None,
+                type="stock",
+            ))
+    db.session.bulk_save_objects(assets_data)
+    db.session.commit()
+
+def populate_market_table(csv_rows):
+    market_data = []
+    for row in csv_rows:
+        existing_market = Market.query.filter_by(
+            symbol=row['symbol'],
+            date=datetime.strptime(row['date'], '%Y-%m-%d').date()
+        ).first()
+        if not existing_market:
+            market_data.append(Market(
+                symbol=row['symbol'],
+                name=row['name'] if row['name'] else None,
+                volume=float(row['volume']) if row['volume'] else 0.0,  # Use 0.0 if empty
+                vwap=float(row['vwap']) if row['vwap'] else 0.0,        # Use 0.0 if empty
+                open=float(row['open']) if row['open'] else 0.0,        # Use 0.0 if empty
+                close=float(row['close']) if row['close'] else 0.0,     # Use 0.0 if empty
+                high=float(row['high']) if row['high'] else 0.0,        # Use 0.0 if empty
+                low=float(row['low']) if row['low'] else 0.0,           # Use 0.0 if empty
+                timestamp=int(row['timestamp']) if row['timestamp'] else 0,  # Use 0 if empty
+                transactions=int(row['transactions']) if row['transactions'] else 0,  # Use 0 if empty
+                date=datetime.strptime(row['date'], '%Y-%m-%d').date()
+            ))
+    db.session.bulk_save_objects(market_data)
+    db.session.commit()
+
+def populate_database_from_csv(csv_file_path, date):
+    if not csv_file_path:
+        csv_file_path = "yesterday_market_summary.csv"
+    if os.path.exists(csv_file_path):
+        with open(csv_file_path, mode='r') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            csv_rows = list(csv_reader)
+        db_stock_count = Market.query.filter_by(date=datetime.strptime(date, '%Y-%m-%d').date()).count()
+        db_asset_count = Asset.query.count()
+        csv_row_count = len(csv_rows)
+        currency_count = len(get_common_currencies())
+        if db_stock_count == csv_row_count and db_asset_count == csv_row_count + currency_count:
+            logging.info("Database is consistent with the CSV file. No action needed.")
+            return True
+        logging.info("Database is inconsistent with the CSV file. Inserting missing rows...")
+        if db_stock_count < csv_row_count:
+            populate_market_table(csv_rows)
+        if db_asset_count < csv_row_count + currency_count:
+            populate_asset_table(csv_rows)
+        return True
+    else:
+        logging.error(f"CSV file {csv_file_path} does not exist.")
+        return False
+
+def save_data_to_csv_database(csv_file_path, date, results):
+    market_data = []
+    assets_data = []
+    with open(csv_file_path, mode='w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(["symbol", "name", "volume", "vwap", "open", "close", "high", "low", "timestamp", "transactions", "date"])
+        for item in results:
+            ticker = Market(
+                symbol=item.ticker,
+                name=None,  # Placeholder for name
+                volume=item.volume,
+                vwap=item.vwap,
+                open=item.open,
+                close=item.close,
+                high=item.high,
+                low=item.low,
+                timestamp=item.timestamp,
+                transactions=item.transactions,
+                date=datetime.strptime(date, '%Y-%m-%d').date()
+            )
+            asset = Asset(
+                symbol=item.ticker,
+                name=None,  # Placeholder for name
+                type="stock",
+            )
+            market_data.append(ticker)
+            assets_data.append(asset)
+            csv_writer.writerow([
+                item.ticker,  # symbol
+                None,       # name (placeholder, as it's not provided in the API response)
+                item.volume,  # volume
+                item.vwap, # vwap
+                item.open,  # open
+                item.close,  # close
+                item.high,  # high
+                item.low,  # low
+                item.timestamp,  # timestamp
+                item.transactions,  # transactions
+                date   # date
+            ])
+    db.session.bulk_save_objects(market_data)
+    db.session.bulk_save_objects(assets_data)
+    db.session.commit()
+
+def fetch_data_from_polygon(csv_file_path, date):
+    results = get_market_summary(date)
+    logging.info(f"Saving market summary to {csv_file_path}, listed stocks: {len(results)}")
+    save_data_to_csv_database(csv_file_path, date, results)
+
+def get_yesterday_market_summary(date):
+    try:
+        if not date:
+            yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+            date = yesterday
+        csv_file_path = "yesterday_market_summary.csv"
+        if populate_database_from_csv(csv_file_path, date):
+            return jsonify({"msg": "Database is updated with the CSV file"}), 200
+        fetch_data_from_polygon(csv_file_path, date)
+        return jsonify({"msg": "Market summary updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def get_all_symbols():
+    try:
+        symbol_list = db.session.query(Asset.symbol).filter_by(type="stock").all()
+        symbol_list = [symbol[0] for symbol in symbol_list]
+        return jsonify(symbol_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

@@ -18,6 +18,7 @@ db_migrate = Migrate()
 redis_client = FlaskRedis()
 from app.routes.auth import auth_bp
 from app.routes.stock import stock_bp
+from app.routes.asset import asset_bp
 
 KEY_FOLDER = "secrets"
 PRIVATE_KEY_PATH = os.path.join(KEY_FOLDER, "rsa_private.pem")
@@ -88,9 +89,11 @@ def create_app(TESTING=False):
     init_jwt_config(app)
     # CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}}, supports_credentials=True)
     # CORS(app, origins=["null", r"http://localhost:\d+"], supports_credentials=True)
-    CORS(app, origins=["http://127.0.0.1:5500"], supports_credentials=True)
-    # CORS(app, supports_credentials=True)
+    # CORS(app, origins=["http://127.0.0.1:5500"], supports_credentials=True)
+    CORS(app, supports_credentials=True)
+    # CORS(app, supports_credentials=True, resources={r"/*": {"origins": r"http://127\.0\.0\.1:\d+"}})
     redis_client.init_app(app)
     app.register_blueprint(auth_bp)
     app.register_blueprint(stock_bp)
+    app.register_blueprint(asset_bp)
     return app

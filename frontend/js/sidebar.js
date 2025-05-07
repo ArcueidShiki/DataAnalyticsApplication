@@ -62,10 +62,12 @@ function setupSettingToggle() {
 }
 
 function handleLogout() {
-  if (confirm("Are you sure to logout?")) {
-    // TODO Http.post("api/logout")
-    window.location.href = "../login.html";
-  }
+  Http.get("/auth/logout").then((response) => {
+    console.log(response);
+    document.cookie = "";
+    localStorage.clear();
+    window.location.href = "login.html";
+  });
 }
 
 function loadHotTopStocks() {
@@ -125,14 +127,11 @@ function populateHotStocks(stocks) {
             </div>
           </div>
         `);
-    if (
-      currentPage === "watchlist-individual" &&
-      stock.symbol === currentSymbol
-    ) {
+    if (currentPage === "ticker" && stock.symbol === currentSymbol) {
       stockItem.addClass("active");
     }
     stockItem.on("click", () => {
-      window.location.href = `watchlist-individual.html?symbol=${stock.symbol}`;
+      window.location.href = `ticker.html?symbol=${stock.symbol}`;
     });
     watchlistContainer.append(stockItem);
   });

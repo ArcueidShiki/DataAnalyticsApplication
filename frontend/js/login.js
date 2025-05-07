@@ -25,9 +25,8 @@ function LoginHandler(e) {
       Http.setCookie("csrf_access_token", csrf_token);
 
       const accessToken = Http.getCookie("access_token_cookie");
-      console.log("Access Token:", accessToken);
-
       const csrfToken = Http.getCookie("csrf_access_token");
+      console.log("Access Token:", accessToken);
       console.log("CSRF Token:", csrfToken);
       window.open("watchlist.html", "_blank"); // Redirect to dashboard
       // window.location.href = "watchlist.html"; // Redirect to dashboard

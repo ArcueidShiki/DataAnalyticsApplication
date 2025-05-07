@@ -453,7 +453,7 @@ function drawLineChart(symbol, data) {
     yAxis: {
       type: "value",
       boundaryGap: [0, "100%"],
-      startValue: 300,
+      startValue: 0,
       splitLine: {
         show: false,
       },
