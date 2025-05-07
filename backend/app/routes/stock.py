@@ -71,3 +71,7 @@ def add_to_watchlist():
 @jwt_required()
 def remove_from_watchlist():
     return controller.remove_from_watchlist()
+
+@stock_bp.route('/market/<string:date>', methods=['GET'])
+def get_yesterday_market_summary(date):
+    return controller.get_yesterday_market_summary(date)

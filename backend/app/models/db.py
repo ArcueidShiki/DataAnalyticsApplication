@@ -23,7 +23,7 @@ class User(db.Model):
 # Assets could be stocks, bonds, currency, etc.
 class Asset(db.Model):
     __tablename__ = 'assets'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(20), unique=True, nullable=False)  # e.g., AAPL, USD, AUD, JPN
     name = Column(String(100))
     type = Column(String, nullable=False)  # e.g., stock, bond, currency, etc.
@@ -76,3 +76,21 @@ class Transaction(db.Model):
     timestamp = Column(DateTime, nullable=False, default=datetime.utcnow)  # Date and time of transaction
     type = Column(String, nullable=False)  # Type of transaction: 'buy' or 'sell'
     status = Column(String, nullable=False)  # Status of transaction: 'completed', 'pending', 'failed'
+
+class Market(db.Model):
+    __tablename__ = 'market'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    symbol = Column(String(20), nullable=False)
+    name = Column(String(100))
+    volume = Column(Float)
+    vwap = Column(Float)
+    open = Column(Float)
+    close = Column(Float)
+    high = Column(Float)
+    low = Column(Float)
+    transactions = Column(Integer)
+    timestamp = Column(Integer)
+    date = Column(Date)
+
+    def __repr__(self):
+        return f"<Market {self.symbol}>"
