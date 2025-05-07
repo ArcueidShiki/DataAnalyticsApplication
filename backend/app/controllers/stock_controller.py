@@ -52,9 +52,15 @@ def show_news(symbol):
     return yf.Ticker(symbol).news
 
 def buy():
+    data = request.json()
     return jsonify({"error": "Bull endpoint not implemented"}), 501
 
 def sell():
+    data = request.json()
+    user_id = get_jwt_identity()
+    symbol = data.symbol
+    quantity = data.quantity
+
     return jsonify({"error": "Sell endpoint not implemented"}), 501
 
 def get_top_hot_stocks():
@@ -68,8 +74,7 @@ def get_top_hot_stocks():
         return jsonify({"error": str(e)}), 500
 
 
-def show_watchlist():
-    user_id = get_jwt_identity()
+def show_watchlist(user_id):
     watchlist = Watchlist.query.filter_by(user_id=user_id).all()
     stock_data = []
     for item in watchlist:
@@ -135,7 +140,6 @@ def remove_from_watchlist():
     db.session.commit()
     return jsonify({"msg": "Removed from watchlist"}), 200
 
-# default 1 day period, interval 15min
 def get_ticker(symbol, interval='15m', period='1d'):
     try:
         data = request.get_json()
@@ -299,5 +303,13 @@ def get_yesterday_market_summary(date):
             return jsonify({"msg": "Database is updated with the CSV file"}), 200
         fetch_data_from_polygon(csv_file_path, date)
         return jsonify({"msg": "Market summary updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def get_all_symbols():
+    try:
+        symbol_list = db.session.query(Asset.symbol).filter_by(type="stock").all()
+        symbol_list = [symbol[0] for symbol in symbol_list]
+        return jsonify(symbol_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

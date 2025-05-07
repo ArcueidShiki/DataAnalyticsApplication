@@ -42,7 +42,6 @@ class Portfolio(db.Model):
     avg_cost = Column(Float, default=0.0) # for stocks, bonds, etc.
     last_updated = Column(DateTime) # for stocks, bonds, etc.
     cur_price = Column(Float) # get from API
-
     # access each other through: user.portfolio; portfolio.user
     user = db.relationship('User', back_populates='portfolio')
     asset = db.relationship('Asset', back_populates='portfolio')

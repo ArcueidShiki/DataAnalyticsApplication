@@ -111,123 +111,6 @@ function initFollowButton() {
 }
 
 /**
- * Initialize search functionality
- */
-function initSearchFunctionality() {
-  const searchInput = document.getElementById("stockSearch");
-  const searchResults = document.getElementById("searchResults");
-
-  if (searchInput && searchResults) {
-    searchInput.addEventListener("input", function () {
-      const query = this.value.trim();
-
-      if (query.length >= 2) {
-        // Show dummy search results
-        searchResults.innerHTML = `
-                <div class="search-item">
-                    <div class="search-stock-icon" style="background-color: #ff9900;">
-                        A
-                    </div>
-                    <div class="search-stock-info">
-                        <div class="search-stock-name">Apple Inc.</div>
-                        <div class="search-stock-symbol">AAPL · NASDAQ</div>
-                    </div>
-                </div>
-                <div class="search-item">
-                    <div class="search-stock-icon" style="background-color: #3b82f6;">
-                        A
-                    </div>
-                    <div class="search-stock-info">
-                        <div class="search-stock-name">Amazon.com Inc.</div>
-                        <div class="search-stock-symbol">AMZN · NASDAQ</div>
-                    </div>
-                </div>
-            `;
-        searchResults.classList.add("active");
-
-        // Add click event to search items
-        setupSearchItemEvents();
-      } else {
-        searchResults.innerHTML = "";
-        searchResults.classList.remove("active");
-      }
-    });
-
-    // Close search results when clicking outside
-    document.addEventListener("click", function (event) {
-      if (
-        !searchInput.contains(event.target) &&
-        !searchResults.contains(event.target)
-      ) {
-        searchResults.classList.remove("active");
-      }
-    });
-  }
-}
-
-/**
- * Add click events to search items
- */
-function setupSearchItemEvents() {
-  document.querySelectorAll(".search-item").forEach((item) => {
-    item.addEventListener("click", function () {
-      const symbol = this.querySelector(
-        ".search-stock-symbol",
-      ).textContent.split(" · ")[0];
-      const name = this.querySelector(".search-stock-name").textContent;
-
-      // Update UI with the selected stock info
-      updateMainContentWithStock(name, symbol);
-
-      // Hide search results
-      document.getElementById("searchResults").classList.remove("active");
-    });
-  });
-}
-
-/**
- * Setup chart scrolling with mouse wheel
- */
-function setupChartScrolling() {
-  const chartContainer = document.querySelector(".chart-container");
-
-  if (chartContainer) {
-    // Prevent wheel event propagation
-    chartContainer.addEventListener(
-      "wheel",
-      function (e) {
-        // Prevent event bubbling to document
-        e.stopPropagation();
-
-        // Get current zoom level
-        const currentMin = window.priceChart.w.globals.minX;
-        const currentMax = window.priceChart.w.globals.maxX;
-        const range = currentMax - currentMin;
-
-        // Zoom based on wheel direction
-        if (e.deltaY < 0) {
-          // Scroll up - zoom in
-          const newMin = currentMin + range * 0.1;
-          const newMax = currentMax - range * 0.1;
-          zoomCharts(newMin, newMax);
-          window.chartZoomLevel++;
-        } else {
-          // Scroll down - zoom out
-          const newMin = currentMin - range * 0.1;
-          const newMax = currentMax + range * 0.1;
-          zoomCharts(newMin, newMax);
-          window.chartZoomLevel--;
-        }
-
-        // Prevent default behavior (page scrolling)
-        e.preventDefault();
-      },
-      { passive: false },
-    );
-  }
-}
-
-/**
  * Initialize tab switching functionality
  */
 function initTabSwitching() {
@@ -277,60 +160,6 @@ function getTooltipDateFormat(timeframe) {
     default:
       return "yyyy-MM-dd";
   }
-}
-
-/**
- * Calculate chart heights based on screen size
- * @returns {Object} Object with heights for different chart types
- */
-function calculateChartHeight() {
-  // Get viewport height and calculate chart heights
-  const viewportHeight = window.innerHeight;
-  // Calculate chart percentages based on viewport, considering screen resolution
-  const isHighResScreen =
-    window.screen.width >= 1920 || window.screen.height >= 1080;
-
-  // Base height percentages - can be adjusted as needed
-  const lineChartHeightPercent = 0.18; // 18% of viewport
-  const candleChartHeightPercent = 0.3; // 30% of viewport
-  const volumeChartHeightPercent = 0.15; // 15% of viewport
-
-  // Increase chart size for high-resolution screens
-  const scaleFactor = isHighResScreen ? 1.1 : 1;
-
-  // Calculate pixel heights, with minimum heights to ensure proper display on small screens
-  const lineHeight = Math.max(
-    120,
-    Math.round(viewportHeight * lineChartHeightPercent * scaleFactor),
-  );
-  const candleHeight = Math.max(
-    200,
-    Math.round(viewportHeight * candleChartHeightPercent * scaleFactor),
-  );
-  const volumeHeight = Math.max(
-    100,
-    Math.round(viewportHeight * volumeChartHeightPercent * scaleFactor),
-  );
-
-  // Ensure the total height doesn't exceed viewport
-  const totalHeight = lineHeight + candleHeight + volumeHeight;
-  const maxAllowedHeight = viewportHeight * 0.8; // Max 80% of viewport
-
-  // If charts would exceed max allowed height, proportionally reduce them
-  if (totalHeight > maxAllowedHeight) {
-    const reductionFactor = maxAllowedHeight / totalHeight;
-    return {
-      lineChartHeight: Math.round(lineHeight * reductionFactor),
-      candleChartHeight: Math.round(candleHeight * reductionFactor),
-      volumeChartHeight: Math.round(volumeHeight * reductionFactor),
-    };
-  }
-
-  return {
-    lineChartHeight: lineHeight,
-    candleChartHeight: candleHeight,
-    volumeChartHeight: volumeHeight,
-  };
 }
 
 /**
@@ -506,6 +335,5 @@ document.addEventListener("DOMContentLoaded", function () {
   initTabSwitching();
   initTimeframeButtons();
   initFollowButton();
-  initSearchFunctionality();
   initThemeObserver();
 });

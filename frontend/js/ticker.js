@@ -565,8 +565,6 @@ function fillOverviewInfo(symbol, data) {
   $("#company-icon").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
 }
 
-
-
 $(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);
   const symbol = urlParams.get("symbol") || "META";

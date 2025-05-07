@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required, verify_jwt_in_request
 import app.controllers.stock_controller as controller
 from flask_cors import cross_origin
 
@@ -25,49 +25,52 @@ def show_financials(symbol):
 def show_news(symbol):
     return controller.show_news(symbol)
 
-@stock_bp.route('/buy', methods=['POST'])
+@stock_bp.route('/buy', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def buy():
-    data = request.get_json()
-    return controller.buy(data)
+    if request.method == 'OPTIONS':
+        response = jsonify({"message": "Preflight request successful"})
+        return add_cors_headers(response), 204
+    return controller.buy()
 
-@stock_bp.route('/sell', methods=['POST'])
+@stock_bp.route('/sell', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def sell():
-    data = request.get_json()
-    return controller.sell(data)
+    if request.method == 'OPTIONS':
+        response = jsonify({"message": "Preflight request successful"})
+        return add_cors_headers(response), 204
+    return controller.sell()
 
 
 @stock_bp.route('/hot', methods=['GET'])
 def get_top_hot_stocks():
     return controller.get_top_hot_stocks()
 
+@stock_bp.after_request
+def add_cors_headers(response):
+    origin = request.headers.get("Origin")
+    if origin and origin.startswith("http://127.0.0.1"):
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
 @stock_bp.route('/watchlist', methods=['GET', 'POST', 'OPTIONS'])
 @jwt_required()
 def show_watchlist():
-    # print("Authorization Header:", request.headers.get("Authorization"))
-    # return jsonify({"msg": "ok"})
-    # print("request method:", request.method)
     if request.method == 'OPTIONS':
-        # print("Preflight request received")
         response = jsonify({"message": "Preflight request successful"})
-        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
-        response.headers.add("Access-Control-Allow-Credentials", "true")
-        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        return response, 204
-    else:
-        print("GET request received")
-    return controller.show_watchlist()
+        return add_cors_headers(response), 204
+    user_id = get_jwt_identity()
+    return controller.show_watchlist(user_id)
 
-# /stock/watchlist/add
-@stock_bp.route('/watchlist/add', methods=['POST'])
+@stock_bp.route('/watchlist/add', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def add_to_watchlist():
     return controller.add_to_watchlist()
 
-@stock_bp.route('/watchlist/remove', methods=['POST'])
+@stock_bp.route('/watchlist/remove', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def remove_from_watchlist():
     return controller.remove_from_watchlist()
@@ -75,3 +78,7 @@ def remove_from_watchlist():
 @stock_bp.route('/market/<string:date>', methods=['GET'])
 def get_yesterday_market_summary(date):
     return controller.get_yesterday_market_summary(date)
+
+@stock_bp.route('/all/symbols', methods=['GET'])
+def get_all_symbols():
+    return controller.get_all_symbols()

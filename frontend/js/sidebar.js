@@ -4,13 +4,13 @@ function setupMenuItems() {
   const menuItems = $(".menu-item");
 
   const meuActions = {
-    "watchlist": () => (window.location.href = "watchlist.html"),
+    watchlist: () => (window.location.href = "watchlist.html"),
     "my asset": () => (window.location.href = "myasset.html"),
     "top chart": () => (window.location.href = "analysis.html"),
-    "contact": () => (window.location.href = "chat.html"),
+    contact: () => (window.location.href = "chat.html"),
     "account setting": () => (window.location.href = "accountsetting.html"),
     "help center": () => (window.location.href = "help.html"),
-    "logout": handleLogout,
+    logout: handleLogout,
   };
   menuItems.each(function () {
     const spanElement = $(this).find("span");
@@ -62,10 +62,12 @@ function setupSettingToggle() {
 }
 
 function handleLogout() {
-  if (confirm("Are you sure to logout?")) {
-    // TODO Http.post("api/logout")
-    window.location.href = "../login.html";
-  }
+  Http.get("/auth/logout").then((response) => {
+    console.log(response);
+    document.cookie = "";
+    localStorage.clear();
+    window.location.href = "login.html";
+  });
 }
 
 function loadHotTopStocks() {
@@ -125,10 +127,7 @@ function populateHotStocks(stocks) {
             </div>
           </div>
         `);
-    if (
-      currentPage === "ticker" &&
-      stock.symbol === currentSymbol
-    ) {
+    if (currentPage === "ticker" && stock.symbol === currentSymbol) {
       stockItem.addClass("active");
     }
     stockItem.on("click", () => {
