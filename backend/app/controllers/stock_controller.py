@@ -8,7 +8,7 @@ from app.models.db import Asset, Market, Watchlist
 from app import db
 from app.utils.yftool import StockUtils, convert_website_to_domain
 import yfinance as yf
-from app.utils.polygon import get_market_summary
+from app.utils.polygontool import get_market_summary
 
 def show_overview(symbol):
     print(symbol)
@@ -149,105 +149,153 @@ def get_ticker(symbol, interval='15m', period='1d'):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+def get_common_currencies():
+    return [
+        {'symbol': 'AUD', 'name': 'Australian Dollar'},
+        {'symbol': 'USD', 'name': 'United States Dollar'},
+        {'symbol': 'JPN', 'name': 'Japanese Yen'},
+        {'symbol': 'HKD', 'name': 'Hong Kong Dollar'},
+        {'symbol': 'SGD', 'name': 'Singapore Dollar'},
+        {'symbol': 'CNY', 'name': 'Chinese Yuan'},
+        {'symbol': 'MYR', 'name': 'Malaysian Ringgit'},
+        {'symbol': 'CAD', 'name': 'Canadian Dollar'},
+        {'symbol': 'EUR', 'name': 'Euro'},
+        {'symbol': 'CHF', 'name': 'Swiss Franc'},
+        {'symbol': 'FRF', 'name': 'French Franc'}
+    ]
+
+def init_common_currencies():
+    asset_data = []
+    for currency in get_common_currencies():
+        if not Asset.query.filter_by(symbol=currency['symbol']).first():
+            # Check if the currency already exists in the database
+            asset_data.append(Asset(
+                symbol=currency['symbol'],
+                name=currency['name'],
+                type="currency",
+            ))
+    return asset_data
+
+def populate_asset_table(csv_rows):
+    assets_data = init_common_currencies()
+    for row in csv_rows:
+        existing_asset = Asset.query.filter_by(symbol=row['symbol']).first()
+        if not existing_asset:
+            assets_data.append(Asset(
+                symbol=row['symbol'],
+                name=row['name'] if row['name'] else None,
+                type="stock",
+            ))
+    db.session.bulk_save_objects(assets_data)
+    db.session.commit()
+
+def populate_market_table(csv_rows):
+    market_data = []
+    for row in csv_rows:
+        existing_market = Market.query.filter_by(
+            symbol=row['symbol'],
+            date=datetime.strptime(row['date'], '%Y-%m-%d').date()
+        ).first()
+        if not existing_market:
+            market_data.append(Market(
+                symbol=row['symbol'],
+                name=row['name'] if row['name'] else None,
+                volume=float(row['volume']) if row['volume'] else 0.0,  # Use 0.0 if empty
+                vwap=float(row['vwap']) if row['vwap'] else 0.0,        # Use 0.0 if empty
+                open=float(row['open']) if row['open'] else 0.0,        # Use 0.0 if empty
+                close=float(row['close']) if row['close'] else 0.0,     # Use 0.0 if empty
+                high=float(row['high']) if row['high'] else 0.0,        # Use 0.0 if empty
+                low=float(row['low']) if row['low'] else 0.0,           # Use 0.0 if empty
+                timestamp=int(row['timestamp']) if row['timestamp'] else 0,  # Use 0 if empty
+                transactions=int(row['transactions']) if row['transactions'] else 0,  # Use 0 if empty
+                date=datetime.strptime(row['date'], '%Y-%m-%d').date()
+            ))
+    db.session.bulk_save_objects(market_data)
+    db.session.commit()
+
+def populate_database_from_csv(csv_file_path, date):
+    if not csv_file_path:
+        csv_file_path = "yesterday_market_summary.csv"
+    if os.path.exists(csv_file_path):
+        with open(csv_file_path, mode='r') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            csv_rows = list(csv_reader)
+        db_stock_count = Market.query.filter_by(date=datetime.strptime(date, '%Y-%m-%d').date()).count()
+        db_asset_count = Asset.query.count()
+        csv_row_count = len(csv_rows)
+        currency_count = len(get_common_currencies())
+        if db_stock_count == csv_row_count and db_asset_count == csv_row_count + currency_count:
+            logging.info("Database is consistent with the CSV file. No action needed.")
+            return True
+        logging.info("Database is inconsistent with the CSV file. Inserting missing rows...")
+        if db_stock_count < csv_row_count:
+            populate_market_table(csv_rows)
+        if db_asset_count < csv_row_count + currency_count:
+            populate_asset_table(csv_rows)
+        return True
+    else:
+        logging.error(f"CSV file {csv_file_path} does not exist.")
+        return False
+
+def save_data_to_csv_database(csv_file_path, date, results):
+    market_data = []
+    assets_data = []
+    with open(csv_file_path, mode='w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(["symbol", "name", "volume", "vwap", "open", "close", "high", "low", "timestamp", "transactions", "date"])
+        for item in results:
+            ticker = Market(
+                symbol=item.ticker,
+                name=None,  # Placeholder for name
+                volume=item.volume,
+                vwap=item.vwap,
+                open=item.open,
+                close=item.close,
+                high=item.high,
+                low=item.low,
+                timestamp=item.timestamp,
+                transactions=item.transactions,
+                date=datetime.strptime(date, '%Y-%m-%d').date()
+            )
+            asset = Asset(
+                symbol=item.ticker,
+                name=None,  # Placeholder for name
+                type="stock",
+            )
+            market_data.append(ticker)
+            assets_data.append(asset)
+            csv_writer.writerow([
+                item.ticker,  # symbol
+                None,       # name (placeholder, as it's not provided in the API response)
+                item.volume,  # volume
+                item.vwap, # vwap
+                item.open,  # open
+                item.close,  # close
+                item.high,  # high
+                item.low,  # low
+                item.timestamp,  # timestamp
+                item.transactions,  # transactions
+                date   # date
+            ])
+    db.session.bulk_save_objects(market_data)
+    db.session.bulk_save_objects(assets_data)
+    db.session.commit()
+
+def fetch_data_from_polygon(csv_file_path, date):
+    results = get_market_summary(date)
+    logging.info(f"Saving market summary to {csv_file_path}, listed stocks: {len(results)}")
+    save_data_to_csv_database(csv_file_path, date, results)
+
 def get_yesterday_market_summary(date):
     try:
         if not date:
             yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
             date = yesterday
-        results = get_market_summary(date)
         csv_file_path = "yesterday_market_summary.csv"
-        if os.path.exists(csv_file_path):
-            with open(csv_file_path, mode='r') as csv_file:
-                csv_reader = csv.DictReader(csv_file)
-                csv_rows = list(csv_reader)
-            db_stock_count = Market.query.filter_by(date=datetime.strptime(date, '%Y-%m-%d').date()).count()
-            db_asset_count = Asset.query.count()
-            csv_row_count = len(csv_rows)
-            if db_stock_count == csv_row_count and db_asset_count == csv_row_count:
-                logging.info("Database is consistent with the CSV file. No action needed.")
-                return jsonify({"msg": "Market and Asset summary already up-to-date"}), 200
-            logging.info("Database is inconsistent with the CSV file. Inserting missing rows...")
-            if db_stock_count < csv_row_count:
-                market_data = []
-                for row in csv_rows:
-                    existing_market = Market.query.filter_by(
-                        symbol=row['symbol'],
-                        date=datetime.strptime(row['date'], '%Y-%m-%d').date()
-                    ).first()
-                    if not existing_market:
-                        market_data.append(Market(
-                            symbol=row['symbol'],
-                            name=row['name'] if row['name'] else None,
-                            volume=float(row['volume']) if row['volume'] else 0.0,  # Use 0.0 if empty
-                            vwap=float(row['vwap']) if row['vwap'] else 0.0,        # Use 0.0 if empty
-                            open=float(row['open']) if row['open'] else 0.0,        # Use 0.0 if empty
-                            close=float(row['close']) if row['close'] else 0.0,     # Use 0.0 if empty
-                            high=float(row['high']) if row['high'] else 0.0,        # Use 0.0 if empty
-                            low=float(row['low']) if row['low'] else 0.0,           # Use 0.0 if empty
-                            timestamp=int(row['timestamp']) if row['timestamp'] else 0,  # Use 0 if empty
-                            transactions=int(row['transactions']) if row['transactions'] else 0,  # Use 0 if empty
-                            date=datetime.strptime(row['date'], '%Y-%m-%d').date()
-                        ))
-                db.session.bulk_save_objects(market_data)
-                db.session.commit()
-
-            if db_asset_count < csv_row_count:
-
-                assets_data = []
-                for row in csv_rows:
-                    existing_asset = Asset.query.filter_by(symbol=row['symbol']).first()
-                    if not existing_asset:
-                        assets_data.append(Asset(
-                            symbol=row['symbol'],
-                            name=row['name'] if row['name'] else None,
-                            type="stock",
-                        ))
-                db.session.bulk_save_objects(assets_data)
-                db.session.commit()
-            return jsonify({"msg": "Database updated from CSV file"}), 200
-        logging.info("Local CSV file does not exist. Fetching data from Polygon API...")
-        market_data = []
-        assets_data = []
-        logging.info(f"Saving market summary to {csv_file_path}, listed stocks: {len(results)}")
-        with open(csv_file_path, mode='w', newline='') as csv_file:
-            csv_writer = csv.writer(csv_file)
-            csv_writer.writerow(["symbol", "name", "volume", "vwap", "open", "close", "high", "low", "timestamp", "transactions", "date"])
-            for item in results:
-                ticker = Market(
-                    symbol=item.ticker,
-                    name=None,  # Placeholder for name
-                    volume=item.volume,
-                    vwap=item.vwap,
-                    open=item.open,
-                    close=item.close,
-                    high=item.high,
-                    low=item.low,
-                    timestamp=item.timestamp,
-                    transactions=item.transactions,
-                    date=datetime.strptime(date, '%Y-%m-%d').date()
-                )
-                asset = Asset(
-                    symbol=item.ticker,
-                    name=None,  # Placeholder for name
-                    type="stock",
-                )
-                market_data.append(ticker)
-                csv_writer.writerow([
-                    item.ticker,  # symbol
-                    None,       # name (placeholder, as it's not provided in the API response)
-                    item.volume,  # volume
-                    item.vwap, # vwap
-                    item.open,  # open
-                    item.close,  # close
-                    item.high,  # high
-                    item.low,  # low
-                    item.timestamp,  # timestamp
-                    item.transactions,  # transactions
-                    date   # date
-                ])
-        db.session.bulk_save_objects(market_data)
-        db.session.bulk_save_objects(assets_data)
-        db.session.commit()
+        if populate_database_from_csv(csv_file_path, date):
+            return jsonify({"msg": "Database is updated with the CSV file"}), 200
+        fetch_data_from_polygon(csv_file_path, date)
         return jsonify({"msg": "Market summary updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

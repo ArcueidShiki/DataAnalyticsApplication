@@ -71,6 +71,7 @@ peewee==3.17.9
 platformdirs==4.3.7
 pluggy==1.5.0
 polygon==1.2.6
+polygon-api-client==1.14.5
 pre_commit==4.2.0
 psutil==7.0.0
 pycparser==2.22
