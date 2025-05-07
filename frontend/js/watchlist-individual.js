@@ -105,14 +105,6 @@ function initFollowButton() {
 
         // Add to watchlist
         addToWatchlist(stockCompany, stockSymbol, trendPath, trendColor);
-
-        // Try to fetch logo for watchlist if we don't have it yet
-        if (!logoUrl) {
-          fetchCompanyLogo(stockCompany, stockSymbol);
-        } else {
-          // Use the existing logo for the watchlist
-          updateWatchlistLogo(stockSymbol, logoUrl);
-        }
       }
     });
   }

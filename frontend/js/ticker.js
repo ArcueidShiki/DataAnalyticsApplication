@@ -453,7 +453,7 @@ function drawLineChart(symbol, data) {
     yAxis: {
       type: "value",
       boundaryGap: [0, "100%"],
-      startValue: 300,
+      startValue: 0,
       splitLine: {
         show: false,
       },
@@ -564,6 +564,8 @@ function fillOverviewInfo(symbol, data) {
   $("#company-logo").attr("src", `${data.branding.logo_url}?apiKey=${apiKey}`);
   $("#company-icon").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
 }
+
+
 
 $(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);

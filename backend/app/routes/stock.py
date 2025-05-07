@@ -61,6 +61,7 @@ def show_watchlist():
         print("GET request received")
     return controller.show_watchlist()
 
+# /stock/watchlist/add
 @stock_bp.route('/watchlist/add', methods=['POST'])
 @jwt_required()
 def add_to_watchlist():

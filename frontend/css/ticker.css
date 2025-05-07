@@ -387,18 +387,18 @@
 }
 
 #candlestickChart {
-  height: 70vh;
-  width: 100%;
+  height:70vh;
+  width:100%;
   /* position: fixed; */
   top: 0;
   left: 0;
-  z-index: 3000;
+  z-index:3000;
   background-color: var(--bg-color);
 }
 
 #priceChart {
-  height: 50vh;
-  width: 100%;
+  height:50vh;
+  width:100%;
   left: 0;
   bottom: 0;
   margin: 3px auto;
