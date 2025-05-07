@@ -165,27 +165,29 @@ def get_common_currencies():
         {'symbol': 'FRF', 'name': 'French Franc'}
     ]
 
-def init_common_currencies():
-    asset_data = []
+def populate_common_currencies():
+    assets_data = []
     for currency in get_common_currencies():
         if not Asset.query.filter_by(symbol=currency['symbol']).first():
             # Check if the currency already exists in the database
-            asset_data.append(Asset(
+            assets_data.append(Asset(
                 symbol=currency['symbol'],
                 name=currency['name'],
                 type="currency",
             ))
-    return asset_data
+    db.session.bulk_save_objects(assets_data)
+    db.session.commit()
 
 def populate_asset_table(csv_rows):
-    assets_data = init_common_currencies()
+    populate_common_currencies()
+    assets_data = []
     for row in csv_rows:
         existing_asset = Asset.query.filter_by(symbol=row['symbol']).first()
         if not existing_asset:
             assets_data.append(Asset(
                 symbol=row['symbol'],
                 name=row['name'] if row['name'] else None,
-                type="currency",
+                type="stock",
             ))
     db.session.bulk_save_objects(assets_data)
     db.session.commit()

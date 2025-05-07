@@ -1,6 +1,7 @@
 import logging
-from polygon import RESTClient
+from polygon.rest import RESTClient
 from datetime import datetime, timedelta
+
 API_KEY = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"
 client = RESTClient(API_KEY)
 

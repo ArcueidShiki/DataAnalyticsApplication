@@ -24,7 +24,7 @@ class User(db.Model):
 class Asset(db.Model):
     __tablename__ = 'assets'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    symbol = Column(String(20), unique=True, nullable=False)  # e.g., AAPL, USD, AUD, JPN
+    symbol = Column(String(20), nullable=False)  # e.g., AAPL, USD, AUD, JPN
     name = Column(String(100))
     type = Column(String, nullable=False)  # e.g., stock, bond, currency, etc.
 
