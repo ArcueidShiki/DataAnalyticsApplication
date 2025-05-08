@@ -91,3 +91,5 @@ def create_app(TESTING=False):
     app.register_blueprint(auth_bp)
     app.register_blueprint(stock_bp)
     return app
+
+
