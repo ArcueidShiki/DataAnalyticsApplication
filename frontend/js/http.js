@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 // Define HTTP class to handle ajax requests and reponses
 
@@ -5,6 +6,7 @@
 // the jwt in the cookies will be sended by the browser automatically, there's no need to do anything.
 const Http = {
   CSRF_TOKEN: null,
+  ACCESS_TOKEN: null,
   protocol: "http", // https, SSL/TLS is handler by cloud provider. self-signed certs are not supported.
   ip: "127.0.0.1",
   port: "9000",
@@ -16,14 +18,13 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "GET",
+        headers: Http._addAuthHeaders(headers),
         xhrFields: {
           withCredentials: true, // Send cookies with the request
         },
-        headers: Http._addCSRFHeaders(headers),
         contentType: this.CONTENT_TYPE_JSON,
         success: function (response) {
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -41,12 +42,14 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "POST",
-        headers: Http._addCSRFHeaders(headers),
+        headers: Http._addAuthHeaders(headers),
+        xhrFields: {
+          withCredentials: true, // Send cookies with the request
+        },
         contentType: this.CONTENT_TYPE_JSON,
         data: JSON.stringify(data),
         success: function (response) {
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -64,12 +67,14 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "PUT",
-        headers: Http._addCSRFHeaders(headers),
+        headers: Http._addAuthHeaders(headers),
+        xhrFields: {
+          withCredentials: true, // Send cookies with the request
+        },
         contentType: this.CONTENT_TYPE_JSON,
         data: JSON.stringify(data),
         success: function (response) {
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -87,11 +92,13 @@ const Http = {
       $.ajax({
         url: `${this.baseUrl}${api}`,
         method: "DELETE",
-        headers: Http._addCSRFHeaders(headers),
+        headers: Http._addAuthHeaders(headers),
+        xhrFields: {
+          withCredentials: true, // Send cookies with the request
+        },
         contentType: this.CONTENT_TYPE_JSON,
         success: function (response) {
           resolve(response);
-          Http.getCSRFTokenFromCookie();
         },
         error: function (xhr, status, error) {
           reject(
@@ -103,18 +110,10 @@ const Http = {
     });
   },
 
-  _addJwtHeaders: function (headers) {
-    const jwt = Http.getCookie("jwt");
-    if (jwt) {
-      headers["Authorization"] = `Bearer ${jwt}`;
-    }
-    return headers;
-  },
-
-  _addCSRFHeaders: function (headers) {
-    if (this.CSRF_TOKEN) {
-      headers["X-CSRF-Token"] = this.CSRF_TOKEN;
-    }
+  _addAuthHeaders: function (headers) {
+    const jwt = this.getCookie("access_token_cookie");
+    headers["Authorization"] = `Bearer ${jwt}`;
+    // headers["X-CSRF-Token"] = this.getCookie("csrf_access_token");
     return headers;
   },
 
@@ -128,6 +127,17 @@ const Http = {
       this.CSRF_TOKEN = match[1]; // Save for future requests
     } else {
       console.error("CSRF token not found in cookies.");
+    }
+  },
+
+  getAccessTokenFromCookie: function () {
+    const match = document.cookie.match(/access_token_cookie=([^;]+)/);
+    if (match) {
+      console.log("Access token found in cookies:", match[1]);
+      return match[1]; // Save for future requests
+    } else {
+      console.error("Access token not found in cookies.");
+      return null;
     }
   },
 
@@ -147,3 +157,8 @@ const Http = {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   },
 };
+
+function getCurrentSymbol() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("symbol") || "AAPL";
+}

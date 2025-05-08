@@ -1,14 +1,31 @@
 import re
 import uuid
 from app import db
-from flask import jsonify
+from flask import jsonify, logging, request
 from datetime import datetime
 from datetime import timedelta
-from app.models.db import Portfolio, User
+from app.models.db import Asset, Portfolio, User
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies
+from flask_jwt_extended import create_access_token, get_csrf_token, set_access_cookies, unset_jwt_cookies
 
-def register(data):
+def init_new_user_funds(userid):
+    print(f"Initializing funds for user {userid}!!!!!!!!!!!!")
+    assetid = db.session.query(Asset.id).filter_by(type='currency', symbol='USD').first()
+    if not assetid:
+        print(f"USD asset not found for user {userid}")
+        return jsonify({"msg": "USD asset not found"}), 400
+
+    new_portfolio = Portfolio(
+        user_id=userid,
+        asset_id=assetid[0],
+        quantity=1000000  # 1 million USD
+    )
+
+    db.session.add(new_portfolio)
+    db.session.commit()
+
+def register():
+    data = request.get_json()
     required_fields = ['email', 'phone', 'username', 'password', 'first_name', 'last_name', 'date_of_birth']
     valid = False
     for f in required_fields:
@@ -75,12 +92,15 @@ def register(data):
         last_name=last_name,
         date_of_birth=dob
     )
+
     db.session.add(user)
     db.session.commit()
+    init_new_user_funds(user.id)
     response = jsonify({"msg": "User registered successfully"})
     return response, 201
 
-def login(data):
+def login():
+    data = request.get_json()
     required_fields = ['username', 'password']
     for f in required_fields:
         if f not in data:
@@ -88,9 +108,21 @@ def login(data):
 
     user = User.query.filter_by(username=data['username']).first()
     if user is None or not check_password_hash(user.password, data['password']):
+    # For testing:
+    # if user.password != data['password']:
         return jsonify({"msg": "Invalid username or password"}), 401
-    response = jsonify({"msg": "Login successful"})
     access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=30))
+    csrf_token = get_csrf_token(access_token)
     # the access_token_cookie contains csrf_access_token, but it needs to be extract at frontend
+    response = jsonify({
+        "msg": "Login successful",
+        "access_token": access_token,
+        "csrf_token": csrf_token
+    })
     set_access_cookies(response, access_token)
+    return response, 200
+
+def logout():
+    response = jsonify({"msg": "Logout successful"})
+    unset_jwt_cookies(response)
     return response, 200

@@ -11,10 +11,9 @@ source venv/bin/activate
 venv\Scripts\activate.bat
 
 pip install -r requirements.txt
-
+rm -rf migrations
 mkdir migrations
 flask db init
-
 python run.py
 ```
 

@@ -1,139 +1,151 @@
-/**
- * sidebar setting JS
- */
-
-// retrieve the current page name
-function getCurrentPage() {
-  const path = window.location.pathname;
-  const pageName = path.split("/").pop().split(".")[0];
-  return pageName || "watchlist";
-}
-
-// retrieve the current stock symbol from URL parameters
-// function getCurrentSymbol() {
-//   const urlParams = new URLSearchParams(window.location.search);
-//   return urlParams.get("symbol") || "AAPL";
-// }
-
-// set to highlight the current menu item
+/* eslint-disable no-undef */
 function setupMenuItems() {
-  console.log("setting menu item...");
-
   const currentPage = getCurrentPage();
-  const menuItems = document.querySelectorAll(".menu-item");
+  const menuItems = $(".menu-item");
 
-  menuItems.forEach((item) => {
-    const spanElement = item.querySelector("span");
+  const meuActions = {
+    watchlist: () => (window.location.href = "watchlist.html"),
+    "my asset": () => (window.location.href = "myasset.html"),
+    "top chart": () => (window.location.href = "analysis.html"),
+    contact: () => (window.location.href = "chat.html"),
+    "account setting": () => (window.location.href = "accountsetting.html"),
+    "help center": () => (window.location.href = "help.html"),
+    logout: handleLogout,
+  };
+  menuItems.each(function () {
+    const spanElement = $(this).find("span");
 
-    const menuText = spanElement.textContent.trim().toLowerCase();
+    const menuText = spanElement.text().trim().toLowerCase();
     const menuTextNoSpace = menuText.replace(/\s+/g, "");
 
-    // highlight the current menu item
     if (
       currentPage.includes(menuTextNoSpace) ||
       menuTextNoSpace.includes(currentPage)
     ) {
-      item.classList.add("active");
-      console.log("menu item has been active:", menuText);
+      $(this).addClass("active");
     }
 
-    // add click event to each menu item
-    item.addEventListener("click", () => {
-      const menuName = spanElement.textContent.trim();
-      console.log("clicking menu:", menuName);
-
-      switch (menuName.toLowerCase()) {
-        case "watchlist":
-          window.location.href = "../watchlist.html";
-          break;
-        case "my asset":
-          window.location.href = "../myasset.html";
-          break;
-        case "top chart":
-          window.location.href = "../analysis.html";
-          break;
-        case "crypto":
-          window.location.href = "../crypto.html";
-          break;
-        case "contact":
-          window.location.href = "../chat.html";
-          break;
-        case "account setting":
-          window.location.href = "../accountsetting.html";
-          break;
-        case "setting":
-          window.location.href = "../settings.html";
-          break;
-        case "help center":
-          window.location.href = "../help.html";
-          break;
-        case "logout":
-          handleLogout();
-          break;
-        default:
-          console.warn(`undefined menu item: ${menuName}`);
-          break;
+    $(this).on("click", function () {
+      const action = meuActions[menuText];
+      if (action) {
+        action();
       }
     });
   });
 }
 
-// setup the account toggle functionality
-function setupAccountToggle() {
-  const accountToggleButton = document.getElementById("account-toggle-button");
-  const accountSection = document.getElementById("account-section");
-  const accountArrow = document.querySelector(".account-arrow");
-  const profileToggle = document.getElementById("profile-toggle");
+function setupSettingToggle() {
+  const settingsButton = $(".menu-item.settings");
+  const accountSection = $(".setting-section");
+  const accountArrow = $(".account-arrow");
+  const profileToggle = $("#profile-toggle");
 
-  // Function to toggle account section
-  function toggleAccountSection() {
-    if (accountSection.style.display === "none") {
-      accountSection.style.display = "block";
-      accountArrow.classList.remove("expanded");
+  function toggleSettingSection() {
+    if (accountSection.hasClass("hidden")) {
+      accountSection.removeClass("hidden");
+      accountSection.addClass("expanded");
+      accountArrow.removeClass("expanded");
     } else {
-      accountSection.style.display = "none";
-      accountArrow.classList.add("expanded");
+      accountSection.addClass("hidden");
+      accountSection.removeClass("expanded");
+      accountArrow.addClass("expanded");
     }
   }
 
-  // Toggle account section when clicking the toggle button
-  if (accountToggleButton) {
-    accountToggleButton.addEventListener("click", toggleAccountSection);
+  if (settingsButton) {
+    settingsButton.on("click", toggleSettingSection);
   }
 
-  // Toggle account section when clicking the profile
   if (profileToggle) {
-    profileToggle.addEventListener("click", toggleAccountSection);
+    profileToggle.on("click", toggleSettingSection);
   }
 }
 
-// setup the logout functionality
 function handleLogout() {
-  if (confirm("Are you sure to logout?")) {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
-    window.location.href = "../login.html";
-    console.log("User logged out");
-  } else {
-    console.log("cancel logout");
+  Http.get("/auth/logout").then((response) => {
+    console.log(response);
+    document.cookie = "";
+    localStorage.clear();
+    window.location.href = "login.html";
+  });
+}
+
+function loadHotTopStocks() {
+  Http.get("/stock/hot")
+    .then((stocks) => {
+      populateHotStocks(stocks);
+      localStorage.setItem("hotStocks", JSON.stringify(stocks));
+      return true;
+    })
+    .catch((error) => {
+      console.error("Error loading hot stocks:", error);
+      return false;
+    });
+}
+
+function loadHotTopStocksFromCache() {
+  const cachedStocks = localStorage.getItem("hotStocks");
+  if (cachedStocks) {
+    try {
+      const stocks = JSON.parse(cachedStocks);
+      populateHotStocks(stocks);
+      return true;
+    } catch (error) {
+      console.error("Error parsing cached stocks:", error);
+      return false;
+    }
   }
+  return false;
 }
 
-function initSidebar() {
+// TODO some optimization:
+// download the image resources if it the first time to load
+// check image resource existence, otherwise download it.
+
+function populateHotStocks(stocks) {
+  currentPage = getCurrentPage();
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSymbol = urlParams.get("symbol") || "AAPL";
+  const watchlistContainer = $("#watchlistContainer");
+  watchlistContainer.empty();
+  stocks.forEach((stock) => {
+    const changeClass = stock.percent_change >= 0 ? "positive" : "negative";
+    const changeIcon =
+      stock.percent_change >= 0 ? "fa-caret-up" : "fa-caret-down";
+    const stockItem = $(`
+          <div class="watchlist-item">
+            <div class="watchlist-icon">
+                <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
+            </div>
+            <div class="watchlist-info">
+                <div class="stock-name">${stock.symbol}</div>
+                <div class="stock-symbol">${stock.price}</div>
+            </div>
+            <div class="price-change ${changeClass}">
+                <i class="fas ${changeIcon}"></i>
+                ${Math.abs(stock.percent_change)}%
+            </div>
+          </div>
+        `);
+    if (currentPage === "ticker" && stock.symbol === currentSymbol) {
+      stockItem.addClass("active");
+    }
+    stockItem.on("click", () => {
+      window.location.href = `ticker.html?symbol=${stock.symbol}`;
+    });
+    watchlistContainer.append(stockItem);
+  });
+}
+
+function loadHotTopStocksFromMockData() {
+  const stocks = getMockStocks();
+  populateHotStocks(stocks);
+}
+
+$(document).ready(function () {
+  if (!loadHotTopStocksFromCache() && !loadHotTopStocks()) {
+    loadHotTopStocksFromMockData();
+  }
   setupMenuItems();
-  setupAccountToggle();
-}
-
-/**
- * Initialize the sidebar and other components
- */
-function initSidepage() {
-  console.log("Page loading...");
-
-  initSidebar();
-
-  console.log("Page loaded");
-}
-
-// Initialize the sidebar when the DOM is fully loaded
-document.addEventListener("DOMContentLoaded", initSidepage);
+  setupSettingToggle();
+});

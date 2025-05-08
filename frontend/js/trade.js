@@ -158,10 +158,6 @@ function updateProgressWidth(selectedIndex) {
     progressWidth = Math.min(progressWidth, 100);
     sliderProgress.style.width = `${progressWidth}%`;
   }
-
-  console.log(
-    `updateprogresswidth: ${progressWidth}%, activeoption: ${selectedPosition.value}%`,
-  );
 }
 
 /**
@@ -194,8 +190,6 @@ function initSlider() {
       const maxQuantity = 10000000; // User's available funds
       quantityInput.value = ((maxQuantity * percentage) / 100).toFixed(2);
       updateTradingSummary();
-
-      console.log(`Selected ${percentage}% option, index: ${index}`);
     });
   });
 

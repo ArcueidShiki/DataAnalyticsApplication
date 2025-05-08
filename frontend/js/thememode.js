@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // update themeUI
 function updateThemeUI(theme, icon, text) {
   if (theme === "light") {
@@ -14,8 +13,6 @@ function updateThemeUI(theme, icon, text) {
 
 // theme toggle function
 function setupThemeToggle() {
-  console.log("theme setting...");
-
   const themeToggle = document.getElementById("themeToggle");
 
   if (!themeToggle) {
@@ -41,6 +38,7 @@ function setupThemeToggle() {
   // click event to toggle theme
   themeToggle.addEventListener("click", function () {
     const currentTheme = document.body.getAttribute("data-theme");
+    console.log("Current Theme from attribute:", currentTheme);
     const newTheme = currentTheme === "light" ? "dark" : "light";
 
     // update theme
@@ -49,65 +47,16 @@ function setupThemeToggle() {
     // update UI
     updateThemeUI(newTheme, icon, text);
 
-    const chartUpdateOptions = {
-      tooltip: {
-        theme: newTheme,
-      },
-      grid: {
-        borderColor: newTheme === "dark" ? "#30363d" : "#e1e4e8",
-      },
-      xaxis: {
-        labels: {
-          style: {
-            colors: newTheme === "dark" ? "#8b949e" : "#666666",
-          },
-        },
-        axisBorder: {
-          color: newTheme === "dark" ? "#30363d" : "#e1e4e8",
-        },
-      },
-    };
-
-    // Update charts with new theme
-    if (window.priceChart) {
-      window.priceChart.updateOptions(
-        {
-          ...chartUpdateOptions,
-          yaxis: getYAxisConfig("price"), // y-axis configuration
-        },
-        true,
-      );
-    }
-
-    if (window.candlestickChart) {
-      window.candlestickChart.updateOptions(
-        {
-          yaxis: getYAxisConfig("candlestick"),
-        },
-        true,
-      );
-    }
-
-    if (window.volumeChart) {
-      window.volumeChart.updateOptions({
-        yaxis: getYAxisConfig("volume"), // y-axis configuration
-      });
-    }
-
     // save new theme to localStorage
     localStorage.setItem("theme", newTheme);
   });
 
   // set up global chart theme
-  setupGlobalChartTheme(currentTheme);
+  // setupGlobalChartTheme(currentTheme);
 }
 
 function initTheme() {
-  console.log("theme.js initTheme");
-
   setupThemeToggle();
-
-  console.log("theme.js initTheme completed");
 }
 
 // Initialize theme on DOMContentLoaded

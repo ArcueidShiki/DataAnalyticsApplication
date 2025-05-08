@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Investment Dashboard - Apple Inc</title>
+    <link rel="icon" href="assets/favicon.png" />
     <!-- css -->
     <link
       rel="stylesheet"
@@ -13,18 +14,32 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.css"
     />
-    <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script>
-    <link rel="stylesheet" href="css/sidebar-watchlist.css" />
-    <link rel="stylesheet" href="css/watchlist-individual.css" />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/ticker.css" />
 
-    <!-- Scripts -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://echarts.apache.org/zh/js/vendors/jquery@3.7.1/dist/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"
+    ></script>
+    <script src="js/utils.js"></script>
     <script src="js/http.js"></script>
+    <script src="js/stock.js"></script>
+    <script src="js/mockdata.js"></script>
+    <script src="js/thememode.js"></script>
     <script src="js/sidebar.js"></script>
-    <script src="js/watchlist-container.js"></script>
     <script src="js/watchlist-individual.js"></script>
-    <script src="js/trading-interface.js"></script>
+    <script src="js/ticker.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/trade.js"></script>
   </head>
   <body>
     <div class="app-container">
@@ -69,7 +84,7 @@
 
         <!-- Watchlist moved up before Account -->
         <div class="watchlist-header">
-          <div class="watchlist-title">WATCHLIST</div>
+          <div class="watchlist-title">TOP HOT</div>
           <div class="watchlist-dropdown">24h</div>
         </div>
 
@@ -78,35 +93,35 @@
         </div>
 
         <!-- Account section moved to bottom and collapsed by default -->
-        <div class="account-toggle">
-          <div class="menu-item" id="account-toggle-button">
+        <div class="settings">
+          <div class="menu-item settings">
             <i class="fas fa-user-circle"></i>
             <span>SETTINGS</span>
             <i class="fas fa-chevron-down account-arrow"></i>
           </div>
-        </div>
-        <div class="account-section" id="account-section" style="display: none">
-          <div class="sidebar-menu">
-            <!-- Add dark mode toggle as first menu item in settings -->
-            <div class="menu-item" id="themeToggle">
-              <i class="fas fa-moon"></i>
-              <span>Dark Mode</span>
-            </div>
-            <div class="menu-item">
-              <i class="fas fa-cog"></i>
-              <span>Account setting</span>
-            </div>
-            <div class="menu-item">
-              <i class="fas fa-sliders-h"></i>
-              <span>Setting</span>
-            </div>
-            <div class="menu-item">
-              <i class="far fa-question-circle"></i>
-              <span>Help center</span>
-            </div>
-            <div class="menu-item">
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Logout</span>
+          <div class="setting-section hidden">
+            <div class="sidebar-menu">
+              <!-- Add dark mode toggle as first menu item in settings -->
+              <div class="menu-item" id="themeToggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Account setting</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-sliders-h"></i>
+                <span>Setting</span>
+              </div>
+              <div class="menu-item">
+                <i class="far fa-question-circle"></i>
+                <span>Help center</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </div>
             </div>
           </div>
         </div>
@@ -114,11 +129,11 @@
 
       <!-- Main content area -->
       <div class="main-content">
-        <div class="breadcrumb">
-          <a href="watchlist.html">Watchlist</a>
+        <!-- <div class="breadcrumb">
+          <a href="watchlist.html">Quote</a>
           <i class="fas fa-chevron-right"></i>
-          <span id="stockName">Apple</span>
-        </div>
+          <span id="stockName">{{symbol}}</span>
+        </div> -->
 
         <!-- Two-column layout container -->
         <div class="content-container">
@@ -128,18 +143,23 @@
               <div class="stock-header-left">
                 <div class="stock-logo">
                   <!-- api -->
+                  <img
+                    src="https://logo.clearbit.com/{{symbol}}.com"
+                    alt="Company Logo"
+                    id="companyLogo"
+                  />
                 </div>
                 <div class="stock-title">
-                  <div class="stock-company">Apple INC.</div>
-                  <div class="stock-details">NASDAQ: AAPL</div>
+                  <div class="stock-company"></div>
+                  <div class="stock-details"></div>
                 </div>
               </div>
               <!-- Moved to the right side of the header -->
               <div class="stock-header-right">
                 <button class="action-btn follow-btn" id="followBtn">
-                  <i class="fas fa-plus"></i>Follow
+                  <i class="fas fa-plus"></i>Add to Watchlist
                 </button>
-                <button class="action-btn buy-btn">AutoTrade</button>
+                <button class="action-btn buy-btn">Trade</button>
                 <button class="more-btn">
                   <i class="fas fa-ellipsis-v"></i>
                 </button>
@@ -162,12 +182,11 @@
                   <div class="price-timeframes-container">
                     <div class="price-section">
                       <div class="price-display">
-                        <div class="price-value" id="currentPrice">$147.04</div>
+                        <div class="price-value" id="currentPrice"></div>
                       </div>
                       <div class="tab-price-change">
                         <div class="tab-price-change positive" id="priceChange">
                           <i class="fas fa-caret-up"></i>
-                          1.47%
                         </div>
                       </div>
                     </div>
@@ -231,7 +250,6 @@
 
                   <div class="chart-container">
                     <div id="candlestickChart"></div>
-                    <div id="volumeChart"></div>
                     <div id="priceChart"></div>
                   </div>
                 </div>
@@ -258,12 +276,54 @@
               <div class="tab-pane" id="company-tab">
                 <div class="about-section">
                   <h2 class="section-title">About</h2>
-                  <p class="about-content" id="companyDescription">
-                    Apple Inc. is an American multinational technology company
-                    that specializes in consumer electronics, software and
-                    online services headquartered in Cupertino, California,
-                    United States.
-                  </p>
+                  <p id="list_data"></p>
+                  <p class="about-content" id="companyDescription"></p>
+                  <div class="info-section">
+                    <h2>Company Information</h2>
+                    <div>
+                      <strong>Name:</strong> <span id="company-name"></span>
+                    </div>
+                    <div>
+                      <strong>Ticker:</strong> <span id="company-ticker"></span>
+                    </div>
+                    <div>
+                      <strong>Description:</strong>
+                      <span id="company-description"></span>
+                    </div>
+                    <div>
+                      <strong>Market Cap:</strong>
+                      <span id="company-market-cap"></span>
+                    </div>
+                    <div>
+                      <strong>Employees:</strong>
+                      <span id="company-employees"></span>
+                    </div>
+                    <div>
+                      <strong>Phone:</strong> <span id="company-phone"></span>
+                    </div>
+                    <div>
+                      <strong>Homepage:</strong>
+                      <a id="company-homepage" href="#" target="_blank"></a>
+                    </div>
+                  </div>
+
+                  <div class="info-section">
+                    <h2>Address</h2>
+                    <div>
+                      <strong>Address:</strong>
+                      <span id="company-address"></span>
+                    </div>
+                    <div>
+                      <strong>City:</strong> <span id="company-city"></span>
+                    </div>
+                    <div>
+                      <strong>State:</strong> <span id="company-state"></span>
+                    </div>
+                    <div>
+                      <strong>Postal Code:</strong>
+                      <span id="company-postal-code"></span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <!-- Financials tab -->
@@ -294,7 +354,7 @@
                 <div id="newsContainer">
                   <div class="news-item">
                     <div class="news-image">
-                      <img src="/api/placeholder/200/120" alt="News image" />
+                      <img src="" alt="News image" />
                     </div>
                     <div class="news-content">
                       <div class="news-source">bloomberg.com</div>
@@ -335,28 +395,28 @@
                 <!-- First Row -->
                 <div class="stats-card">
                   <div class="stats-title">Day's open</div>
-                  <div class="stats-value" id="daysOpen">145.26</div>
+                  <div class="stats-value" id="daysOpen"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">Closing</div>
-                  <div class="stats-value" id="closingPrice">145.26</div>
+                  <div class="stats-value" id="closingPrice"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">High</div>
-                  <div class="stats-value" id="intradayHigh">147.55</div>
+                  <div class="stats-value" id="intradayHigh"></div>
                 </div>
                 <!-- Second Row -->
                 <div class="stats-card">
                   <div class="stats-title">Low</div>
-                  <div class="stats-value" id="intradayLow">145.00</div>
+                  <div class="stats-value" id="intradayLow"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">Turnover</div>
-                  <div class="stats-value" id="intradayLow">20.01B</div>
+                  <div class="stats-value" id="turnover"></div>
                 </div>
                 <div class="stats-card">
                   <div class="stats-title">Volume</div>
-                  <div class="stats-value" id="volume">64.5M</div>
+                  <div class="stats-value" id="volume"></div>
                 </div>
               </div>
             </div>
@@ -430,7 +490,6 @@
                 </div>
               </div>
             </div>
-
             <!-- Trading Interface Section -->
             <div class="trading-interface-section">
               <div class="section-header">

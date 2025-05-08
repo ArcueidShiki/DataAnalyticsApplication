@@ -76,12 +76,40 @@ function initPortfolioChart() {
   });
 }
 
-// Initialize the page
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("MyAsset page loaded");
+/**
+ *
+ * @param {*} assets:{asset_id, symbol, type, quantity, close, avg_cost, today_profit, proft, percentage}
+ */
+function calculateTotalValue(assets) {
+  let totalValue = 0;
+  assets.forEach((asset) => {
+    if (asset.type == "stock") {
+      totalValue += asset.close * asset.quantity;
+    } else if (asset.type == "currency") {
+      totalValue += asset.quantity;
+    }
+  });
+  console.log("total value:", totalValue);
+  $(".balance-amount").text(totalValue.toFixed(2));
+}
 
-  // Initialize view control buttons
+function getTotalAssets() {
+  console.log("enter total assets");
+  Http.get("/asset/")
+    .then((response) => {
+      console.log(response);
+      localStorage.setItem("assets", JSON.stringify(response));
+      calculateTotalValue(response);
+      return true;
+    })
+    .catch((error) => {
+      console.error("error:", error);
+      return false;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  getTotalAssets();
   initViewControls();
-  // Initialize the portfolio chart
   initPortfolioChart();
 });
