@@ -142,3 +142,16 @@ def get_ticker(symbol, interval='15m', period='1d'):
     #     "candlestick": candlestick_data,
     #     "volume": volume_data,
     # }), 200
+
+def get_price(symbol):
+    """
+    Fetch the current market price for a given stock symbol.
+    """
+    try:
+        ticker = yf.Ticker(symbol)
+        data = ticker.history(period="1d")
+        if not data.empty:
+            return round(data['Close'].iloc[-1], 2)
+    except Exception as e:
+        print(f"Error fetching price for {symbol}: {e}")
+    return 0.0
