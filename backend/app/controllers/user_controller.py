@@ -24,7 +24,7 @@ def init_new_user_funds(userid):
     db.session.add(new_portfolio)
     db.session.commit()
 
-def register():
+def register(data):
     data = request.get_json()
     required_fields = ['email', 'phone', 'username', 'password', 'first_name', 'last_name', 'date_of_birth']
     valid = False
