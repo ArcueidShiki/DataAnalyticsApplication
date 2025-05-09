@@ -565,9 +565,90 @@ function fillOverviewInfo(symbol, data) {
   $("#company-icon").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
 }
 
+// Function to handle the "Add to Watchlist" button click
+function addToWatchlist(symbol) {
+  // Get the current symbol from the URL parameters or use default
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSymbol = symbol || urlParams.get("symbol") || "AAPL";
+
+  // Get JWT token from localStorage or cookie
+  const token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NjY4MDYyNywianRpIjoiMDU2Njk2YzItNzUwNS00NDk5LWI5ODItYzNmOWNjMTI2YmUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImI3YWE1ZmQ0LWM3NjYtNDEzOC05OWY5LWI1MDU5NDdiODEwYSIsIm5iZiI6MTc0NjY4MDYyNywiY3NyZiI6ImUwMTA0MmM1LTg2ZWItNDZhYi1hZTg1LTdkOGE2Yjg1OTE3NSIsImV4cCI6MTc0OTI3MjYyN30.myUHb6AKmb7FQDUAZ5h94pn65kwgWqBxA6HfStYKH3vMIbPw7bNNCt9xMXzKFIlUfv40WY1tTTWD8OOfed06CaHdeX1pcZj3SfhIq02hWN9eEo_MrzxAi9SRVy7kSOav8ZhRruhbFeSoJL6m_G4cPw3oZgcZAaFKV05R-LEvoDuoIFnvog0Q5uTQbPM6X7XPhhagrKqB5JnFDeZe9kuFGBgXESIdiXPt756au6OExWHPZTAZZO3yRFIbGA-IKKEKU-WBvokEdpZubVlABHLJQDXn_5UopebShV9soiJqyNKHFQlBAAq82kcbRb5Oo0V_ngeZar2hk2F43OYWnhRtCw';
+  console.log("Token:", token);
+
+  if (!token) {
+    // If no token, show login prompt or redirect to login page
+    alert("Please log in to add stocks to your watchlist.");
+    return;
+  }
+  // Change button state immediately for better user feedback
+  $("#followBtn").html('<i class="fas fa-spinner fa-spin"></i> Adding...');
+
+  // Send the request to the server
+  const requestData = {
+    symbol: currentSymbol,
+    is_favorite: false
+  };
+
+  console.log("Sending request with token:", token.substring(0, 10) + "...");
+  // Use the JWT token for authorization
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  // Use the HTTP utility that's already included in the project
+  const url = 'http://127.0.0.1:9000/stock/watchlist/add';
+  
+  // Use the fetch API to send the request
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    credentials: 'include', 
+    body: JSON.stringify(requestData)
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(`Error: ${response.status}`);
+  })
+  .then(data => {
+    console.log("Added to watchlist:", data);
+    $("#followBtn").html('<i class="fas fa-check"></i> Added to Watchlist');
+    $("#followBtn").addClass("following");
+    
+  })
+  .catch(error => {
+    console.error("Error:", error);
+    $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
+    alert("Failed to add to watchlist: " + error.message);
+  });
+}
+
+// Helper function to get cookie by name
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(name + '=')) {
+      return cookie.substring(name.length + 1);
+    }
+  }
+  return null;
+}
+
+
 $(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);
   const symbol = urlParams.get("symbol") || "META";
   fetchStockData(symbol);
   getTickerOverview(symbol);
+
+  // Add event listener for the follow button
+  $("#followBtn").on("click", function() {
+    addToWatchlist();
+  });
 });

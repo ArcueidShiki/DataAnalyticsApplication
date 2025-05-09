@@ -80,6 +80,11 @@
   color: inherit;
   text-decoration: none;
   font-weight: normal;
+  display: block; /* Change from comment to active */
+  width: 100%; /* Ensure links take full width */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
   /* display: block; */
 }
 
@@ -283,7 +288,7 @@
   height: auto;
   position: absolute;
   bottom: 0;
-  transform: translateY(-18%);
+  transform: translateY(-30%);
   transition: transform 1s ease;
   background-color: var(--sidebar-bg);
   z-index: 5;

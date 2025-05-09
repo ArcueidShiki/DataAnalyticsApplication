@@ -194,6 +194,12 @@
   color: var(--text-color);
 }
 
+/* Follow button styles */
+.follow-btn.following {
+  background-color: var(--positive-color);
+  color: white;
+}
+
 .buy-btn {
   background-color: var(--primary-color);
   color: black;
