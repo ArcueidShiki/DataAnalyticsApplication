@@ -19,7 +19,7 @@ redis_client = FlaskRedis()
 from app.routes.auth import auth_bp
 from app.routes.stock import stock_bp
 from app.routes.asset import asset_bp
-from app.routes.myassets import myasset_bp
+from app.routes.myasset import myasset_bp
 
 KEY_FOLDER = "secrets"
 PRIVATE_KEY_PATH = os.path.join(KEY_FOLDER, "rsa_private.pem")
