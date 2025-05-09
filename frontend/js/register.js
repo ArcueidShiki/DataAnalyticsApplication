@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 function RegisterHandler(e) {
   e.preventDefault();
   const username = $("#username").val();

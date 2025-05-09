@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
-// Initialize view control buttons and sorting functionality
+import Sidebar from "./sidebar.js";
+import Http from "./http.js";
 function initViewControls() {
   const viewButtons = document.querySelectorAll(".view-btn");
 
@@ -94,7 +94,6 @@ function calculateTotalValue(assets) {
 }
 
 function getTotalAssets() {
-  console.log("enter total assets");
   Http.get("/asset/")
     .then((response) => {
       console.log(response);
@@ -112,4 +111,5 @@ document.addEventListener("DOMContentLoaded", function () {
   getTotalAssets();
   initViewControls();
   initPortfolioChart();
+  Sidebar.getInstance();
 });
