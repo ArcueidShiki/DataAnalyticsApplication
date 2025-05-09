@@ -67,5 +67,5 @@ $(document).ready(function () {
   if (!loadWatchlistFromCache() && !loadWatchlist()) {
     loadWatchlistFromMockData();
   }
-  const sidebar = new Sidebar();
+  Sidebar.getInstance();
 });

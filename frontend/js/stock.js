@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 class Ticker {
   constructor(symbol, info, close, change, percent_change, marketCap, domain) {
     this.symbol = symbol;
@@ -28,15 +26,4 @@ $(document).ready(function () {
   window.addEventListener("resize", function () {
     candlestickChart.resize();
   });
-  //   if (!loadTickerFromCache(currentSymbol) && !loadTicker(currentSymbol)) {
-  //     loadTickerFromMockData(currentSymbol);
-  //   }
-  //   initChartSeting();
-  //   initTabSwitching();
-  //   initTimeframeButtons();
-  //   initFollowButton();
-  //   initSearchFunctionality();
-  //   initializeChart();
-  //   initThemeObserver();
-  //   setupResizeHandler();
 });

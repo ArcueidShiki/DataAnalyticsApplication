@@ -18,7 +18,6 @@ function InitSearchSymbols() {
     }
   } else {
     const symbolList = JSON.parse(symbols);
-    console.log(symbolList);
     initializeSearchPanel(symbolList);
   }
 }

@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 // Define HTTP class to handle ajax requests and reponses
 
 // the headers should include csrf token if it is not null
@@ -162,3 +160,5 @@ function getCurrentSymbol() {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get("symbol") || "AAPL";
 }
+
+export default Http;

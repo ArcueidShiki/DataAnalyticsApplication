@@ -1,15 +1,24 @@
 import * as Utils from "./utils.js";
-let sidebar = null;
+import Http from "./http.js";
 export default class Sidebar {
+  static instance = null; // sidebar singleton
   constructor() {
-    if (sidebar) {
-      return sidebar;
+    if (Sidebar.instance) {
+      console.log("Sidebar instance already exists. Returning the existing instance.");
+      return Sidebar.instance;
     }
-    sidebar = this;
+    Sidebar.instance = this;
     this.init();
+  }
+  static getInstance() {
+    if (!Sidebar.instance) {
+      Sidebar.instance = new Sidebar();
+    }
+    return Sidebar.instance;
   }
   init() {
     $(document).ready(() => {
+      this.createSidebarElments();
       if (!this.loadHotTopStocksFromCache() && !this.loadHotTopStocks()) {
         this.loadHotTopStocksFromMockData();
       }
@@ -17,6 +26,110 @@ export default class Sidebar {
       this.setupSettingToggle();
     });
   }
+
+  createUserProfile() {
+    return $(`
+        <div class="sidebar-header">
+          <div class="user-profile" id="profile-toggle">
+            <div class="profile-avatar">
+              <img src="assets/user.jpeg" alt="User Avatar" />
+            </div>
+            <div class="profile-info">
+              <div class="profile-name">Rojo Arab Oktov</div>
+              <div class="profile-balance">$56,320.00</div>
+            </div>
+          </div>
+        </div>
+    `);
+  }
+
+  createMenu() {
+    return $(`
+        <div class="menu-label">MENU</div>
+        <div class="sidebar-menu">
+          <div class="menu-item" id="watchlist-menu-item">
+            <i class="fa-solid fa-th"></i>
+            <span>Watchlist</span>
+          </div>
+          <div class="menu-item">
+            <i class="far fa-user"></i>
+            <span>My asset</span>
+          </div>
+          <div class="menu-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Top chart</span>
+          </div>
+          <div class="menu-item">
+            <i class="fab fa-bitcoin"></i>
+            <span>Crypto</span>
+            <span class="new-badge">new</span>
+          </div>
+          <div class="menu-item">
+            <i class="fa-brands fa-rocketchat"></i>
+            <span>Contact</span>
+          </div>
+        </div>
+    `);
+  }
+
+  createHotTop() {
+    return $(`
+        <div class="watchlist-header">
+          <div class="watchlist-title">TOP HOT</div>
+          <div class="watchlist-dropdown">24h</div>
+        </div>
+
+        <div id="watchlistContainer">
+        </div>
+    `);
+  }
+
+  createSettings() {
+    return $(`
+        <div class="settings">
+          <div class="menu-item settings">
+            <i class="fas fa-user-circle"></i>
+            <span>SETTINGS</span>
+            <i class="fas fa-chevron-down account-arrow"></i>
+          </div>
+          <div class="setting-section hidden">
+            <div class="sidebar-menu">
+              <div class="menu-item" id="themeToggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Account setting</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-sliders-h"></i>
+                <span>Setting</span>
+              </div>
+              <div class="menu-item">
+                <i class="far fa-question-circle"></i>
+                <span>Help center</span>
+              </div>
+              <div class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    `);
+  }
+
+  createSidebarElments() {
+    const sidebarContainer = $(`<div class="sidebar"></div>`);
+    sidebarContainer.append(this.createUserProfile());
+    sidebarContainer.append(this.createMenu());
+    sidebarContainer.append(this.createHotTop());
+    sidebarContainer.append(this.createSettings());
+    $(".app-container").prepend(sidebarContainer);
+    this.setupThemeToggle();
+  }
+
   setupMenuItems() {
     const currentPage = Utils.getCurrentPage();
     const menuItems = $(".menu-item");
@@ -154,5 +267,46 @@ export default class Sidebar {
   loadHotTopStocksFromMockData() {
     const stocks = getMockStocks();
     this.populateHotStocks(stocks);
+  }
+
+  updateThemeUI(theme, icon, text) {
+    if (theme === "light") {
+      icon.classList.remove("fa-moon");
+      icon.classList.add("fa-sun");
+      text.textContent = "Light Mode";
+    } else {
+      icon.classList.remove("fa-sun");
+      icon.classList.add("fa-moon");
+      text.textContent = "Dark Mode";
+    }
+  }
+
+  setupThemeToggle() {
+    const themeToggle = document.getElementById("themeToggle");
+    if (!themeToggle) {
+      console.warn('button ID "themeToggle" not found');
+      return;
+    }
+
+    const icon = themeToggle.querySelector("i");
+    const text = themeToggle.querySelector("span");
+
+    if (!icon || !text) {
+      console.warn("lack of icon or text in themeToggle");
+      return;
+    }
+
+    const currentTheme = localStorage.getItem("theme") || "dark";
+    document.body.setAttribute("data-theme", currentTheme);
+
+    this.updateThemeUI(currentTheme, icon, text);
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = document.body.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+
+      document.body.setAttribute("data-theme", newTheme);
+      this.updateThemeUI(newTheme, icon, text);
+      localStorage.setItem("theme", newTheme);
+    });
   }
 }

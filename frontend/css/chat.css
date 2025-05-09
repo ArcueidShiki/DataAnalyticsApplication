@@ -1,60 +1,9 @@
-/* Chat Application Styles */
-/* Dark theme */
-/* Base Styles */
-:root {
-  --bg-color: #121212;
-  --sidebar-bg: #1a1a1a;
-  --card-bg: #1e1e1e;
-  --card-bg-rgb: 30, 30, 30;
-  --text-color: #ffffff;
-  --text-secondary: #aaaaaa;
-  --primary-color: #4ade80;
-  --border-color: #30363d;
-  --positive-color: #4ade80;
-  --negative-color: #f87171;
-  --accent-color: #4ade80;
-  --hover-bg: rgba(255, 255, 255, 0.05);
-  --bubble-user: #1e3b2c;
-  --bubble-friend: #2a2a2a;
-}
-
-/* light theme */
-[data-theme="light"] {
-  --bg-color: #f5f7fa;
-  --sidebar-bg: #ffffff;
-  --card-bg: #ffffff;
-  --card-bg-rgb: 255, 255, 255;
-  --text-color: #1a1a1a;
-  --text-secondary: #666666;
-  --primary-color: #4ade80;
-  --border-color: #e1e4e8;
-  --positive-color: #10b981;
-  --negative-color: #ef4444;
-  --accent-color: #4ade80;
-  --hover-bg: rgba(0, 0, 0, 0.03);
-  --bubble-user: #dcf8c6;
-  --bubble-friend: #f0f0f0;
-}
+@import url("sidebar.css");
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
-/* App container */
-.app-container {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  min-height: 100vh;
-}
-
-/* Main content area */
 .main-content {
   position: relative;
   flex-direction: row;
@@ -70,7 +19,6 @@ body {
     color 0.3s ease;
 }
 
-/* Chat List Section */
 .chat-list-section {
   width: 320px;
   border-right: 1px solid var(--border-color);

@@ -1,55 +1,10 @@
-/* Watchlist css */
-@import url("base.css");
 @import url("sidebar.css");
 * {
   scrollbar-width: none;
 }
-/* base styles */
-/* dark mode */
-:root {
-  /* dark mode */
-  --bg-color: #121212;
-  --sidebar-bg: #1a1a1a;
-  --card-bg: #1e1e1e;
-  --card-bg-rgb: 30, 30, 30;
-  --text-color: #ffffff;
-  --text-secondary: #8b949e;
-  --primary-color: #4ade80;
-  --border-color: #30363d;
-  --positive-color: #4ade80;
-  --negative-color: #f87171;
-  --accent-color: #4ade80;
-  --hover-bg: rgba(255, 255, 255, 0.05);
-}
 
-/* light mode */
-[data-theme="light"] {
-  --bg-color: #f5f7fa;
-  --sidebar-bg: #ffffff;
-  --card-bg: #ffffff;
-  --card-bg-rgb: 255, 255, 255;
-  --text-color: #1a1a1a;
-  --text-secondary: #666666;
-  --primary-color: #4ade80;
-  --border-color: #e1e4e8;
-  --positive-color: #10b981;
-  --negative-color: #ef4444;
-  --accent-color: #4ade80;
-  --hover-bg: rgba(0, 0, 0, 0.03);
-}
-
-/* App container */
-.app-container {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  min-height: 100vh;
-}
-
-/* main styles */
 .main-content {
+  flex-grow: 1;
   flex: 1;
   padding: 20px 30px;
   background-color: var(--bg-color);
