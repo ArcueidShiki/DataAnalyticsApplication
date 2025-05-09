@@ -1,8 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-
 // https://polygon.io/docs/rest/stocks/tickers/ticker-overview this for company logo and description and financials
-// TODO symbol -> company home page -> domain -> geographical location on google map.
+import Sidebar from "./sidebar.js";
 const apiKey = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"; // Replace with your actual API key
 var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
@@ -365,7 +362,7 @@ async function fetchStockData(
       ohlcValues.push([item.o, item.c, item.l, item.h]); // Open, Close, Low, High
       volumes.push(item.v); // Volume
     });
-    stockData = {
+    const stockData = {
       categoryData: categories,
       values: ohlcValues,
       volumes: volumes,
@@ -570,4 +567,5 @@ $(document).ready(function () {
   const symbol = urlParams.get("symbol") || "META";
   fetchStockData(symbol);
   getTickerOverview(symbol);
+  Sidebar.getInstance();
 });

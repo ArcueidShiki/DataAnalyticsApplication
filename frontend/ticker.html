@@ -3,9 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Investment Dashboard - Apple Inc</title>
+    <title>Investment Dashboard</title>
     <link rel="icon" href="assets/favicon.png" />
-    <!-- css -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -15,11 +14,7 @@
       href="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/ticker.css" />
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/yahoo-finance@0.3.8/lib/index.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script
@@ -30,104 +25,16 @@
       type="text/javascript"
       src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"
     ></script>
-    <script src="js/utils.js"></script>
-    <script src="js/http.js"></script>
+    <link rel="stylesheet" href="css/ticker.css" />
     <script src="js/stock.js"></script>
-    <script src="js/mockdata.js"></script>
-    <script src="js/thememode.js"></script>
-    <script src="js/sidebar.js"></script>
     <script src="js/watchlist-individual.js"></script>
-    <script src="js/ticker.js"></script>
+    <script src="js/ticker.js" type="module"></script>
     <script src="js/search.js"></script>
     <script src="js/trade.js"></script>
   </head>
   <body>
     <div class="app-container">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <div class="sidebar-header">
-          <div class="user-profile" id="profile-toggle">
-            <div class="profile-avatar">
-              <img src="assets/user.jpeg" alt="User Avatar" />
-            </div>
-            <div class="profile-info">
-              <div class="profile-name">Rojo Arab Oktov</div>
-              <div class="profile-balance">$56,320.00</div>
-            </div>
-          </div>
-        </div>
 
-        <div class="menu-label">MENU</div>
-        <div class="sidebar-menu">
-          <div class="menu-item" id="watchlist-menu-item">
-            <i class="fa-solid fa-th"></i>
-            <span>Watchlist</span>
-          </div>
-          <div class="menu-item">
-            <i class="far fa-user"></i>
-            <span>My asset</span>
-          </div>
-          <div class="menu-item">
-            <i class="fas fa-chart-line"></i>
-            <span>Top chart</span>
-          </div>
-          <div class="menu-item">
-            <i class="fab fa-bitcoin"></i>
-            <span>Crypto</span>
-            <span class="new-badge">new</span>
-          </div>
-          <div class="menu-item">
-            <i class="fa-brands fa-rocketchat"></i>
-            <span>Contact</span>
-          </div>
-        </div>
-
-        <!-- Watchlist moved up before Account -->
-        <div class="watchlist-header">
-          <div class="watchlist-title">TOP HOT</div>
-          <div class="watchlist-dropdown">24h</div>
-        </div>
-
-        <div id="watchlistContainer">
-          <!-- generate by JavaScript -->
-        </div>
-
-        <!-- Account section moved to bottom and collapsed by default -->
-        <div class="settings">
-          <div class="menu-item settings">
-            <i class="fas fa-user-circle"></i>
-            <span>SETTINGS</span>
-            <i class="fas fa-chevron-down account-arrow"></i>
-          </div>
-          <div class="setting-section hidden">
-            <div class="sidebar-menu">
-              <!-- Add dark mode toggle as first menu item in settings -->
-              <div class="menu-item" id="themeToggle">
-                <i class="fas fa-moon"></i>
-                <span>Dark Mode</span>
-              </div>
-              <div class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span>Account setting</span>
-              </div>
-              <div class="menu-item">
-                <i class="fas fa-sliders-h"></i>
-                <span>Setting</span>
-              </div>
-              <div class="menu-item">
-                <i class="far fa-question-circle"></i>
-                <span>Help center</span>
-              </div>
-              <div class="menu-item">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main content area -->
       <div class="main-content">
         <!-- <div class="breadcrumb">
           <a href="watchlist.html">Quote</a>
@@ -135,14 +42,11 @@
           <span id="stockName">{{symbol}}</span>
         </div> -->
 
-        <!-- Two-column layout container -->
         <div class="content-container">
-          <!-- Main column -->
           <div class="main-column">
             <div class="stock-header">
               <div class="stock-header-left">
                 <div class="stock-logo">
-                  <!-- api -->
                   <img
                     src="https://logo.clearbit.com/{{symbol}}.com"
                     alt="Company Logo"
@@ -174,9 +78,7 @@
               <button class="tab">News</button>
             </div>
 
-            <!-- tab content  -->
             <div class="tab-content">
-              <!-- Overview tab content -->
               <div class="tab-pane active" id="overview-tab">
                 <div class="chart-section">
                   <div class="price-timeframes-container">
@@ -326,7 +228,6 @@
                   </div>
                 </div>
               </div>
-              <!-- Financials tab -->
               <div class="tab-pane" id="financials-tab">
                 <div class="financials-section">
                   <h2 class="section-title">Financials</h2>
@@ -339,11 +240,9 @@
                       <div class="financials-title">Net Income</div>
                       <div class="financials-value">$57.41B</div>
                     </div>
-                    <!-- More financial cards can be added here -->
                   </div>
                 </div>
               </div>
-              <!-- News tab content  -->
               <div class="tab-pane" id="news-tab">
                 <div class="news-section">
                   <h2 class="section-title">Highlight</h2>
@@ -370,9 +269,7 @@
             </div>
           </div>
 
-          <!-- Side column - Occupying the entire right column -->
           <div class="side-column">
-            <!-- Search bar moved to top -->
             <div class="search-container">
               <i class="fas fa-search search-icon"></i>
               <input
@@ -382,7 +279,6 @@
                 id="stockSearch"
               />
               <div class="search-dropdown" id="searchResults">
-                <!-- Search results will be populated here by JavaScript -->
               </div>
             </div>
 
@@ -392,7 +288,6 @@
               </div>
 
               <div class="stats-grid">
-                <!-- First Row -->
                 <div class="stats-card">
                   <div class="stats-title">Day's open</div>
                   <div class="stats-value" id="daysOpen"></div>
@@ -405,7 +300,6 @@
                   <div class="stats-title">High</div>
                   <div class="stats-value" id="intradayHigh"></div>
                 </div>
-                <!-- Second Row -->
                 <div class="stats-card">
                   <div class="stats-title">Low</div>
                   <div class="stats-value" id="intradayLow"></div>
@@ -490,7 +384,6 @@
                 </div>
               </div>
             </div>
-            <!-- Trading Interface Section -->
             <div class="trading-interface-section">
               <div class="section-header">
                 <div class="section-title">Trading</div>
