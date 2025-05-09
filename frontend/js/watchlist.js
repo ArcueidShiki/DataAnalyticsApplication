@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-
+import Sidebar from "./sidebar.js";
 function popluateWatchlistTable(stocks) {
   const table = $("#watchlistTableBody");
   table.empty();
@@ -68,4 +67,5 @@ $(document).ready(function () {
   if (!loadWatchlistFromCache() && !loadWatchlist()) {
     loadWatchlistFromMockData();
   }
+  const sidebar = new Sidebar();
 });

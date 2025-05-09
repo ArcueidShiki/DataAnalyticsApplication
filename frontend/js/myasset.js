@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // Initialize view control buttons and sorting functionality
 function initViewControls() {
   const viewButtons = document.querySelectorAll(".view-btn");

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+
 // Define HTTP class to handle ajax requests and reponses
 
 // the headers should include csrf token if it is not null

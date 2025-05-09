@@ -1,16 +1,16 @@
-import { defineConfig } from "eslint/config";
 import js from "@eslint/js";
-import globals from "globals";
 
-export default defineConfig([
+export default [
+  js.configs.recommended,
   {
-    files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
-    plugins: { js },
-    extends: ["js/recommended"],
+    languageOptions: {
+      ecmaVersion: "latest", // Use the latest ECMAScript version
+      sourceType: "module",  // Enable ES6 modules
+    },
+    rules: {
+      "no-undef": "off", // Example: Disable 'no-undef' rule
+      "no-unused-vars": "off", // Example: Warn on unused variables
+      "no-console": "off", // Example: Allow console statements
+    },
   },
-  { files: ["**/*.js"], languageOptions: { sourceType: "commonjs" } },
-  {
-    files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
-    languageOptions: { globals: globals.browser },
-  },
-]);
+];

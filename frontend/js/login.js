@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+
 function LoginHandler(e) {
   e.preventDefault();
   const username = $('input[type="text"]').val();

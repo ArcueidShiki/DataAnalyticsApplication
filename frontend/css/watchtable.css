@@ -1,4 +1,6 @@
 /* Watchlist css */
+@import url("base.css");
+@import url("sidebar.css");
 * {
   scrollbar-width: none;
 }

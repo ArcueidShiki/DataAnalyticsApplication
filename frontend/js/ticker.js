@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 
 // https://polygon.io/docs/rest/stocks/tickers/ticker-overview this for company logo and description and financials
 // TODO symbol -> company home page -> domain -> geographical location on google map.

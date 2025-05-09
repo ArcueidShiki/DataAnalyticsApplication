@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 
 class Ticker {
   constructor(symbol, info, close, change, percent_change, marketCap, domain) {

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // Fetch all stock symbols and cache them in localStorage
 function InitSearchSymbols() {
   const symbols = localStorage.getItem("symbolList");
