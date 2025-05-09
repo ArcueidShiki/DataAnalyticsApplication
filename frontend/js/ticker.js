@@ -574,21 +574,25 @@ function addToWatchlist(symbol) {
   // Send the request to the server
   const requestData = {
     symbol: currentSymbol,
-    is_favorite: false
+    is_favorite: false,
   };
 
   // Use the fetch API to send the request
   Http.post("/stock/watchlist/add", requestData)
-    .then(data => {
-      console.log("Added to watchlist:", data);
+    .then(() => {
       $("#followBtn").html('<i class="fas fa-check"></i> Added to Watchlist');
       $("#followBtn").addClass("following");
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error adding to watchlist:", error);
-      
-      if (error.status === 400 && error.responseJSON && error.responseJSON.msg === "Already in watchlist") {
-        $("#followBtn").html('<i class="fas fa-check"></i> Already in Watchlist');
+      if (
+        error.status === 400 &&
+        error.responseJSON &&
+        error.responseJSON.msg === "Already in watchlist"
+      ) {
+        $("#followBtn").html(
+          '<i class="fas fa-check"></i> Already in Watchlist',
+        );
         $("#followBtn").addClass("following");
       } else if (error.status === 401) {
         $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
@@ -607,7 +611,7 @@ $(document).ready(function () {
   getTickerOverview(symbol);
   
   // Add event listener for the follow button
-  $("#followBtn").on("click", function() {
+  $("#followBtn").on("click", function () {
     addToWatchlist();
   });
 
