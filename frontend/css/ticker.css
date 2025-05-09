@@ -1,4 +1,5 @@
 @import url("sidebar.css");
+@import url("searchbar.css");
 
 .top-content-bar {
   display: flex;
@@ -7,95 +8,6 @@
   margin-bottom: 20px;
 }
 
-/* Search bar styles */
-.search-container {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-  margin-bottom: 30px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 15px 10px 40px;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-color);
-  font-size: 14px;
-}
-
-.search-icon {
-  position: absolute;
-  padding: 10px 15px;
-  justify-content: center;
-  color: var(--text-secondary);
-}
-
-.search-dropdown {
-  position: absolute;
-  width: 100%;
-  top: 100%;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  max-height: 300px;
-  z-index: 100;
-  display: none;
-}
-
-.search-dropdown.active {
-  display: block;
-  max-height: 20vh;
-  overflow: hidden;
-}
-
-.search-item {
-  padding: 12px 15px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.search-item:last-child {
-  border-bottom: none;
-}
-
-.search-item:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.search-stock-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  background-color: #333;
-  color: white;
-}
-
-.search-stock-info {
-  flex: 1;
-}
-
-.search-stock-name {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.search-stock-symbol {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
 
 .main-column {
   width: 50vw;
@@ -396,7 +308,7 @@
   /* position: fixed; */
   top: 0;
   left: 0;
-  z-index: 3000;
+  z-index: 0;
   background-color: var(--bg-color);
 }
 
@@ -425,6 +337,7 @@
   border-radius: 10px;
   padding: 8px;
   margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .stats-card {
@@ -559,6 +472,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow: hidden;
 }
 
 .change-item {
@@ -616,7 +530,7 @@
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 4000;
+  z-index: 6000;
 }
 
 .trading-tabs {

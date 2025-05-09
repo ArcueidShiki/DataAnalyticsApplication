@@ -1,5 +1,6 @@
 // https://polygon.io/docs/rest/stocks/tickers/ticker-overview this for company logo and description and financials
 import Sidebar from "./sidebar.js";
+import SearchBar from "./search.js";
 const apiKey = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"; // Replace with your actual API key
 var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
@@ -568,4 +569,5 @@ $(document).ready(function () {
   fetchStockData(symbol);
   getTickerOverview(symbol);
   Sidebar.getInstance();
+  SearchBar.getInstance();
 });

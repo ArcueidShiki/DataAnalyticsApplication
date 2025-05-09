@@ -1,4 +1,5 @@
 import Sidebar from "./sidebar.js";
+import SearchBar from "./search.js";
 function popluateWatchlistTable(stocks) {
   const table = $("#watchlistTableBody");
   table.empty();
@@ -68,4 +69,5 @@ $(document).ready(function () {
     loadWatchlistFromMockData();
   }
   Sidebar.getInstance();
+  SearchBar.getInstance();
 });
