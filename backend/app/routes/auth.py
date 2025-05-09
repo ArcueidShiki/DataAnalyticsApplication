@@ -9,9 +9,10 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 @auth_bp.route('/register', methods=('POST',))
 def register():
     data = request.get_json()
+    if not data:
+        return {"error": "Invalid input"}, 400
     response, status_code = controller.register(data)
     return response, status_code
-
 @auth_bp.route('/login',  methods=('POST',))
 def login():
     data = request.get_json()

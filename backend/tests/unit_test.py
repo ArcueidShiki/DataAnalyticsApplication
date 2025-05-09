@@ -3,13 +3,11 @@ from app import create_app, db
 from flask import json
 
 class AuthTestCase(unittest.TestCase):
+    # tests/unit_test.py
     def setUp(self):
         self.app = create_app(TESTING=True)
         self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        with self.app.app_context():
-            db.create_all()
-        self.client = self.app.test_client()
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite
 
     def test_register_login(self):
         res = self.client.post('/auth/register', json={
