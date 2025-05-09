@@ -1,5 +1,14 @@
 from flask import json
+import pytest
+from app import create_app
 
+@pytest.fixture
+def client():
+    app = create_app(TESTING=True)
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        with app.app_context():
+            yield client
 def test_register_and_login(client):
     # Test registration
     response = client.post('/auth/register', json={
