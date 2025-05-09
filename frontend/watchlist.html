@@ -9,104 +9,12 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/watchtable.css" />
-    <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/http.js"></script>
-    <script src="js/mockdata.js"></script>
-    <script src="js/thememode.js"></script>
-    <script src="js/sidebar.js"></script>
-    <script src="js/watchlist.js"></script>
+    <link rel="stylesheet" href="css/watchtable.css" />
+    <script src="js/watchlist.js" type="module"></script>
   </head>
   <body>
     <div class="app-container">
-      <div class="sidebar">
-        <div class="sidebar-header">
-          <div class="user-profile" id="profile-toggle">
-            <div class="profile-avatar">
-              <img src="assets/user.jpeg" alt="User Avatar" />
-            </div>
-            <div class="profile-info">
-              <div class="profile-name">Rojo Arab Oktov</div>
-              <div class="profile-balance">$56,320.00</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu-label">MENU</div>
-        <div class="sidebar-menu">
-          <div class="menu-item" id="watchlist-menu-item">
-            <i class="fa-solid fa-th"></i>
-            <span>Watchlist</span>
-          </div>
-          <div class="menu-item">
-            <i class="far fa-user"></i>
-            <span>My asset</span>
-          </div>
-          <div class="menu-item">
-            <i class="fas fa-chart-line"></i>
-            <span>Top chart</span>
-          </div>
-          <div class="menu-item">
-            <i class="fab fa-bitcoin"></i>
-            <span>Crypto</span>
-            <span class="new-badge">new</span>
-          </div>
-          <div class="menu-item">
-            <i class="fa-brands fa-rocketchat"></i>
-            <span>Contact</span>
-          </div>
-        </div>
-
-        <!-- Watchlist moved up before Account -->
-        <div class="watchlist-header">
-          <div class="watchlist-title">TOP HOT</div>
-          <div class="watchlist-dropdown">24h</div>
-        </div>
-
-        <div id="watchlistContainer">
-          <!-- generate by JavaScript -->
-        </div>
-
-        <!-- Account section moved to bottom and collapsed by default -->
-        <div class="settings">
-          <div class="menu-item settings">
-            <i class="fas fa-user-circle"></i>
-            <span>SETTINGS</span>
-            <i class="fas fa-chevron-down account-arrow"></i>
-          </div>
-          <div class="setting-section hidden">
-            <div class="sidebar-menu">
-              <!-- Add dark mode toggle as first menu item in settings -->
-              <div class="menu-item" id="themeToggle">
-                <i class="fas fa-moon"></i>
-                <span>Dark Mode</span>
-              </div>
-              <div class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span>Account setting</span>
-              </div>
-              <div class="menu-item">
-                <i class="fas fa-sliders-h"></i>
-                <span>Setting</span>
-              </div>
-              <div class="menu-item">
-                <i class="far fa-question-circle"></i>
-                <span>Help center</span>
-              </div>
-              <div class="menu-item">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main content area -->
       <div class="main-content">
         <div class="breadcrumb">
           <span>Watchlist</span>
@@ -120,7 +28,6 @@
             </div>
           </div>
           <div class="list-header-right">
-            <!-- Search bar moved to top -->
             <div class="search-container">
               <i class="fas fa-search search-icon"></i>
               <input
@@ -130,13 +37,11 @@
                 id="stockSearch"
               />
               <div class="search-dropdown" id="searchResults">
-                <!-- Search results will be populated here by JavaScript -->
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Watchlist Table -->
         <div class="watchlist-table">
           <div class="watchlist-row watchlist-header-row">
             <div></div>
@@ -148,7 +53,6 @@
             <div>Market Cap</div>
           </div>
           <div id="watchlistTableBody">
-            <!-- Will be populated by JavaScript -->
           </div>
         </div>
       </div>
