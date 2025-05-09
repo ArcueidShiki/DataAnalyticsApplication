@@ -24,6 +24,14 @@ KEY_FOLDER = "secrets"
 PRIVATE_KEY_PATH = os.path.join(KEY_FOLDER, "rsa_private.pem")
 PUBLIC_KEY_PATH = os.path.join(KEY_FOLDER, "rsa_public.pem")
 
+@stock_bp.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'http://127.0.0.1:8000')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
+
 def generate_rsa_keys():
     os.makedirs(KEY_FOLDER, exist_ok=True)
     if not os.path.exists(PRIVATE_KEY_PATH):

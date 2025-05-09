@@ -113,6 +113,7 @@ const Http = {
   _addAuthHeaders: function (headers) {
     const jwt = this.getCookie("access_token_cookie");
     headers["Authorization"] = `Bearer ${jwt}`;
+    console.log(headers["Authorization"]);
     // headers["X-CSRF-Token"] = this.getCookie("csrf_access_token");
     return headers;
   },
