@@ -2,7 +2,7 @@ import logging
 from polygon.rest import RESTClient
 from datetime import datetime, timedelta
 
-API_KEY = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"
+API_KEY = "Ug_fJXX8sztY8pAGhKeUX6IIGJ1AMjcj"
 client = RESTClient(API_KEY)
 
 def get_market_summary(date):

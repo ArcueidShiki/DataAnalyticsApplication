@@ -105,13 +105,17 @@ def show_watchlist(user_id):
                 # 'is_favorite': item.is_favorite
             })
     response = make_response(jsonify(stock_data), 200)
-    response.headers['Access-Control-Allow-Origin'] = 'http://127.0.0.1:5500'
+    response.headers['Access-Control-Allow-Origin'] = 'Origin'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     return response
 
 def add_to_watchlist():
     user_id = get_jwt_identity()
     data = request.get_json()
+
+    if not data:
+        return jsonify({"msg": "Missing JSON data"}), 400
+
     symbol = data.get('symbol')
     if not symbol:
         return jsonify({"msg": "Missing field: symbol"}), 400

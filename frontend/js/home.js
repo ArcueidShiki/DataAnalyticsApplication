@@ -400,46 +400,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initialize the chart
   priceChart = initPriceChart(true); // Start with dark theme
-// Interval switch buttons
-const btnWeekly = document.getElementById("btnWeekly");
-const btnMonthly = document.getElementById("btnMonthly");
-const btnYearly = document.getElementById("btnYearly");
+  // Interval switch buttons
+  const btnWeekly = document.getElementById("btnWeekly");
+  const btnMonthly = document.getElementById("btnMonthly");
+  const btnYearly = document.getElementById("btnYearly");
 
-btnWeekly?.addEventListener("click", () => switchInterval("weekly"));
-btnMonthly?.addEventListener("click", () => switchInterval("monthly"));
-btnYearly?.addEventListener("click", () => switchInterval("yearly"));
+  btnWeekly?.addEventListener("click", () => switchInterval("weekly"));
+  btnMonthly?.addEventListener("click", () => switchInterval("monthly"));
+  btnYearly?.addEventListener("click", () => switchInterval("yearly"));
 
-function switchInterval(interval) {
-  let points;
-  const min = 14200;
-  const max = 14500;
+  function switchInterval(interval) {
+    let points;
+    const min = 14200;
+    const max = 14500;
 
-  switch (interval) {
-    case "weekly":
-      points = 7;
-      break;
-    case "monthly":
-      points = 30;
-      break;
-    case "yearly":
-      points = 365;
-      break;
-    default:
-      points = 15;
+    switch (interval) {
+      case "weekly":
+        points = 7;
+        break;
+      case "monthly":
+        points = 30;
+        break;
+      case "yearly":
+        points = 365;
+        break;
+      default:
+        points = 15;
+    }
+
+    const newData = generateRandomChartData(min, max, points);
+    const newCategories = generateDateCategories(points);
+
+    priceChart.updateOptions({
+      series: [{ name: "Price", data: newData }],
+      xaxis: { categories: newCategories },
+    });
+
+    // Highlight active button
+    document
+      .querySelectorAll(".interval-buttons button")
+      .forEach((btn) => btn.classList.remove("active"));
+    document
+      .getElementById(
+        `btn${interval.charAt(0).toUpperCase() + interval.slice(1)}`,
+      )
+      ?.classList.add("active");
   }
-
-  const newData = generateRandomChartData(min, max, points);
-  const newCategories = generateDateCategories(points);
-
-  priceChart.updateOptions({
-    series: [{ name: "Price", data: newData }],
-    xaxis: { categories: newCategories }
-  });
-
-  // Highlight active button
-  document.querySelectorAll(".interval-buttons button").forEach((btn) =>
-    btn.classList.remove("active")
-  );
-  document.getElementById(`btn${interval.charAt(0).toUpperCase() + interval.slice(1)}`)?.classList.add("active");
-}
 });
