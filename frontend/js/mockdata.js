@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* All the dummy data generated in this file */
 
 class Stock {
@@ -40,7 +39,7 @@ function getStockObjects() {
   );
 }
 
-function getMockStocks() {
+export function getMockStocks() {
   return [
     new Stock(
       "AAPL",
