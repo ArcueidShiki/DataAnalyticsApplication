@@ -7,7 +7,7 @@ class AuthTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(TESTING=True)
         self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 
     def test_register_login(self):
         res = self.client.post('/auth/register', json={
