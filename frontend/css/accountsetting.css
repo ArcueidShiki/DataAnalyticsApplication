@@ -59,8 +59,7 @@
 
 /* Adjust layout for modal context */
 .account-settings-modal .account-settings-container {
-  padding: 24px 0;
-  margin-top: 20px;
+  padding: 5px 0;
   min-height: auto;
 }
 
@@ -68,7 +67,6 @@
   display: flex;
   flex-direction: row;
   gap: 24px;
-  margin-bottom: 24px;
   flex-wrap: nowrap;
   overflow: visible;
 }
@@ -86,7 +84,7 @@
 }
 
 .account-settings-header {
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 16px;
 }
@@ -106,7 +104,6 @@
 .settings-layout {
   display: flex;
   gap: 24px;
-  margin-bottom: 24px;
   flex-wrap: wrap;
   min-height: auto;
 }
@@ -200,7 +197,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 1;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .tab-button.active {
@@ -467,7 +464,7 @@ input:checked + .slider:before {
 
 /* Settings Actions */
 .settings-actions {
-  margin-top: 32px;
+  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
   gap: 16px;
