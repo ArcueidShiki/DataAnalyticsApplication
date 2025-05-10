@@ -72,10 +72,6 @@ function initTimeframeButtons() {
   const timeframeBtns = document.querySelectorAll(".timeframe-btn");
   timeframeBtns.forEach((btn) => {
     btn.addEventListener("click", function () {
-      console.log(
-        "Timeframe button clicked:",
-        this.getAttribute("data-timeframe"),
-      );
       timeframeBtns.forEach((b) => b.classList.remove("active"));
       this.classList.add("active");
       const timeframe = this.getAttribute("data-timeframe");

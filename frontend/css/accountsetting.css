@@ -345,7 +345,9 @@
   width: 0;
   background-color: #f00;
   border-radius: 2px;
-  transition: width 0.2s ease, background-color 0.2s ease;
+  transition:
+    width 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .strength-meter.weak::before {

@@ -33,7 +33,7 @@ class Balance(db.Model):
     __tablename__ = 'balances'
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(String, ForeignKey('users.id'), nullable=False)
-    currency = Column(Integer, ForeignKey('currencies.symbol'), nullable=False)
+    currency = Column(String(20), ForeignKey('currencies.symbol'), nullable=False)
     amount = Column(Float, nullable=False, default=0.0)
     user = db.relationship('User', back_populates='balance')
     __table_args__ = (db.UniqueConstraint('user_id', 'currency', name='unique_user_currency'),)
