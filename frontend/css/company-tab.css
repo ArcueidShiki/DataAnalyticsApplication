@@ -1,5 +1,5 @@
 @import url("sidebar.css");
-/* 公司标签页样式 */
+/* Company Tab Styles */
 #company-tab {
   padding: 0;
   background-color: var(--card-bg, #1c1c1e);
@@ -8,12 +8,12 @@
   color: var(--text-color, #fff);
 }
 
-/* 关于部分样式 */
+/* About Section Styles */
 .about-section {
   padding: 20px;
 }
 
-/* 公司描述内容样式 */
+/* Company Description Content Styles */
 .about-content {
   font-size: 15px;
   line-height: 1.6;
@@ -24,7 +24,7 @@
   padding-right: 10px;
 }
 
-/* 滚动条样式 */
+/* Scrollbar Styles */
 .about-content::-webkit-scrollbar {
   width: 6px;
 }
@@ -39,7 +39,7 @@
   border-radius: 3px;
 }
 
-/* 信息部分样式 */
+/* Info Section Styles */
 .info-section {
   background-color: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
@@ -54,7 +54,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* 信息区块标题 */
+/* Info Block Title */
 .info-section h2 {
   font-size: 18px;
   font-weight: 600;
@@ -64,7 +64,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 信息行样式 */
+/* Info Row Styles */
 .info-section > div {
   display: flex;
   margin-bottom: 12px;
@@ -73,7 +73,7 @@
   gap: 10px;
 }
 
-/* 信息标签 */
+/* Info Label */
 .info-section strong {
   display: inline-block;
   width: 100px;
@@ -81,7 +81,7 @@
   font-weight: 500;
 }
 
-/* 信息内容 */
+/* Info Content */
 .info-section span,
 .info-section a {
   flex: 1;
@@ -89,7 +89,7 @@
   word-break: break-word;
 }
 
-/* 链接样式 */
+/* Link Styles */
 .info-section a {
   color: var(--primary-color, #08c53d);
   text-decoration: none;
@@ -101,7 +101,7 @@
   text-decoration: underline;
 }
 
-/* 公司Logo样式 */
+/* Company Logo Styles */
 .company-logo-container {
   text-align: center;
   margin-bottom: 20px;
@@ -125,30 +125,30 @@
   background-color: #ffffff;
 }
 
-/* 空数据占位符 */
+/* Empty Data Placeholder */
 .info-section span:empty::after {
   content: "N/A";
   color: rgba(255, 255, 255, 0.4);
   font-style: italic;
 }
 
-/* 响应式布局 */
+/* Responsive Layout */
 @media (min-width: 768px) {
-  /* 创建双列布局 */
+  /* Create Double Column Layout */
   .info-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
   }
 
-  /* 在中等屏幕上减少信息标签宽度 */
+  /* Reduce Info Label Width on Medium Screens */
   .info-section strong {
     width: 90px;
   }
 }
 
 @media (max-width: 767px) {
-  /* 在小屏幕上单列布局 */
+  /* Single Column Layout on Small Screens */
   .info-section strong {
     width: 100px;
   }
@@ -162,7 +162,7 @@
   }
 }
 
-/* 增强版：添加公司信息卡片式布局 */
+/* Enhanced: Add Company Info Card Layout */
 .info-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -198,7 +198,7 @@
   letter-spacing: 0.5px;
 }
 
-/* 标签样式 */
+/* Tag Styles */
 .company-tag {
   display: inline-block;
   padding: 3px 8px;
@@ -211,7 +211,7 @@
   margin-bottom: 8px;
 }
 
-/* 添加公司名称和徽标的组合布局 */
+/* Add Company Name and Logo Combined Layout */
 .company-header {
   display: flex;
   align-items: center;
@@ -240,19 +240,19 @@
   font-weight: 500;
 }
 
-/* 补充样式:为空的案例处理 */
+/* Additional Styles: Handle Empty Cases */
 #company-homepage:empty::after {
   content: "N/A";
   color: rgba(255, 255, 255, 0.4);
   font-style: italic;
 }
 
-/* 确保错误加载的图片不会占用空间 */
+/* Ensure Error-Loaded Images Don't Take Up Space */
 img.error {
   display: none;
 }
 
-/* 错误情况的回退样式 */
+/* Fallback Styles for Error Cases */
 .image-fallback {
   display: flex;
   align-items: center;
