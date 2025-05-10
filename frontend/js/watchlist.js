@@ -1,6 +1,10 @@
+import Http from "./http.js";
 import Sidebar from "./sidebar.js";
 import SearchBar from "./search.js";
+import { getMockStocks } from "./mockdata.js";
+import { formatMarketCap } from "./utils.js";
 function popluateWatchlistTable(stocks) {
+  console.log("Populating watchlist table with stocks:", stocks);
   const table = $("#watchlistTableBody");
   table.empty();
   stocks.forEach((stock) => {
@@ -11,7 +15,7 @@ function popluateWatchlistTable(stocks) {
       <div class="watchlist-row watchlist-stock-row">
           <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="30px"/>
           <div>${stock.symbol}</div>
-          <div>${stock.info}</div>
+          <div>${stock.company}</div>
           <div>$${stock.close.toFixed(2)}</div>
           <div class="price-change ${changeClass}">
               <i class="fas ${changeIcon}"></i>
@@ -21,7 +25,7 @@ function popluateWatchlistTable(stocks) {
               <i class="fas ${changeIcon}"></i>
               ${changePrefix}${Math.abs(stock.percent_change).toFixed(2)}%
           </div>
-          <div>${stock.marketCap}</div>
+          <div>${formatMarketCap(stock.market_cap)}</div>
       <div>
     `);
     row.on("click", () => {
@@ -65,9 +69,9 @@ function loadWatchlistFromMockData() {
 }
 
 $(document).ready(function () {
+  Sidebar.getInstance();
+  SearchBar.getInstance();
   if (!loadWatchlistFromCache() && !loadWatchlist()) {
     loadWatchlistFromMockData();
   }
-  Sidebar.getInstance();
-  SearchBar.getInstance();
 });
