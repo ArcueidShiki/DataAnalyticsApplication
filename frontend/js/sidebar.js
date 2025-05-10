@@ -141,7 +141,7 @@ export default class Sidebar {
       "my asset": () => (window.location.href = "myasset.html"),
       "top chart": () => (window.location.href = "analysis.html"),
       contact: () => (window.location.href = "chat.html"),
-      "account setting": () => (window.location.href = "accountsetting.html"),
+      "account setting": () => this.showAccountSettingsModal(),
       "help center": () => (window.location.href = "help.html"),
       logout: this.handleLogout,
     };
@@ -152,8 +152,9 @@ export default class Sidebar {
       const menuTextNoSpace = menuText.replace(/\s+/g, "");
 
       if (
-        currentPage.includes(menuTextNoSpace) ||
-        menuTextNoSpace.includes(currentPage)
+        currentPage === menuTextNoSpace ||
+        // Special case for multi-word menu items
+        (menuText.includes(" ") && currentPage === menuText.replace(/\s+/g, ""))
       ) {
         $(this).addClass("active");
       }
@@ -310,6 +311,47 @@ export default class Sidebar {
       document.body.setAttribute("data-theme", newTheme);
       this.updateThemeUI(newTheme, icon, text);
       localStorage.setItem("theme", newTheme);
+    });
+  }
+
+  // Add a new method to handle showing the account settings modal
+  showAccountSettingsModal() {
+    // Check if modal already exists
+    if ($("#account-settings-modal").length === 0) {
+      this.createAccountSettingsModal();
+    } else {
+      $("#account-settings-modal").addClass("show");
+    }
+  }
+
+  // Create the modal dynamically
+  createAccountSettingsModal() {
+    // Create modal container
+    const modal = $('<div id="account-settings-modal" class="account-settings-modal"></div>');
+    
+    // Load content asynchronously to keep things fast
+    $.get("accountsetting.html", function(content) {
+      const modalContent = $('<div class="modal-main-content"></div>').html(content);
+      modal.append(modalContent);
+      
+      // Add close button
+      const closeButton = $('<span class="modal-close">&times;</span>');
+      closeButton.on('click', function() {
+        $("#account-settings-modal").removeClass("show");
+      });
+      
+      modalContent.prepend(closeButton);
+      
+      // Append to body
+      $("body").append(modal);
+      
+      // Show the modal
+      setTimeout(() => {
+        modal.addClass("show");
+        
+        // Initialize account settings functionality
+        new AccountSettings(true); // true indicates it's in a modal
+      }, 100);
     });
   }
 }

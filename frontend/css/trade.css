@@ -197,9 +197,9 @@
   position: absolute;
   bottom: 0;
   margin: 1rem;
-  padding: 1rem;
+  padding: 20px;
   right: 0;
-  width: 20vw;
+  width: 290px;
   max-height: 600px;
   overflow-y: auto;
   background: linear-gradient(135deg, #a3a2a2 0%, #232323 100%);

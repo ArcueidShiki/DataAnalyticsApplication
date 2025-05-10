@@ -1,0 +1,628 @@
+@import url("base.css");
+
+/* main content */
+.account-settings-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.account-settings-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-main-content {
+  background-color: var(--bg-color);
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  border-radius: 12px;
+  overflow-y: auto;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  padding: 45px;
+  transform: translateY(30px);
+  transition: transform 0.3s ease;
+}
+
+.account-settings-modal.show .modal-main-content {
+  transform: translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  color: var(--text-color);
+}
+
+/* Adjust layout for modal context */
+.account-settings-modal .account-settings-container {
+  padding: 24px 0;
+  margin-top: 20px;
+  min-height: auto;
+}
+
+.account-settings-modal .settings-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+
+/* Special styling for multiple modals (confirmation inside settings) */
+.account-settings-modal .modal {
+  z-index: 1100;
+}
+
+/* Account Settings Styles */
+.account-settings-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.account-settings-header {
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+}
+
+.account-settings-header h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.account-settings-header p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Layout for tab-based design */
+.settings-layout {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  min-height: auto;
+}
+
+.settings-left-column {
+  flex: 1;
+  min-width: 350px;
+}
+
+.settings-right-column {
+  flex: 1;
+  min-width: 350px;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  position: relative;
+  display: flex;
+  border-bottom: none; /* Remove the bottom border */
+  margin-bottom: 0; /* Remove margin as we'll connect to the card */
+  overflow-x: auto;
+  z-index: 2;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 16px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+  margin-bottom: 5px; /* Add margin to connect with the card */
+}
+
+.tab-button:hover {
+  color: var(--primary-color);
+}
+
+.tab-button.active {
+  color: var(--text-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.tab-button.active::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 10px;
+  background-color: var(--card-bg);
+  bottom: -10px;
+  left: 0;
+  z-index: 1;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.tab-button i {
+  margin-right: 8px;
+}
+
+.tab-button.active i {
+  color: var(--primary-color);
+  margin-right: 8px;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  position: relative;
+  margin-top: -8px; /* Connect with the tab */
+  border-top-left-radius: 0; /* Remove top left radius when tab is active */
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.tab-content.active .settings-section:first-child {
+  border-top-left-radius: 0;
+  border-top-right-radius: 12px;
+}
+
+.settings-section {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
+}
+
+.tab-button.active {
+  background-color: var(--card-bg);
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding-bottom: 14px; /* Slightly increase padding to connect with card */
+  box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+}
+
+.settings-section h2,
+.settings-section h3 {
+  font-size: 18px;
+  margin-bottom: 24px;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+}
+
+.settings-section h2 i,
+.settings-section h3 i {
+  margin-right: 12px;
+  color: var(--primary-color);
+}
+
+/* Profile Edit Section */
+.profile-edit-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile-avatar-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-edit-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.avatar-container:hover .avatar-edit-overlay {
+  opacity: 1;
+}
+
+.avatar-edit-overlay i {
+  color: white;
+  font-size: 32px;
+}
+
+.avatar-upload-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.avatar-upload-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+.profile-details-edit {
+  width: 100%;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Password Strength */
+.password-strength {
+  margin-top: 24px;
+}
+
+.strength-meter {
+  height: 4px;
+  width: 100%;
+  background-color: #e5e5e5;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.strength-meter::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 0;
+  background-color: #f00;
+  border-radius: 2px;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.strength-meter.weak::before {
+  width: 25%;
+  background-color: #f00;
+}
+
+.strength-meter.medium::before {
+  width: 50%;
+  background-color: #ff9800;
+}
+
+.strength-meter.strong::before {
+  width: 75%;
+  background-color: #ffc107;
+}
+
+.strength-meter.very-strong::before {
+  width: 100%;
+  background-color: #4caf50;
+}
+
+.strength-text {
+  font-weight: bold;
+}
+
+/* Toggle Switch */
+.toggle-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Danger Zone */
+.danger-zone {
+  border: 1px solid #f44336;
+}
+
+.danger-zone h3 {
+  color: #f44336;
+}
+
+.delete-account-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 12px;
+}
+
+.delete-account-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Settings Actions */
+.settings-actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.cancel-btn {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: var(--hover-bg);
+}
+
+.save-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.save-btn:hover {
+  background: linear-gradient(135deg, #d2fc6d 10%, #007f5f 100%);
+  color: #ffffff;
+}
+
+/* Confirmation Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.close-modal {
+  color: var(--text-secondary);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: var(--text-color);
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.confirm-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.confirm-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  background-color: #333;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.success-toast {
+  background-color: #4caf50;
+}
+
+.toast.error-toast {
+  background-color: #f44336;
+}
+
+.toast.info-toast {
+  background-color: #2196f3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .settings-layout {
+    flex-direction: column;
+  }
+
+  .settings-left-column,
+  .settings-right-column {
+    width: 100%;
+  }
+
+  .profile-edit-container {
+    align-items: center;
+  }
+}
