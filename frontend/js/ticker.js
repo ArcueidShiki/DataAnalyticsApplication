@@ -7,9 +7,12 @@ var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
 function drawCandleStickChart(symbol, data) {
   var dom = document.getElementById("candlestickChart");
+  dom.style.width = '100%';
+
   var chart = echarts.init(dom, "dark", {
     renderer: "canvas", // "svg" or "canvas"
     useDirtyRect: false,
+    width: 'auto'
   });
   // "https://echarts.apache.org/examples/data/asset/data/stock-DJI.json"; exmaple data.
   var app = {};

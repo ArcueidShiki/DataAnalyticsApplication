@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Settings</title>
+    <link rel="icon" href="assets/favicon.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/accountsetting.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/accountsetting.js"></script>
+  </head>
+  <body>
+    <div class="account-settings-container">
+      <div class="account-settings-header">
+        <h1>Account Settings</h1>
+        <p>Manage your account information and preferences</p>
+      </div>
+
+      <div class="settings-layout">
+        <!-- Profile Information Section - Left Column -->
+        <div class="settings-left-column">
+          <div class="settings-section">
+            <h2><i class="fas fa-user"></i> Profile Information</h2>
+            <div class="profile-edit-container">
+              <div class="profile-avatar-edit">
+                <div class="avatar-container">
+                  <img
+                    src="assets/user.jpeg"
+                    alt="User Avatar"
+                    id="profile-avatar"
+                  />
+                  <div class="avatar-edit-overlay">
+                    <i class="fas fa-camera"></i>
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  accept="image/*"
+                  style="display: none"
+                />
+              </div>
+
+              <div class="profile-details-edit">
+                <div class="form-group">
+                  <label for="fullname">Full Name</label>
+                  <input type="text" id="fullname" value="Rojo Arab Oktov" />
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email Address</label>
+                  <input type="email" id="email" value="rojo@example.com" />
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">Phone Number</label>
+                  <input type="tel" id="phone" value="+1 (555) 123-4567" />
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date of Birth</label>
+                    <input type="date" id="birthdate" value="1999-01-01" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column with Tabs -->
+        <div class="settings-right-column">
+          <div class="tab-navigation">
+            <button class="tab-button active" data-tab="security-tab">
+              <i class="fas fa-lock"></i> Security
+            </button>
+            <button class="tab-button" data-tab="notifications-tab">
+              <i class="fas fa-bell"></i> Notifications
+            </button>
+          </div>
+
+          <!-- Security Tab Content -->
+          <div class="tab-content active" id="security-tab">
+            <div class="settings-section">
+              <h3>Password Settings</h3>
+              <div class="form-group">
+                <label for="current-password">Current Password</label>
+                <input type="password" id="current-password" />
+              </div>
+
+              <div class="form-group">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" />
+              </div>
+
+              <div class="form-group">
+                <label for="confirm-password">Confirm New Password</label>
+                <input type="password" id="confirm-password" />
+              </div>
+
+              <div class="password-strength" id="password-strength">
+                <div class="strength-meter"></div>
+                <span
+                  >Password Strength:
+                  <span class="strength-text">Not set</span></span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications Tab Content -->
+          <div class="tab-content" id="notifications-tab">
+            <div class="settings-section">
+              <h3>Notification Preferences</h3>
+              <div class="toggle-setting">
+                <span>Email Notifications</span>
+                <label class="switch">
+                  <input type="checkbox" checked id="email-notifications" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="toggle-setting">
+                <span>Push Notifications</span>
+                <label class="switch">
+                  <input type="checkbox" checked id="push-notifications" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="toggle-setting">
+                <span>Market Alerts</span>
+                <label class="switch">
+                  <input type="checkbox" checked id="market-alerts" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="toggle-setting">
+                <span>Newsletter Subscription</span>
+                <label class="switch">
+                  <input type="checkbox" id="newsletter" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-actions">
+        <button class="cancel-btn">Cancel</button>
+        <button class="save-btn" id="save-settings">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confirm Changes</h2>
+          <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to save these changes?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="cancel-btn" id="modal-cancel">Cancel</button>
+          <button class="confirm-btn" id="modal-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
