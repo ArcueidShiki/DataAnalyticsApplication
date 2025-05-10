@@ -165,7 +165,6 @@ function initTimeframeButtons() {
       timeframeBtns.forEach((b) => b.classList.remove("active"));
       this.classList.add("active");
       const timeframe = this.getAttribute("data-timeframe");
-      updateChartWithDummyData(timeframe);
     });
   });
 }
@@ -259,11 +258,6 @@ function updateMainContentWithStock(name, symbol) {
       followBtn.classList.remove("followed");
     }
   }
-
-  // Update chart with new data
-  updateChartWithDummyData("1D");
-
-  // Update breadcrumb
   const breadcrumbSpan = document.querySelector(".breadcrumb span");
   if (breadcrumbSpan) {
     breadcrumbSpan.textContent = name;

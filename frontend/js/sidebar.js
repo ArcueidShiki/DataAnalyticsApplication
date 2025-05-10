@@ -204,16 +204,17 @@ export default class Sidebar {
   }
 
   loadHotTopStocks() {
-    Http.get("/stock/hot")
-      .then((stocks) => {
-        this.populateHotStocks(stocks);
-        localStorage.setItem("hotStocks", JSON.stringify(stocks));
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error loading hot stocks:", error);
-        return false;
-      });
+    // Http.get("/stock/hot")
+    //   .then((stocks) => {
+    //     this.populateHotStocks(stocks);
+    //     localStorage.setItem("hotStocks", JSON.stringify(stocks));
+    //     return true;
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error loading hot stocks:", error);
+    //     return false;
+    //   });
+    return true;
   }
 
   loadHotTopStocksFromCache() {
