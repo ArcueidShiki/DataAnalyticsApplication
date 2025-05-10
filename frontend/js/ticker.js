@@ -1,4 +1,4 @@
-// https://polygon.io/docs/rest/stocks/tickers/ticker-overview this for company logo and description and financials
+import Http from "./http.js";
 import Sidebar from "./sidebar.js";
 import SearchBar from "./search.js";
 import TradeCard from "./trade.js";
@@ -335,14 +335,23 @@ function fillData(symbol, data) {
   fillOverviewInfo(symbol, data["overview"]);
 }
 
-async function fetchStockData(
-  symbol,
-  multiplier = 1,
-  timespan = "day",
-  fromDate = "2025-01-01",
-  toDate = "2025-03-31",
-  limit = 120,
-) {
+function getDailyData(symbol) {
+  Http.get(`/stock/${symbol}/daily`)
+    .then((response) => {
+      console.log("Intraday data:", response);
+    })
+    .catch((error) => {
+      console.error("Error fetching daily data:", error);
+    });
+}
+
+function getWeeklyData(symbol) {
+}
+
+function getMonthlyData(symbol) {
+}
+
+async function fetchStockData(symbol) {
   if (gStockMap && gStockMap[symbol] && gStockMap[symbol]["hisotry"]) {
     fillTickerData(symbol, gStockMap[symbol]["history"]);
     return true;
@@ -537,11 +546,6 @@ function fillOverviewInfo(symbol, data) {
   $(".stock-company").text(symbol);
   $(".stock-details").text(data.name);
   $("#companyLogo").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
-  // const logo = $(".stock-logo");
-  // logo.append(website_to_logo(symbol, data.homepage_url));
-  // $("#companyDescription").text(data.description);
-
-  // Fill company information
   $("#company-name").text(data.name);
   $("#company-description").text(data.description);
   $("#company-market-cap").text(
@@ -552,14 +556,10 @@ function fillOverviewInfo(symbol, data) {
   $("#company-homepage")
     .attr("href", data.homepage_url)
     .text(data.homepage_url);
-
-  // Fill address
   $("#company-address").text(data.address.address1);
   $("#company-city").text(data.address.city);
   $("#company-state").text(data.address.state);
   $("#company-postal-code").text(data.address.postal_code);
-
-  // Fill branding
   $("#company-logo").attr("src", `${data.branding.logo_url}?apiKey=${apiKey}`);
   $("#company-icon").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
 }
@@ -609,7 +609,7 @@ function addToWatchlist(symbol) {
 $(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);
   const symbol = urlParams.get("symbol") || "META";
-  fetchStockData(symbol);
+  // getDailyData(symbol);
   getTickerOverview(symbol);
 
   // Add event listener for the follow button

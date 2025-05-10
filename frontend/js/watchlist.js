@@ -1,5 +1,7 @@
+import Http from "./http.js";
 import Sidebar from "./sidebar.js";
 import SearchBar from "./search.js";
+import { getMockStocks } from "./mockdata.js";
 function popluateWatchlistTable(stocks) {
   const table = $("#watchlistTableBody");
   table.empty();

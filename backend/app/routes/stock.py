@@ -5,53 +5,38 @@ from flask_cors import cross_origin
 
 stock_bp = Blueprint('stock', __name__, url_prefix='/stock')
 
+@stock_bp.route('/all/symbols', methods=['GET'])
+def get_all_symbols():
+    return controller.get_all_symbols()
+
 @stock_bp.route('/<string:symbol>/overview', methods=['GET'])
-def show_overview(symbol):
-    return controller.show_overview(symbol)
-
-@stock_bp.route('/<string:symbol>/analyst', methods=['GET'])
-def show_analyst(symbol):
-    return controller.show_analyst(symbol)
-
-@stock_bp.route('/<string:symbol>/company', methods=['GET'])
-def show_company(symbol):
-    return controller.show_company(symbol)
+def get_ticker_overview(symbol):
+    return controller.get_ticker_overview(symbol)
 
 @stock_bp.route('/<string:symbol>/financials', methods=['GET'])
-def show_financials(symbol):
-    return controller.show_financials(symbol)
+def get_financials(symbol):
+    return controller.get_financials(symbol)
 
 @stock_bp.route('/<string:symbol>/news', methods=['GET'])
-def show_news(symbol):
-    return controller.show_news(symbol)
+def get_news(symbol):
+    return controller.get_news(symbol)
 
-@stock_bp.route('/buy', methods=['POST', 'OPTIONS'])
-@jwt_required()
-def buy():
-    if request.method == 'OPTIONS':
-        response = jsonify({"message": "Preflight request successful"})
-        return add_cors_headers(response), 204
-    return controller.buy()
+@stock_bp.route('/<string:symbol>/daily', methods=['GET'])
+def get_daliy_data(symbol):
+    return controller.get_daliy_data(symbol)
 
-@stock_bp.route('/sell', methods=['POST', 'OPTIONS'])
-@jwt_required()
-def sell():
-    if request.method == 'OPTIONS':
-        response = jsonify({"message": "Preflight request successful"})
-        return add_cors_headers(response), 204
-    return controller.sell()
+@stock_bp.route('/<string:symbol>/weekly', methods=['GET'])
+def get_weekly_data(symbol):
+    return controller.get_weekly_data(symbol)
 
-
-@stock_bp.route('/hot', methods=['GET'])
-def get_top_hot_stocks():
-    return controller.get_top_hot_stocks()
+@stock_bp.route('/<string:symbol>/monthly', methods=['GET'])
+def get_monthly_data(symbol):
+    return controller.get_monthly_data(symbol)
 
 @stock_bp.after_request
 def add_cors_headers(response):
     origin = request.headers.get("Origin")
-    # print(f"Origin: {origin}")
-    if origin :
-    # and (origin.startswith("http://127.0.0.1") or origin.startswith("http://[::1]")):
+    if origin and (origin.startswith("http://127.0.0.1") or origin.startswith("http://[::1]")):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
@@ -78,12 +63,23 @@ def add_to_watchlist():
 @stock_bp.route('/watchlist/remove', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def remove_from_watchlist():
+    if request.method == 'OPTIONS':
+        response = jsonify({"message": "Preflight request successful"})
+        return add_cors_headers(response), 204
     return controller.remove_from_watchlist()
 
-@stock_bp.route('/market/<string:date>', methods=['GET'])
-def get_yesterday_market_summary(date):
-    return controller.get_yesterday_market_summary(date)
+@stock_bp.route('/buy', methods=['POST', 'OPTIONS'])
+@jwt_required()
+def buy():
+    if request.method == 'OPTIONS':
+        response = jsonify({"message": "Preflight request successful"})
+        return add_cors_headers(response), 204
+    return controller.buy()
 
-@stock_bp.route('/all/symbols', methods=['GET'])
-def get_all_symbols():
-    return controller.get_all_symbols()
+@stock_bp.route('/sell', methods=['POST', 'OPTIONS'])
+@jwt_required()
+def sell():
+    if request.method == 'OPTIONS':
+        response = jsonify({"message": "Preflight request successful"})
+        return add_cors_headers(response), 204
+    return controller.sell()
