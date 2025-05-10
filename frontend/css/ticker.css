@@ -14,40 +14,23 @@
   height: 100%;
   position: relative;
   flex: 1;
-  margin: 1rem;
+  margin: 10px 20px;
   bottom: 1rem;
 }
 
-/* Breadcrumb navigation */
-/* .breadcrumb {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: var(--text-secondary);
-}
-
-.breadcrumb a {
-  color: var(--text-secondary);
-  text-decoration: none;
-}
-
-.breadcrumb i {
-  margin: 0 10px;
-  font-size: 10px;
-} */
-
 /* Stock header */
 .stock-header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .stock-header-left {
   display: flex;
-  align-items: center;
+  margin-top: 20px;
+  /* align-items: center; */
   gap: 15px;
 }
 
@@ -85,7 +68,8 @@
 
 .stock-header-right {
   display: flex;
-  align-items: right;
+  /* align-items: right; */
+  margin-top: 40px;
   gap: 15px;
 }
 
@@ -197,6 +181,7 @@
   display: flex;
   align-items: flex-start;
   margin-bottom: 0;
+  margin-left: 20px;
   height: auto;
 }
 
@@ -310,7 +295,7 @@
 
 #candlestickChart {
   height: 70vh;
-  width: 100%;
+  width: 100% !important;
   /* position: fixed; */
   top: 0;
   left: 0;
@@ -558,7 +543,7 @@
 }
 
 .main-content {
-  width: 85%;
+  width: 100%;
   height: 100%;
   background-color: var(--bg-color);
   overflow: scroll;
@@ -568,7 +553,8 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-top: 3rem;
+  margin-top: 30px;
+  margin-bottom: 30px;
   width: 100%;
   height: 100%;
 }
@@ -576,8 +562,8 @@
 .side-column {
   margin: 1rem;
   padding: 1rem;
-  top: 10vh;
+  top: auto;
   right: 0;
-  width: 20vw;
+  width: auto;
   flex-shrink: 0;
 }

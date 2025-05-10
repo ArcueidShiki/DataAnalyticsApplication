@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Manage your account settings and preferences"
+    />
+    <title>Account Settings</title>
+    <link rel="icon" href="assets/favicon.png" />
+    <!-- Consolidated Font Awesome (using one version) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-abcdefghijklmnopqrstuvwxyz1234567890"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/accountsetting.css" />
+    <!-- Defer non-critical JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="js/accountsetting.js" defer></script>
+  </head>
+  <body>
+    <main class="account-settings-container">
+      <header class="account-settings-header">
+        <h1>Account Settings</h1>
+        <p>Manage your account information and preferences</p>
+      </header>
+      <div class="settings-layout">
+        <!-- Profile Information Section - Left Column -->
+        <section class="settings-left-column">
+          <div class="settings-section" id="profile-section">
+            <h2>
+              <i class="fas fa-user" aria-hidden="true"></i> Profile Information
+            </h2>
+            <div class="profile-edit-container">
+              <div class="profile-avatar-edit">
+                <div class="avatar-container">
+                  <img
+                    src="assets/user.jpeg"
+                    alt="User Avatar"
+                    id="profile-avatar"
+                    width="150"
+                    height="150"
+                  />
+                  <div
+                    class="avatar-edit-overlay"
+                    role="button"
+                    aria-label="Change profile picture"
+                  >
+                    <i class="fas fa-camera" aria-hidden="true"></i>
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  accept="image/*"
+                  aria-label="Upload profile picture"
+                  hidden
+                />
+              </div>
+
+              <form class="profile-details-edit">
+                <div class="form-group">
+                  <label for="fullname">Full Name</label>
+                  <input
+                    type="text"
+                    id="fullname"
+                    value="Rojo Arab Oktov"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    value="rojo@example.com"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value="+1 (555) 123-4567"
+                    pattern="[+]?[0-9\s()-]+"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="birthdate">Date of Birth</label>
+                  <input type="date" id="birthdate" value="1999-01-01" />
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Column with Tabs -->
+        <section class="settings-right-column">
+          <div class="tab-navigation" role="tablist">
+            <button
+              class="tab-button active"
+              id="security-tab-btn"
+              data-tab="security-tab"
+              role="tab"
+              aria-selected="true"
+              aria-controls="security-tab"
+            >
+              <i class="fas fa-lock" aria-hidden="true"></i> Security
+            </button>
+            <button
+              class="tab-button"
+              id="notifications-tab-btn"
+              data-tab="notifications-tab"
+              role="tab"
+              aria-selected="false"
+              aria-controls="notifications-tab"
+            >
+              <i class="fas fa-bell" aria-hidden="true"></i> Notifications
+            </button>
+          </div>
+
+          <!-- Security Tab Content -->
+          <div
+            class="tab-content active"
+            id="security-tab"
+            role="tabpanel"
+            aria-labelledby="security-tab-btn"
+          >
+            <div class="settings-section">
+              <h3>Password Settings</h3>
+              <form id="password-form">
+                <div class="form-group">
+                  <label for="current-password">Current Password</label>
+                  <input
+                    type="password"
+                    id="current-password"
+                    autocomplete="current-password"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="new-password">New Password</label>
+                  <input
+                    type="password"
+                    id="new-password"
+                    autocomplete="new-password"
+                    aria-describedby="password-strength"
+                    minlength="8"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="confirm-password">Confirm New Password</label>
+                  <input
+                    type="password"
+                    id="confirm-password"
+                    autocomplete="new-password"
+                    required
+                  />
+                </div>
+
+                <div
+                  class="password-strength"
+                  id="password-strength"
+                  aria-live="polite"
+                >
+                  <div class="strength-meter"></div>
+                  <span
+                    >Password Strength:
+                    <span class="strength-text">Not set</span></span
+                  >
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Notifications Tab Content -->
+          <div
+            class="tab-content"
+            id="notifications-tab"
+            role="tabpanel"
+            aria-labelledby="notifications-tab-btn"
+            hidden
+          >
+            <div class="settings-section">
+              <h3>Notification Preferences</h3>
+              <form id="notifications-form">
+                <div class="toggle-setting">
+                  <label for="email-notifications">Email Notifications</label>
+                  <div class="switch">
+                    <input type="checkbox" checked id="email-notifications" />
+                    <span class="slider round"></span>
+                  </div>
+                </div>
+
+                <div class="toggle-setting">
+                  <label for="push-notifications">Push Notifications</label>
+                  <div class="switch">
+                    <input type="checkbox" checked id="push-notifications" />
+                    <span class="slider round"></span>
+                  </div>
+                </div>
+
+                <div class="toggle-setting">
+                  <label for="market-alerts">Market Alerts</label>
+                  <div class="switch">
+                    <input type="checkbox" checked id="market-alerts" />
+                    <span class="slider round"></span>
+                  </div>
+                </div>
+
+                <div class="toggle-setting">
+                  <label for="newsletter">Newsletter Subscription</label>
+                  <div class="switch">
+                    <input type="checkbox" id="newsletter" />
+                    <span class="slider round"></span>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="settings-actions">
+        <button type="button" class="cancel-btn">Cancel</button>
+        <button type="submit" class="save-btn" id="save-settings">
+          Save Changes
+        </button>
+      </div>
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div
+      class="modal"
+      id="confirmation-modal"
+      role="dialog"
+      aria-labelledby="modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-title">Confirm Changes</h2>
+          <button class="close-modal" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to save these changes?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" id="modal-cancel">
+            Cancel
+          </button>
+          <button type="button" class="confirm-btn" id="modal-confirm">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
