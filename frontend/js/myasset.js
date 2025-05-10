@@ -1,5 +1,6 @@
 import Sidebar from "./sidebar.js";
 import Http from "./http.js";
+import TradeCard from "./trade.js";
 function initViewControls() {
   const viewButtons = document.querySelectorAll(".view-btn");
 
@@ -112,4 +113,6 @@ document.addEventListener("DOMContentLoaded", function () {
   initViewControls();
   initPortfolioChart();
   Sidebar.getInstance();
+  const symbol = "TSLA";
+  TradeCard.getInstance(symbol);
 });

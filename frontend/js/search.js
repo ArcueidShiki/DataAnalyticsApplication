@@ -5,7 +5,7 @@ export default class SearchBar {
   constructor() {
     if (SearchBar.instance) {
       console.log(
-        "SearchBar instance already exists. Returning the existing instance."
+        "SearchBar instance already exists. Returning the existing instance.",
       );
       return SearchBar.instance;
     }
@@ -71,7 +71,7 @@ export default class SearchBar {
 
       if (query) {
         const filteredSymbols = symbols.filter((symbol) =>
-          symbol.toLowerCase().includes(query)
+          symbol.toLowerCase().includes(query),
         );
         if (filteredSymbols.length > 0) {
           filteredSymbols.forEach((symbol) => {

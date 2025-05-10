@@ -1,432 +1,292 @@
-/**
- * Trading Interface
- * A modular implementation of a trading platform interface
- */
+// import Http from "./http";
+export default class TradeCard {
+  static instance = null;
+  symbol = null;
+  quantity = null;
+  currentPrice = null;
+  targetPrice = null;
+  amount = null;
+  maxQtyToBuy = 0;
+  maxQtyToSell = 0;
 
-/**
- * Initialize trading action tabs (Buy/Sell)
- * @returns {void}
- */
-function initTradingTabs() {
-  const tradingTabs = document.querySelectorAll(".trading-tab");
+  constructor(symbol, price) {
+    if (TradeCard.instance) {
+      console.log(
+        "TradeCard instance already exists. Returning the existing instance."
+      );
+      return TradeCard.instance;
+    }
+    TradeCard.instance = this;
+    this.init();
+    this.symbol = symbol;
+    this.currentPrice = price;
+  }
 
-  tradingTabs.forEach((tab) => {
-    tab.addEventListener("click", function () {
-      // Remove active class from all tabs
-      tradingTabs.forEach((t) => t.classList.remove("active"));
+  static getInstance(symbol = null, price = null) {
+    if (!TradeCard.instance) {
+      TradeCard.instance = new TradeCard(symbol, price);
+    }
+    if (symbol) {
+      TradeCard.instance.updateSymbol(symbol, price);
+    }
+    return TradeCard.instance;
+  }
 
-      // Add active class to clicked tab
-      this.classList.add("active");
+  init() {
+    this.createTradeCardElements();
+    this.initTradingTabs();
+    this.initPlaceOrderButton();
+    this.setupResponsiveTrading();
+  }
 
-      // Update button text only, not directly setting styles
-      const placeOrderButton = document.querySelector(".place-order-button");
-      if (placeOrderButton) {
-        // Set button text based on action type
-        placeOrderButton.textContent =
-          this.dataset.action === "buy"
-            ? "Place Buy Order"
-            : "Place Sell Order";
+  createTradeCardElements() {
+    const tradeCard = $(`<div class="trading-interface-section">`);
+    tradeCard.append(this.createHeader());
+    tradeCard.append(this.createInputGroups());
+    tradeCard.append(this.createSummary());
+    $(".app-container").append(tradeCard);
+  }
+  createHeader() {
+    return $(`
+      <div class="section-header">
+        <div class="section-title">Trade</div>
+      </div>
 
-        // Remove all possible action classes
-        placeOrderButton.classList.remove("buy-action", "sell-action");
+      <div class="trading-type-options">
+        <button class="type-option active" data-type="stocks">
+          NVDA
+        </button>
+      </div>
+    `);
+  }
 
-        // Add class for current action
-        placeOrderButton.classList.add(`${this.dataset.action}-action`);
-      }
+  createInputGroups() {
+    return $(`
+      <div class="trading-input-group">
+        <div class="trading-input-label">Price</div>
+        <div class="trading-input-container">
+          <input
+            type="number"
+            class="trading-input"
+            id="tradePrice"
+            value="152.35"
+          />
+          <div class="trading-input-suffix">USD</div>
+          <div class="trading-input-controls">
+            <button class="input-control decrease">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button class="input-control increase">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
-      // Update body data attribute for CSS usage
-      document.body.setAttribute("data-trading-action", this.dataset.action);
-    });
-  });
-}
+      <div class="trading-input-group">
+        <div class="trading-input-label">Quantity</div>
+        <div class="trading-input-container">
+          <input
+            type="number"
+            class="trading-input"
+            id="tradeQuantity"
+            placeholder="0"
+          />
+        </div>
+      </div>
 
-/**
- * Initialize trading type options (Stocks/Global/Futures)
- * @returns {void}
- */
-function initTypeOptions() {
-  const typeOptions = document.querySelectorAll(".type-option");
+      <div class="trading-input-group">
+        <div class="trading-input-label">Amount</div>
+        <div class="trading-input-container">
+          <input
+          type="number"
+          class="trading-input"
+          id="amount"
+          value="0"
+          readonly
+        />
+          <div class="trading-input-suffix">USD</div>
+        </div>
+      </div>
+    `)
+  }
 
-  typeOptions.forEach((option) => {
-    option.addEventListener("click", function () {
-      typeOptions.forEach((o) => o.classList.remove("active"));
-      this.classList.add("active");
-    });
-  });
-}
+  createSummary() {
+    return $(`
+      <div class="trading-summary">
+        <div class="summary-item">
+          <div class="summary-label">
+            Max Qty to Buy(Cash): <span class="summary-value buy">19</span>
+          </div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">
+            Max Qty to Sell: <span class="summary-value sell">65</span>
+          </div>
+        </div>
+      </div>
+      <div class="trading-tabs">
+        <button class="trading-tab active" data-action="buy">
+          Buy
+        </button>
+        <button class="trading-tab" data-action="sell">Sell</button>
+      </div>
+      <button class="place-order-button">Place Order</button>
+    `)
+  }
 
-/**
- * Initialize price input controls with increment/decrement buttons
- * @returns {void}
- */
-function initPriceControls() {
-  const priceInput = document.getElementById("tradePrice");
-  const decreaseBtn = document.querySelector(".decrease");
-  const increaseBtn = document.querySelector(".increase");
-
-  // Set initial price from stock data if available
-  const currentPriceEl = document.getElementById("currentPrice");
-  if (currentPriceEl) {
-    const currentPrice = parseFloat(
-      currentPriceEl.textContent.replace("$", ""),
-    );
-    if (!isNaN(currentPrice)) {
-      priceInput.value = currentPrice.toFixed(2);
+  updateSymbol(symbol, price) {
+    this.symbol = symbol;
+    this.currentPrice = price;
+    const symbolElement = document.querySelector(".type-option.active");
+    const priceElement = document.getElementById("tradePrice");
+    if (symbolElement) {
+      symbolElement.textContent = symbol;
+    }
+    if (priceElement) {
+      priceElement.value = price;
     }
   }
 
-  decreaseBtn.addEventListener("click", function () {
-    let currentValue = parseFloat(priceInput.value);
-    if (!isNaN(currentValue)) {
-      priceInput.value = (currentValue - 0.01).toFixed(2);
-      updateTradingSummary();
-    }
-  });
-
-  increaseBtn.addEventListener("click", function () {
-    let currentValue = parseFloat(priceInput.value);
-    if (!isNaN(currentValue)) {
-      priceInput.value = (currentValue + 0.01).toFixed(2);
-      updateTradingSummary();
-    }
-  });
-
-  // Update trading summary when price input changes
-  priceInput.addEventListener("input", updateTradingSummary);
-}
-
-/**
- * Calculate positions of slider options
- * @returns {Array} Array of position data for each option
- */
-function calculateOptionPositions() {
-  const sliderOptions = document.querySelectorAll(".slider-option");
-  const sliderTrack = document.querySelector(".trading-slider-track");
-  const positions = [];
-
-  if (sliderTrack && sliderOptions.length > 0) {
-    const trackRect = sliderTrack.getBoundingClientRect();
-    const trackLeft = trackRect.left;
-    const trackWidth = trackRect.width;
-
-    sliderOptions.forEach((option, index) => {
-      const optionRect = option.getBoundingClientRect();
-      const optionCenter = optionRect.left + optionRect.width / 2 - trackLeft;
-      const percentage = (optionCenter / trackWidth) * 100;
-
-      positions.push({
-        index: index,
-        position: percentage,
-        width: (optionRect.width / trackWidth) * 100,
-        value: parseInt(option.dataset.value || index * 20), // Default 20% increment
+  initTradingTabs() {
+    const tradingTabs = $(".trading-tab");
+    tradingTabs.each(function () {
+      $(this).on("click", function () {
+        tradingTabs.each(function () {
+          $(this).removeClass("active");
+        });
+        $(this).addClass("active");
+        const placeOrderButton = $(".place-order-button");
+        if (placeOrderButton) {
+          let action = $(this).attr("data-action");
+          placeOrderButton.text(
+            action === "buy" ? "Place Buy Order" : "Place Sell Order"
+          );
+          placeOrderButton.removeClass("buy-action sell-action");
+          action = $(this).attr("data-action");
+          placeOrderButton.addClass(`${action}-action`);
+        }
       });
     });
   }
 
-  return positions;
-}
+  initPriceControls() {
+    this.currentPrice = parseFloat($("#currentPrice").text());
+    const priceInput = $("#tradePrice");
+    const quantityInput = $("#tradeQuantity");
+    const decreaseBtn = $(".decrease");
+    const increaseBtn = $(".increase");
+    priceInput.val(this.currentPrice.toFixed(2));
 
-/**
- * Update progress bar width based on selected option
- * @param {number} selectedIndex - Index of selected slider option
- * @returns {void}
- */
-function updateProgressWidth(selectedIndex) {
-  const sliderProgress = document.querySelector(".slider-progress");
-  const sliderTrack = document.querySelector(".trading-slider-track");
-
-  if (!sliderProgress || !sliderTrack) return;
-
-  const positions = calculateOptionPositions();
-  if (positions.length === 0) return;
-
-  const selectedPosition = positions[selectedIndex];
-  if (!selectedPosition) return;
-
-  // Update: Calculate progress width to the right edge of the selected option, not the center
-  let progressWidth = 0;
-
-  if (selectedIndex === positions.length - 1) {
-    // If it's the last option, fill to 100%
-    sliderProgress.style.width = "calc(100% - 8px)";
-  } else {
-    // Calculate the right edge position of the current option
-    // Right edge = center position + half of option width
-    progressWidth = selectedPosition.position + selectedPosition.width / 2;
-
-    // Ensure it doesn't exceed 100%
-    progressWidth = Math.min(progressWidth, 100);
-    sliderProgress.style.width = `${progressWidth}%`;
-  }
-}
-
-/**
- * Initialize slider functionality for trading amounts
- * @returns {void}
- */
-function initSlider() {
-  const sliderOptions = document.querySelectorAll(".slider-option");
-  const quantityInput = document.getElementById("tradeQuantity");
-
-  // Set event listeners for slider options
-  sliderOptions.forEach((option, index) => {
-    option.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Remove all active classes
-      sliderOptions.forEach((o) => o.classList.remove("active"));
-
-      // Add active class to current option
-      this.classList.add("active");
-
-      // Get percentage value
-      const percentage = parseInt(this.dataset.value || index * 10 + 10); // Default 10% increment
-
-      // Update progress bar width
-      updateProgressWidth(index);
-
-      // Calculate quantity based on percentage
-      const maxQuantity = 10000000; // User's available funds
-      quantityInput.value = ((maxQuantity * percentage) / 100).toFixed(2);
-      updateTradingSummary();
-    });
-  });
-
-  // Initialize with default option
-  const defaultOptionIndex = 1; // Second option, corresponding to 25%
-  if (sliderOptions[defaultOptionIndex]) {
-    sliderOptions[defaultOptionIndex].click();
-  }
-
-  // Update trading summary when quantity input changes
-  quantityInput.addEventListener("input", updateTradingSummary);
-
-  // Handle window resize events
-  window.addEventListener("resize", function () {
-    const activeIndex = Array.from(sliderOptions).findIndex((option) =>
-      option.classList.contains("active"),
-    );
-    if (activeIndex >= 0) {
-      updateProgressWidth(activeIndex);
-    }
-  });
-}
-
-/**
- * Initialize max button functionality
- * @returns {void}
- */
-function initMaxButton() {
-  const maxButton = document.querySelector(".max-button");
-  const quantityInput = document.getElementById("tradeQuantity");
-  const sliderOptions = document.querySelectorAll(".slider-option");
-
-  if (maxButton) {
-    maxButton.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Set maximum quantity
-      quantityInput.value = 10000000; // Maximum available quantity
-
-      // Activate the last option
-      sliderOptions.forEach((o) => o.classList.remove("active"));
-      const lastOption = sliderOptions[sliderOptions.length - 1];
-      if (lastOption) {
-        lastOption.classList.add("active");
-        updateProgressWidth(sliderOptions.length - 1);
+    decreaseBtn.on("click", () => {
+      let currentValue = parseFloat(priceInput.val());
+      if (!isNaN(currentValue)) {
+        priceInput.val((currentValue - 0.01).toFixed(2));
+        this.updateTradingSummary();
       }
-
-      updateTradingSummary();
     });
-  }
-}
 
-/**
- * Initialize place order button functionality
- * @returns {void}
- */
-function initPlaceOrderButton() {
-  const placeOrderButton = document.querySelector(".place-order-button");
-  const priceInput = document.getElementById("tradePrice");
-  const quantityInput = document.getElementById("tradeQuantity");
-
-  placeOrderButton.addEventListener("click", function () {
-    const action = document.querySelector(".trading-tab.active").dataset.action;
-    const price = parseFloat(priceInput.value);
-    const quantity = parseFloat(quantityInput.value);
-
-    if (isNaN(price) || isNaN(quantity)) {
-      alert("Please enter valid price and quantity");
-      return;
-    }
-
-    // This would typically call an API to place the order
-    alert(
-      `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`,
-    );
-  });
-}
-
-/**
- * Update trading summary based on price and quantity
- * @returns {void}
- */
-function updateTradingSummary() {
-  const priceInput = document.getElementById("tradePrice");
-  const quantityInput = document.getElementById("tradeQuantity");
-  const price = parseFloat(priceInput.value);
-  const quantity = parseFloat(quantityInput.value);
-
-  if (!isNaN(price) && !isNaN(quantity)) {
-    const cost = price * quantity;
-    document.querySelector(".summary-value").textContent =
-      cost.toFixed(2) + " USDT";
-  }
-}
-
-/**
- * Initialize the trading interface with all necessary components
- * @returns {void}
- */
-function initTradingInterface() {
-  initTradingTabs();
-  initTypeOptions();
-  initPriceControls();
-  initSlider();
-  initMaxButton();
-  initPlaceOrderButton();
-
-  // Initialize with defaults
-  updateTradingSummary();
-}
-
-/**
- * Initialize the responsive trading interface
- * @returns {void}
- */
-function setupResponsiveTrading() {
-  // Get relevant elements
-  const tradingSection = document.querySelector(".trading-interface-section");
-  const tradingHeader = tradingSection
-    ? tradingSection.querySelector(".section-header")
-    : null;
-  const autoTradeBtn = document.querySelector(".action-btn.buy-btn");
-
-  // Exit if necessary elements not found
-  if (!tradingSection || !tradingHeader) return;
-
-  // Create content container for all non-header content
-  const sectionContent = document.createElement("div");
-  sectionContent.className = "section-content";
-
-  // Move all non-header content to new container
-  while (tradingSection.children.length > 1) {
-    sectionContent.appendChild(tradingSection.children[1]);
-  }
-
-  tradingSection.appendChild(sectionContent);
-
-  // Create collapse/expand indicator
-  const collapseIndicator = document.createElement("i");
-  collapseIndicator.className = "fas fa-chevron-up trading-collapse-indicator";
-
-  // Add indicator to title area
-  const titleElement = tradingHeader.querySelector(".section-title");
-  if (titleElement) {
-    titleElement.appendChild(collapseIndicator);
-  }
-
-  // Add badge
-  const tradeBadge = document.createElement("div");
-  tradeBadge.className = "trade-badge";
-  tradeBadge.textContent = "SPOT";
-  tradingHeader.appendChild(tradeBadge);
-
-  // Toggle expansion state when header is clicked
-  tradingHeader.addEventListener("click", function () {
-    toggleTradingExpand();
-  });
-
-  // Auto-trade button click event
-  if (autoTradeBtn) {
-    autoTradeBtn.addEventListener("click", function () {
-      // Ensure trading area is expanded
-      if (!tradingSection.classList.contains("expanded")) {
-        toggleTradingExpand();
+    increaseBtn.on("click", () => {
+      let currentValue = parseFloat(priceInput.val());
+      if (!isNaN(currentValue)) {
+        priceInput.val((currentValue + 0.01).toFixed(2));
+        this.updateTradingSummary();
       }
+    });
+
+    priceInput.on("input", this.updateTradingSummary);
+    quantityInput.on("input", this.updateTradingSummary);
+  }
+
+  initPlaceOrderButton() {
+    const placeOrderButton = $(".place-order-button");
+    const priceInput = $("#tradePrice");
+    const quantityInput = $("#tradeQuantity");
+
+    placeOrderButton.on("click", () => {
+      const action = $(".trading-tab.active").dataset.action;
+      console.log("Action:", action);
+      const price = parseFloat(priceInput.val());
+      const quantity = parseFloat(quantityInput.val());
+
+      if (isNaN(price) || isNaN(quantity)) {
+        alert("Please enter valid price and quantity");
+        return;
+      }
+      alert(
+        `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`
+      );
     });
   }
 
-  // Handle window resize events
-  window.addEventListener("resize", function () {
-    const isHighRes = window.innerWidth >= 2560 || window.innerHeight >= 1440;
+  updateTradingSummary() {
+    const priceInput = $("#tradePrice");
+    const quantityInput = $("#tradeQuantity");
+    const price = parseFloat(priceInput.val());
+    const quantity = parseFloat(quantityInput.val());
 
-    // Remove collapsible behavior on high-resolution screens
-    if (isHighRes) {
-      tradingSection.classList.remove("expanded");
-      tradingSection.style.transform = "none";
-    } else {
-      // Restore collapsible behavior on low-resolution screens
-      if (!tradingSection.classList.contains("expanded")) {
-        tradingSection.style.transform = "translateY(calc(100% - 60px))";
-      }
+    if (!isNaN(price) && !isNaN(quantity)) {
+      this.amount = price * quantity;
+      $("#amount").val(this.amount.toFixed(2));
     }
-  });
-
-  // Close trading interface when clicking outside
-  document.addEventListener("click", function (event) {
-    const isClickInsideTrading = tradingSection.contains(event.target);
-    const isClickOnAutoTrade =
-      autoTradeBtn && autoTradeBtn.contains(event.target);
-
-    // If click is outside trading area and not on auto-trade button, collapse trading interface
-    if (
-      !isClickInsideTrading &&
-      !isClickOnAutoTrade &&
-      tradingSection.classList.contains("expanded")
-    ) {
-      toggleTradingExpand();
-    }
-  });
-
-  // Check screen resolution on initialization
-  const isHighRes = window.innerWidth >= 2560 || window.innerHeight >= 1440;
-  if (isHighRes) {
-    tradingSection.style.transform = "none";
   }
-}
 
-/**
- * Toggle expand/collapse state of trading interface
- * @returns {void}
- */
-function toggleTradingExpand() {
-  const tradingSection = document.querySelector(".trading-interface-section");
-  const collapseIndicator = document.querySelector(
-    ".trading-collapse-indicator",
-  );
+  toggleTradingExpand() {
+    const tradingSection = $(".trading-interface-section");
+    tradingSection.toggleClass("expanded");
+    this.initPriceControls();
+  }
 
-  tradingSection.classList.toggle("expanded");
+  setupResponsiveTrading() {
+    const tradingSection = document.querySelector(".trading-interface-section");
+    const tradingHeader = tradingSection
+      ? tradingSection.querySelector(".section-header")
+      : null;
+    const autoTradeBtn = document.querySelector(".action-btn.buy-btn");
+    if (!tradingSection || !tradingHeader) return;
+    const sectionContent = document.createElement("div");
+    sectionContent.className = "section-content";
+    while (tradingSection.children.length > 1) {
+      sectionContent.appendChild(tradingSection.children[1]);
+    }
 
-  // Update indicator based on state
-  if (tradingSection.classList.contains("expanded")) {
-    collapseIndicator.className =
-      "fas fa-chevron-down trading-collapse-indicator";
-  } else {
+    tradingSection.appendChild(sectionContent);
+    const collapseIndicator = document.createElement("i");
     collapseIndicator.className =
       "fas fa-chevron-up trading-collapse-indicator";
+    const titleElement = tradingHeader.querySelector(".section-title");
+    if (titleElement) {
+      titleElement.appendChild(collapseIndicator);
+    }
+    const tradeBadge = document.createElement("div");
+    tradeBadge.className = "trade-badge";
+    tradeBadge.textContent = "SPOT";
+    tradingHeader.appendChild(tradeBadge);
+    tradingHeader.addEventListener("click", () => {
+      this.toggleTradingExpand();
+    });
+    if (autoTradeBtn) {
+      autoTradeBtn.addEventListener("click", () => {
+        if (!tradingSection.classList.contains("expanded")) {
+          this.toggleTradingExpand();
+        }
+      });
+    }
+    document.addEventListener("click", (event) => {
+      const isClickInsideTrading = tradingSection.contains(event.target);
+      const isClickOnAutoTrade =
+        autoTradeBtn && autoTradeBtn.contains(event.target);
+      if (
+        !isClickInsideTrading &&
+        !isClickOnAutoTrade &&
+        tradingSection.classList.contains("expanded")
+      ) {
+        this.toggleTradingExpand();
+      }
+    });
+    const isHighRes = window.innerWidth >= 2560 || window.innerHeight >= 1440;
+    if (isHighRes) {
+      tradingSection.style.transform = "none";
+    }
   }
 }
-
-/**
- * Initialize all trading functionality when the DOM is loaded
- */
-document.addEventListener("DOMContentLoaded", function () {
-  // Initialize the trading interface
-  initTradingInterface();
-
-  // Setup responsive trading interface
-  setupResponsiveTrading();
-});

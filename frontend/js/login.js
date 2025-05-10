@@ -1,10 +1,11 @@
+import Http from "./http.js";
 function LoginHandler(e) {
   e.preventDefault();
   const username = $('input[type="text"]').val();
   const password = $('input[type="password"]').val();
   const remember = $("#remember").is(":checked");
   if (!username) {
-    alert("Please enter your username");
+    alert("Please enter username");
     return;
   }
   if (!password) {
@@ -21,7 +22,6 @@ function LoginHandler(e) {
       console.log("CSRF token:", csrf_token);
       Http.setCookie("access_token_cookie", access_token);
       Http.setCookie("csrf_access_token", csrf_token);
-
       const accessToken = Http.getCookie("access_token_cookie");
       const csrfToken = Http.getCookie("csrf_access_token");
       console.log("Access Token:", accessToken);
