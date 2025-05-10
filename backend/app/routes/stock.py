@@ -52,6 +52,14 @@ def show_watchlist():
     user_id = get_jwt_identity()
     return controller.show_watchlist(user_id)
 
+@stock_bp.route('/watchlist/exists/<string:symbol>', methods=['GET', 'OPTIONS'])
+@jwt_required()
+def check_watchlist_exists(symbol):
+    if request.method == 'OPTIONS':
+        response = jsonify({"message": "Preflight request successful"})
+        return add_cors_headers(response), 204
+    return controller.check_watchlist_exists(symbol)
+
 @stock_bp.route('/watchlist/add', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def add_to_watchlist():

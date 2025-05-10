@@ -544,22 +544,28 @@ function fillOverviewInfo(symbol, data) {
   // $("#company-icon").attr("src", logo_url);
 }
 
-// Function to handle the "Add to Watchlist" button click
+function setupToggleCandlestickChart(symbol) {
+  const daily = $('button[data-timeframe="1D"]');
+  const weekly = $('button[data-timeframe="1W"]');
+  const monthly = $('button[data-timeframe="1M"]');
+  daily.on("click", () => {
+    getStockData(symbol, "daily");
+  });
+  weekly.on("click", () => {
+    getStockData(symbol, "weekly");
+  });
+  monthly.on("click", () => {
+    getStockData(symbol, "monthly");
+  });
+}
+
 function addToWatchlist(symbol) {
-  // Get the current symbol from the URL parameters or use default
-  const urlParams = new URLSearchParams(window.location.search);
-  const currentSymbol = symbol || urlParams.get("symbol") || "AAPL";
-
-  // Change button state immediately for better user feedback
   $("#followBtn").html('<i class="fas fa-spinner fa-spin"></i> Adding...');
-
-  // Send the request to the server
   const requestData = {
-    symbol: currentSymbol,
+    symbol: symbol,
     is_favorite: false,
   };
 
-  // Use the fetch API to send the request
   Http.post("/stock/watchlist/add", requestData)
     .then(() => {
       $("#followBtn").html('<i class="fas fa-check"></i> Added to Watchlist');
@@ -567,6 +573,7 @@ function addToWatchlist(symbol) {
     })
     .catch((error) => {
       console.error("Error adding to watchlist:", error);
+
       if (
         error.status === 400 &&
         error.responseJSON &&
@@ -586,20 +593,41 @@ function addToWatchlist(symbol) {
     });
 }
 
-function setupToggleCandlestickChart() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const symbol = urlParams.get("symbol") || "META";
-  const daily = $('button[data-timeframe="1D"]');
-  const weekly = $('button[data-timeframe="1W"]');
-  const monthly = $('button[data-timeframe="1M"]');
-  daily.on("click", () => {
-    getStockData(symbol, "daily");
-  });
-  weekly.on("click", () => {
-    getStockData(symbol, "weekly");
-  });
-  monthly.on("click", () => {
-    getStockData(symbol, "monthly");
+function checkInWatchlist(symbol) {
+  Http.get(`/stock/watchlist/exists/${symbol}`)
+    .then((response) => {
+      console.log("Check watchlist response:", response);
+      if (response.exists) {
+        $("#followBtn").html('<i class="fas fa-check"></i> Following');
+        $("#followBtn").addClass("following");
+      } else {
+        $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
+        $("#followBtn").removeClass("following");
+      }
+    })
+    .catch((error) => {
+      console.error("Error checking watchlist:", error);
+    });
+}
+
+function removeFromWatchlist(symbol) {
+  $("#followBtn").html('<i class="fas fa-spinner fa-spin"></i> Removing...');
+  Http.post("/stock/watchlist/remove", { symbol })
+    .then(() => {
+      $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
+      $("#followBtn").removeClass("following");
+    })
+    .catch((error) => {
+      console.error("Error removing from watchlist:", error);
+    });
+}
+
+function setupToggleWathclist(symbol) {
+  checkInWatchlist(symbol);
+  $("#followBtn").on("click", function (event) {
+    event.preventDefault();
+    const isFollowing = $("#followBtn").hasClass("following");
+    isFollowing ? removeFromWatchlist(symbol) : addToWatchlist(symbol);
   });
 }
 
@@ -608,10 +636,8 @@ $(document).ready(function () {
   const symbol = urlParams.get("symbol") || "META";
   getTickerOverview(symbol);
   getStockData(symbol, "daily");
-  setupToggleCandlestickChart();
-  $("#followBtn").on("click", function () {
-    addToWatchlist();
-  });
+  setupToggleCandlestickChart(symbol);
+  setupToggleWathclist(symbol);
   Sidebar.getInstance();
   SearchBar.getInstance();
   TradeCard.getInstance(symbol);

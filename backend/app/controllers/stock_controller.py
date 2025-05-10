@@ -13,8 +13,46 @@ from sqlalchemy.orm import joinedload
 def show_watchlist(user_id):
     watchlist = Watchlist.query.filter_by(user_id=user_id).all()
     stock_data = []
+    for item in watchlist:
+        stock = (
+            db.session.query(
+                USStock.symbol,
+                USStock.market_cap,
+                USCompany.domain.label("domain"),
+                USCompany.name.label("company"),
+                DailyUSMarketData.close.label("close"),
+                (DailyUSMarketData.close - DailyUSMarketData.open).label("change"),
+                ((DailyUSMarketData.close - DailyUSMarketData.open) / DailyUSMarketData.open * 100).label("percent_change"),
+                DailyUSMarketData.timestamp
+            )
+            .join(USCompany, USStock.symbol == USCompany.symbol)
+            .join(DailyUSMarketData, USStock.symbol == DailyUSMarketData.symbol)
+            .filter(
+                USStock.symbol == item.symbol,
+                DailyUSMarketData.timestamp >= func.date(func.now()) - timedelta(days=2)
+            )
+            .order_by(DailyUSMarketData.timestamp.desc())
+            .first()
+        )
+        if stock:
+            stock_data.append({
+                "symbol": stock.symbol,
+                "domain": stock.domain,
+                "company": stock.company,
+                "close": stock.close,
+                "change": stock.change,
+                "percent_change": stock.percent_change,
+                "market_cap": stock.market_cap,
+            })
     response = make_response(jsonify(stock_data), 200)
     return response
+
+def check_watchlist_exists(symbol):
+    user_id = get_jwt_identity()
+    if not symbol:
+        return jsonify({"msg": "Missing field: symbol"}), 400
+    watchlist_item = Watchlist.query.filter_by(user_id=user_id, symbol=symbol).first()
+    return jsonify({"exists": True if watchlist_item else False}), 200
 
 def add_to_watchlist():
     user_id = get_jwt_identity()
@@ -218,14 +256,15 @@ def get_ticker_overview(symbol):
                 )
                 db.session.add(stock)
             db.session.commit()
-            sector = db.session.query(Sector).filter_by(code=data.sic_code).first()
-            if not sector:
-                sector = Sector(
-                    code=data.sic_code,
-                    description=data.sic_description
-                )
-                db.session.add(sector)
-                db.session.commit()
+            if data.sic_code:
+                sector = db.session.query(Sector).filter_by(code=data.sic_code).first()
+                if not sector:
+                    sector = Sector(
+                        code=data.sic_code,
+                        description=data.sic_description
+                    )
+                    db.session.add(sector)
+                    db.session.commit()
             company = db.session.query(USCompany).filter_by(name=data.name, symbol=data.ticker).first()
             if company:
                 company.description = data.description

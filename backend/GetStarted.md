@@ -1,4 +1,6 @@
-# Installation
+# How to Run
+
+## Dev Mode (Debug Mode)
 
 ```bash
 ## python version 3.12.9
@@ -15,6 +17,16 @@ rm -rf migrations
 mkdir migrations
 flask db init
 python run.py
+```
+## Non-Debug Mode
+
+```bash
+#windows
+set DEBUG=false
+python run.py
+
+# Linux
+DEBUG=false python run.py
 ```
 
 ## Database Migration Operations

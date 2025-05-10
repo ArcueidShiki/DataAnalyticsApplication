@@ -91,7 +91,13 @@
 
 .watchlist-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1.5fr;
+  grid-template-columns: minmax(50px, 1fr) minmax(50px, 1fr) minmax(
+      100px,
+      1.5fr
+    ) minmax(50px, 1fr) minmax(50px, 1fr) minmax(50px, 1fr) minmax(
+      100px,
+      1.5fr
+    );
   padding: 16px 20px;
   gap: 10px;
   align-items: center;
@@ -123,10 +129,11 @@
 /* grid styles */
 .watchlist-row > div {
   padding: 0 8px;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis; */
   white-space: nowrap;
   color: var(--text-color);
   text-align: left;
+  overflow: hidden;
 }
 
 .stock-cell {
