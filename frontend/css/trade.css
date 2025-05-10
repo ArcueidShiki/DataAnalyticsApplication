@@ -128,11 +128,11 @@
 }
 
 .place-order-button.buy-action {
-    background-color: #55e326;
+  background-color: #55e326;
 }
 
 .place-order-button.sell-action {
-    background-color: #df3737;
+  background-color: #df3737;
 }
 
 .place-order-button:hover {
@@ -164,11 +164,11 @@
 }
 
 .summary-value.buy {
-    color: #40d61f;
+  color: #40d61f;
 }
 
 .summary-value.sell {
-    color: #d91c1c;
+  color: #d91c1c;
 }
 
 /* Dark mode specific adjustments */
@@ -194,7 +194,6 @@
 }
 
 .trading-interface-section {
-
   position: absolute;
   bottom: 0;
   margin: 1rem;
@@ -257,7 +256,6 @@
   cursor: pointer;
   user-select: none;
 }
-
 
 /* For Chrome, Edge, and Safari */
 input[type="number"]::-webkit-inner-spin-button,

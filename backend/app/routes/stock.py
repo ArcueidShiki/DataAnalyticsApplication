@@ -49,11 +49,13 @@ def get_top_hot_stocks():
 @stock_bp.after_request
 def add_cors_headers(response):
     origin = request.headers.get("Origin")
-    if origin and origin.startswith("http://127.0.0.1"):
+    # print(f"Origin: {origin}")
+    if origin :
+    # and (origin.startswith("http://127.0.0.1") or origin.startswith("http://[::1]")):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-CSRF-Token"
     return response
 
 @stock_bp.route('/watchlist', methods=['GET', 'POST', 'OPTIONS'])
@@ -68,6 +70,9 @@ def show_watchlist():
 @stock_bp.route('/watchlist/add', methods=['POST', 'OPTIONS'])
 @jwt_required()
 def add_to_watchlist():
+    if request.method == 'OPTIONS':
+        response = jsonify({"message": "Preflight request successful"})
+        return add_cors_headers(response), 204
     return controller.add_to_watchlist()
 
 @stock_bp.route('/watchlist/remove', methods=['POST', 'OPTIONS'])

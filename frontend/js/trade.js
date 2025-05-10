@@ -12,7 +12,7 @@ export default class TradeCard {
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
-        "TradeCard instance already exists. Returning the existing instance."
+        "TradeCard instance already exists. Returning the existing instance.",
       );
       return TradeCard.instance;
     }
@@ -108,7 +108,7 @@ export default class TradeCard {
           <div class="trading-input-suffix">USD</div>
         </div>
       </div>
-    `)
+    `);
   }
 
   createSummary() {
@@ -132,7 +132,7 @@ export default class TradeCard {
         <button class="trading-tab" data-action="sell">Sell</button>
       </div>
       <button class="place-order-button">Place Order</button>
-    `)
+    `);
   }
 
   updateSymbol(symbol, price) {
@@ -160,7 +160,7 @@ export default class TradeCard {
         if (placeOrderButton) {
           let action = $(this).attr("data-action");
           placeOrderButton.text(
-            action === "buy" ? "Place Buy Order" : "Place Sell Order"
+            action === "buy" ? "Place Buy Order" : "Place Sell Order",
           );
           placeOrderButton.removeClass("buy-action sell-action");
           action = $(this).attr("data-action");
@@ -214,7 +214,7 @@ export default class TradeCard {
         return;
       }
       alert(
-        `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`
+        `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`,
       );
     });
   }

@@ -564,11 +564,59 @@ function fillOverviewInfo(symbol, data) {
   $("#company-icon").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
 }
 
+// Function to handle the "Add to Watchlist" button click
+function addToWatchlist(symbol) {
+  // Get the current symbol from the URL parameters or use default
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSymbol = symbol || urlParams.get("symbol") || "AAPL";
+
+  // Change button state immediately for better user feedback
+  $("#followBtn").html('<i class="fas fa-spinner fa-spin"></i> Adding...');
+
+  // Send the request to the server
+  const requestData = {
+    symbol: currentSymbol,
+    is_favorite: false,
+  };
+
+  // Use the fetch API to send the request
+  Http.post("/stock/watchlist/add", requestData)
+    .then(() => {
+      $("#followBtn").html('<i class="fas fa-check"></i> Added to Watchlist');
+      $("#followBtn").addClass("following");
+    })
+    .catch((error) => {
+      console.error("Error adding to watchlist:", error);
+      if (
+        error.status === 400 &&
+        error.responseJSON &&
+        error.responseJSON.msg === "Already in watchlist"
+      ) {
+        $("#followBtn").html(
+          '<i class="fas fa-check"></i> Already in Watchlist',
+        );
+        $("#followBtn").addClass("following");
+      } else if (error.status === 401) {
+        $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
+        alert("Authentication required. Please log in again.");
+      } else {
+        $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
+        alert("Failed to add to watchlist. Please try again.");
+      }
+    });
+}
+
 $(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);
   const symbol = urlParams.get("symbol") || "META";
   fetchStockData(symbol);
   getTickerOverview(symbol);
+
+  // Add event listener for the follow button
+  $("#followBtn").on("click", function () {
+    addToWatchlist();
+  });
+
   Sidebar.getInstance();
   SearchBar.getInstance();
   TradeCard.getInstance(symbol);
