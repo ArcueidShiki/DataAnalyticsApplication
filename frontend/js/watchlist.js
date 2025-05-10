@@ -67,9 +67,9 @@ function loadWatchlistFromMockData() {
 }
 
 $(document).ready(function () {
+  Sidebar.getInstance();
+  SearchBar.getInstance();
   if (!loadWatchlistFromCache() && !loadWatchlist()) {
     loadWatchlistFromMockData();
   }
-  Sidebar.getInstance();
-  SearchBar.getInstance();
 });

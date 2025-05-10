@@ -19,6 +19,14 @@ python run.py
 
 ## Database Migration Operations
 
+```bash
+sqlite3 app.db .dump > app.dump.sql # keep all the data in the database as a script file
+
+# portable for everyone
+sqlite3 app.db
+.read app.dump.sql
+```
+
 To view the app.db, start the backend and ensure you have installed the SQLite Viewer extension in VS Code or another IDE.
 
 when? When you changed table schema in the models layer

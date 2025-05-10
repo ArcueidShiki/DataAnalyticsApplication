@@ -8,8 +8,6 @@ VALUES
 ((SELECT id FROM users WHERE username = 'arcueid'), 'AAPL', TRUE),
 ((SELECT id FROM users WHERE username = 'arcueid'), 'GOOGL', FALSE),
 ((SELECT id FROM users WHERE username = 'arcueid'), 'TSLA', TRUE),
-((SELECT id FROM users WHERE username = 'arcueid'), 'BTC', FALSE),
-((SELECT id FROM users WHERE username = 'arcueid'), 'ETH', TRUE),
 ((SELECT id FROM users WHERE username = 'arcueid'), 'MSFT', FALSE),
 ((SELECT id FROM users WHERE username = 'arcueid'), 'AMZN', TRUE),
 ((SELECT id FROM users WHERE username = 'arcueid'), 'NFLX', FALSE),

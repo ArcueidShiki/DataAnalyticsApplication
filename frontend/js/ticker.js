@@ -256,7 +256,7 @@ function drawCandleStickChart(symbol, data) {
         },
       ],
     }),
-    true
+    true,
   );
   chart.dispatchAction({
     type: "brush",
@@ -360,7 +360,7 @@ function drawCharts(symbol, data, timespan) {
   fillTickerData(symbol, stockData);
 }
 
-function getStockData(symbol, timespan='daily') {
+function getStockData(symbol, timespan = "daily") {
   if (gStockMap && gStockMap[symbol] && gStockMap[symbol][timespan]) {
     const data = gStockMap[symbol][timespan];
     fillTickerData(symbol, data);
@@ -382,7 +382,6 @@ function fillDayPrice(data) {
     console.error("No data available to fill day price.");
     return;
   }
-  console.log("Filling day price with data:", data);
   const length = data.values.length;
   const latestData = data.values[length - 1];
   const open = latestData[0];
@@ -519,7 +518,7 @@ function website_to_logo(url, symbol) {
     return null;
   }
   const logo = $(
-    `<img src="https://www.google.com/s2/favicons?sz=64&domain=${domain}" alt="${symbol} icon" width="15px"/>`
+    `<img src="https://www.google.com/s2/favicons?sz=64&domain=${domain}" alt="${symbol} icon" width="15px"/>`,
   );
   return logo;
 }
@@ -574,7 +573,7 @@ function addToWatchlist(symbol) {
         error.responseJSON.msg === "Already in watchlist"
       ) {
         $("#followBtn").html(
-          '<i class="fas fa-check"></i> Already in Watchlist'
+          '<i class="fas fa-check"></i> Already in Watchlist',
         );
         $("#followBtn").addClass("following");
       } else if (error.status === 401) {
@@ -593,9 +592,15 @@ function setupToggleCandlestickChart() {
   const daily = $('button[data-timeframe="1D"]');
   const weekly = $('button[data-timeframe="1W"]');
   const monthly = $('button[data-timeframe="1M"]');
-  daily.on("click", () => {getStockData(symbol, "daily");});
-  weekly.on("click", () => {getStockData(symbol, "weekly");});
-  monthly.on("click", () => {getStockData(symbol, "monthly");});
+  daily.on("click", () => {
+    getStockData(symbol, "daily");
+  });
+  weekly.on("click", () => {
+    getStockData(symbol, "weekly");
+  });
+  monthly.on("click", () => {
+    getStockData(symbol, "monthly");
+  });
 }
 
 $(document).ready(function () {

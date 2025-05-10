@@ -259,7 +259,12 @@ def get_ticker_overview(symbol):
                 )
                 db.session.add(address)
                 db.session.commit()
-            return jsonify(data), 200
+        stock = (
+            db.session.query(USStock).join(USCompany)
+                .join(USAddress).join(Sector).filter(USStock.symbol == symbol).first()
+        )
+        if stock and stock.market_cap and stock.company:
+            return jsonify(stock.to_dict()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -369,7 +374,14 @@ def get_daliy_data(symbol):
             data.append(daily_data)
         db.session.bulk_save_objects(data)
         db.session.commit()
-        return jsonify(results), 200
+        results = db.session.query(DailyUSMarketData).filter(
+            DailyUSMarketData.symbol == symbol,
+            and_(
+                func.date(DailyUSMarketData.timestamp) >= fromDate,  # Convert timestamp to date and compare
+                func.date(DailyUSMarketData.timestamp) <= toDate
+            )
+        ).all()
+        return jsonify([result.to_dict() for result in results]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -407,7 +419,14 @@ def get_weekly_data(symbol):
             data.append(weekly_data)
         db.session.bulk_save_objects(data)
         db.session.commit()
-        return jsonify(results), 200
+        results = db.session.query(WeeklyUSMarketData).filter(
+            WeeklyUSMarketData.symbol == symbol,
+            and_(
+                func.date(WeeklyUSMarketData.timestamp) >= fromDate,  # Convert timestamp to date and compare
+                func.date(WeeklyUSMarketData.timestamp) <= toDate
+            )
+        ).all()
+        return jsonify([result.to_dict() for result in results]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -445,7 +464,14 @@ def get_monthly_data(symbol):
             data.append(monthly_data)
         db.session.bulk_save_objects(data)
         db.session.commit()
-        return jsonify(results), 200
+        results = db.session.query(MonthlyUSMarketData).filter(
+            MonthlyUSMarketData.symbol == symbol,
+            and_(
+                func.date(MonthlyUSMarketData.timestamp) >= fromDate,  # Convert timestamp to date and compare
+                func.date(MonthlyUSMarketData.timestamp) <= toDate
+            )
+        ).all()
+        return jsonify([result.to_dict() for result in results]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
