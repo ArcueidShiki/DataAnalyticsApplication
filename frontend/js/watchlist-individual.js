@@ -24,92 +24,6 @@ function initThemeObserver() {
   });
 }
 
-/**
- * Initialize follow button functionality
- */
-function initFollowButton() {
-  // Store followed stock data
-  let followedStocks = JSON.parse(localStorage.getItem("followedStocks")) || {};
-
-  // Follow button functionality
-  const followBtn = document.getElementById("followBtn");
-  if (followBtn) {
-    // Check if the current stock is already followed and update button state
-    const currentSymbol =
-      document.querySelector(".stock-details")?.textContent.split(": ")[1] ||
-      "AAPL";
-    const isFollowed = followedStocks[currentSymbol];
-
-    if (isFollowed) {
-      followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
-      followBtn.classList.add("followed");
-    }
-
-    // Initialize stock logo on page load
-    const stockCompany =
-      document.querySelector(".stock-company")?.textContent || "Apple Inc.";
-    // updateStockLogo(stockCompany, currentSymbol);
-
-    followBtn.addEventListener("click", function () {
-      const stockCompany =
-        document.querySelector(".stock-company")?.textContent || "Apple Inc.";
-      const stockSymbol =
-        document.querySelector(".stock-details")?.textContent.split(": ")[1] ||
-        "AAPL";
-
-      if (followBtn.classList.contains("followed")) {
-        // Unfollow the stock
-        followBtn.innerHTML = '<i class="fas fa-plus"></i> Follow';
-        followBtn.classList.remove("followed");
-
-        // Remove from localStorage
-        delete followedStocks[stockSymbol];
-        localStorage.setItem("followedStocks", JSON.stringify(followedStocks));
-
-        // Remove from watchlist if exists
-        const watchlistItem = document.querySelector(
-          `.watchlist-item[data-symbol="${stockSymbol}"]`,
-        );
-        if (watchlistItem) {
-          watchlistItem.remove();
-        }
-      } else {
-        // Follow the stock
-        followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
-        followBtn.classList.add("followed");
-
-        // Generate a random trend for the mini chart
-        const trendIsPositive = Math.random() > 0.5;
-        const trendPath = trendIsPositive
-          ? "M1,15 L10,13 L20,10 L30,8 L40,5 L50,3 L59,1"
-          : "M1,5 L10,8 L20,12 L30,10 L40,13 L50,15 L59,18";
-        const trendColor = trendIsPositive
-          ? "var(--positive-color)"
-          : "var(--negative-color)";
-
-        // Get the logo URL if we already fetched it for the stock logo
-        const stockLogoImg = document.querySelector(".stock-logo img");
-        const logoUrl = stockLogoImg?.src || null;
-
-        // Save to localStorage with timestamp
-        followedStocks[stockSymbol] = {
-          name: stockCompany,
-          symbol: stockSymbol,
-          dateAdded: new Date().toISOString(),
-          logo: logoUrl, // Use the already fetched logo if available
-        };
-        localStorage.setItem("followedStocks", JSON.stringify(followedStocks));
-
-        // Add to watchlist
-        addToWatchlist(stockCompany, stockSymbol, trendPath, trendColor);
-      }
-    });
-  }
-}
-
-/**
- * Initialize tab switching functionality
- */
 function initTabSwitching() {
   const tabs = document.querySelectorAll(".tab");
   tabs.forEach((tab) => {
@@ -165,7 +79,6 @@ function initTimeframeButtons() {
       timeframeBtns.forEach((b) => b.classList.remove("active"));
       this.classList.add("active");
       const timeframe = this.getAttribute("data-timeframe");
-      updateChartWithDummyData(timeframe);
     });
   });
 }
@@ -245,25 +158,6 @@ function updateMainContentWithStock(name, symbol) {
   if (stockCompanyEl) stockCompanyEl.textContent = name;
   if (stockDetailsEl) stockDetailsEl.textContent = `NASDAQ: ${symbol}`;
 
-  // Update follow button state
-  const followBtn = document.getElementById("followBtn");
-  const followedStocks =
-    JSON.parse(localStorage.getItem("followedStocks")) || {};
-
-  if (followBtn) {
-    if (followedStocks[symbol]) {
-      followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
-      followBtn.classList.add("followed");
-    } else {
-      followBtn.innerHTML = '<i class="fas fa-plus"></i> Follow';
-      followBtn.classList.remove("followed");
-    }
-  }
-
-  // Update chart with new data
-  updateChartWithDummyData("1D");
-
-  // Update breadcrumb
   const breadcrumbSpan = document.querySelector(".breadcrumb span");
   if (breadcrumbSpan) {
     breadcrumbSpan.textContent = name;
@@ -273,6 +167,5 @@ function updateMainContentWithStock(name, symbol) {
 document.addEventListener("DOMContentLoaded", function () {
   initTabSwitching();
   initTimeframeButtons();
-  initFollowButton();
   initThemeObserver();
 });

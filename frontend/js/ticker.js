@@ -1,7 +1,8 @@
-// https://polygon.io/docs/rest/stocks/tickers/ticker-overview this for company logo and description and financials
+import Http from "./http.js";
 import Sidebar from "./sidebar.js";
 import SearchBar from "./search.js";
 import TradeCard from "./trade.js";
+import { formatMarketCap } from "./utils.js";
 const apiKey = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"; // Replace with your actual API key
 var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
@@ -321,77 +322,73 @@ function saveDataToLocalStorage(symbol, key, data) {
   }
 }
 
-function loadFromLocalStorage(symbol) {
-  if (!symbol) {
-    console.error("Symbol is missing. Cannot retrieve data from localStorage.");
-    return false;
-  }
-  try {
-    fillData(symbol, gStockMap[symbol]);
-    return true;
-  } catch (error) {
-    console.error("Error retrieving data from localStorage:", error);
-    return false;
-  }
-}
-
 function fillTickerData(symbol, data) {
   drawCandleStickChart(symbol, data);
-  fillDayPrice(symbol, data);
   drawLineChart(symbol, data);
+  fillDayPrice(data);
 }
 
-function fillData(symbol, data) {
-  fillTickerData(symbol, data["history"]);
-  fillOverviewInfo(symbol, data["overview"]);
-}
-
-async function fetchStockData(
-  symbol,
-  multiplier = 1,
-  timespan = "day",
-  fromDate = "2025-01-01",
-  toDate = "2025-03-31",
-  limit = 120,
-) {
-  if (gStockMap && gStockMap[symbol] && gStockMap[symbol]["hisotry"]) {
-    fillTickerData(symbol, gStockMap[symbol]["history"]);
-    return true;
-  }
-  const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/${multiplier}/${timespan}/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=${limit}&apiKey=${apiKey}`;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.statusText}`);
+function formatTimestamp(input) {
+  let dateObj;
+  if (!isNaN(input)) {
+    const timestamp = Number(input);
+    if (timestamp > 1e10) {
+      dateObj = new Date(timestamp); // Milliseconds
+    } else {
+      dateObj = new Date(timestamp * 1000); // Seconds
     }
-    const data = await response.json();
-    const categories = []; // X-axis data (dates)
-    const ohlcValues = []; // OHLC data for candlestick chart
-    const volumes = []; // Volume data for bar chart
-    data.results.forEach((item) => {
-      const date = new Date(item.t);
-      const formattedDate = date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-      categories.push(formattedDate);
-      ohlcValues.push([item.o, item.c, item.l, item.h]); // Open, Close, Low, High
-      volumes.push(item.v); // Volume
-    });
-    const stockData = {
-      categoryData: categories,
-      values: ohlcValues,
-      volumes: volumes,
-    };
-    saveDataToLocalStorage(symbol, "history", stockData); // Save data to localStorage
-    drawCandleStickChart(symbol, stockData);
-    drawLineChart(symbol, stockData);
-    fillDayPrice(symbol, stockData);
-    return true;
-  } catch (error) {
-    console.error("Error fetching candlestick data:", error);
-    return false;
+  } else {
+    dateObj = new Date(input);
   }
+  if (isNaN(dateObj.getTime())) {
+    throw new Error("Invalid timestamp or date format");
+  }
+  const yyyyMMdd = dateObj.toISOString().split("T")[0];
+  return yyyyMMdd;
+  // const yyyyMMddHHmmss = dateObj.toISOString().replace("T", " ").split(".")[0];
+  // return {
+  //   date: yyyyMMdd,
+  //   dateTime: yyyyMMddHHmmss,
+  // };
 }
 
-function fillDayPrice(symbol, data) {
+function drawCharts(symbol, data, timespan) {
+  const categories = []; // X-axis data (dates)
+  const ohlcValues = []; // OHLC data for candlestick chart
+  const volumes = []; // Volume data for bar chart
+  data.forEach((item) => {
+    const formattedDate = formatTimestamp(item.timestamp);
+    categories.push(formattedDate);
+    ohlcValues.push([item.open, item.close, item.low, item.high]);
+    volumes.push(item.volume);
+  });
+  const stockData = {
+    categoryData: categories,
+    values: ohlcValues,
+    volumes: volumes,
+  };
+  saveDataToLocalStorage(symbol, timespan, stockData);
+  fillTickerData(symbol, stockData);
+}
+
+function getStockData(symbol, timespan = "daily") {
+  if (gStockMap && gStockMap[symbol] && gStockMap[symbol][timespan]) {
+    const data = gStockMap[symbol][timespan];
+    fillTickerData(symbol, data);
+    return true;
+  }
+  Http.get(`/stock/${symbol}/${timespan}`)
+    .then((response) => {
+      drawCharts(symbol, response, timespan);
+      return true;
+    })
+    .catch((error) => {
+      console.error("Error fetching daily data:", error);
+      return false;
+    });
+}
+
+function fillDayPrice(data) {
   if (!data || !data.values || data.values.length === 0) {
     console.error("No data available to fill day price.");
     return;
@@ -506,26 +503,19 @@ function drawLineChart(symbol, data) {
 
 function getNews() {}
 
-async function getTickerOverview(symbol) {
+function getTickerOverview(symbol) {
   if (gStockMap && gStockMap[symbol] && gStockMap[symbol]["overview"]) {
     fillOverviewInfo(symbol, gStockMap[symbol]["overview"]);
     return true;
   }
-  const url = `https://api.polygon.io/v3/reference/tickers/${symbol}?apiKey=${apiKey}`;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.statusText}`);
-    }
-    const data = await response.json();
-    console.log("overview:", data.results);
-    saveDataToLocalStorage(symbol, "overview", data.results); // Save data to localStorage
-    fillOverviewInfo(symbol, data.results);
-    return true;
-  } catch (error) {
-    console.error("Error fetching candlestick data:", error);
-    return false;
-  }
+  Http.get(`/stock/${symbol}/overview`)
+    .then((response) => {
+      saveDataToLocalStorage(symbol, "overview", response);
+      fillOverviewInfo(symbol, response);
+    })
+    .catch((error) => {
+      console.error("Error fetching ticker overview data:", error);
+    });
 }
 
 function website_to_logo(url, symbol) {
@@ -545,52 +535,48 @@ function website_to_logo(url, symbol) {
 }
 
 function fillOverviewInfo(symbol, data) {
+  const logo_url = `https://www.google.com/s2/favicons?sz=64&domain=${data.company.domain}`;
   $(".stock-company").text(symbol);
-  $(".stock-details").text(data.name);
-  $("#companyLogo").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
-  // const logo = $(".stock-logo");
-  // logo.append(website_to_logo(symbol, data.homepage_url));
-  // $("#companyDescription").text(data.description);
-
-  // Fill company information
-  $("#company-name").text(data.name);
-  $("#company-description").text(data.description);
-  $("#company-market-cap").text(
-    `$${(data.market_cap / 1e12).toFixed(2)} Trillion`,
-  );
-  $("#company-employees").text(data.total_employees);
-  $("#company-phone").text(data.phone_number);
+  $(".stock-details").text(data.company.name);
+  $("#companyLogo").attr("src", logo_url);
+  $("#company-name").text(data.company.name);
+  $("#company-description").text(data.company.description);
+  $("#company-market-cap").text(formatMarketCap(data.market_cap));
+  $("#company-employees").text(data.company.total_employees);
+  $("#company-phone").text(data.company.phone_number);
   $("#company-homepage")
-    .attr("href", data.homepage_url)
-    .text(data.homepage_url);
-
-  // Fill address
-  $("#company-address").text(data.address.address1);
-  $("#company-city").text(data.address.city);
-  $("#company-state").text(data.address.state);
-  $("#company-postal-code").text(data.address.postal_code);
-
-  // Fill branding
-  $("#company-logo").attr("src", `${data.branding.logo_url}?apiKey=${apiKey}`);
-  $("#company-icon").attr("src", `${data.branding.icon_url}?apiKey=${apiKey}`);
+    .attr("href", `https://${data.company.domain}`)
+    .text(data.company.domain);
+  $("#company-address").text(data.company.address.address);
+  $("#company-city").text(data.company.address.city);
+  $("#company-state").text(data.company.address.state);
+  $("#company-postal-code").text(data.company.address.post_code);
+  // $("#company-logo").attr("src", logo_url);
+  // $("#company-icon").attr("src", logo_url);
 }
 
-// Function to handle the "Add to Watchlist" button click
+function setupToggleCandlestickChart(symbol) {
+  const daily = $('button[data-timeframe="1D"]');
+  const weekly = $('button[data-timeframe="1W"]');
+  const monthly = $('button[data-timeframe="1M"]');
+  daily.on("click", () => {
+    getStockData(symbol, "daily");
+  });
+  weekly.on("click", () => {
+    getStockData(symbol, "weekly");
+  });
+  monthly.on("click", () => {
+    getStockData(symbol, "monthly");
+  });
+}
+
 function addToWatchlist(symbol) {
-  // Get the current symbol from the URL parameters or use default
-  const urlParams = new URLSearchParams(window.location.search);
-  const currentSymbol = symbol || urlParams.get("symbol") || "AAPL";
-
-  // Change button state immediately for better user feedback
   $("#followBtn").html('<i class="fas fa-spinner fa-spin"></i> Adding...');
-
-  // Send the request to the server
   const requestData = {
-    symbol: currentSymbol,
+    symbol: symbol,
     is_favorite: false,
   };
 
-  // Use the fetch API to send the request
   Http.post("/stock/watchlist/add", requestData)
     .then(() => {
       $("#followBtn").html('<i class="fas fa-check"></i> Added to Watchlist');
@@ -598,6 +584,7 @@ function addToWatchlist(symbol) {
     })
     .catch((error) => {
       console.error("Error adding to watchlist:", error);
+
       if (
         error.status === 400 &&
         error.responseJSON &&
@@ -617,17 +604,51 @@ function addToWatchlist(symbol) {
     });
 }
 
+function checkInWatchlist(symbol) {
+  Http.get(`/stock/watchlist/exists/${symbol}`)
+    .then((response) => {
+      console.log("Check watchlist response:", response);
+      if (response.exists) {
+        $("#followBtn").html('<i class="fas fa-check"></i> Following');
+        $("#followBtn").addClass("following");
+      } else {
+        $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
+        $("#followBtn").removeClass("following");
+      }
+    })
+    .catch((error) => {
+      console.error("Error checking watchlist:", error);
+    });
+}
+
+function removeFromWatchlist(symbol) {
+  $("#followBtn").html('<i class="fas fa-spinner fa-spin"></i> Removing...');
+  Http.post("/stock/watchlist/remove", { symbol })
+    .then(() => {
+      $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
+      $("#followBtn").removeClass("following");
+    })
+    .catch((error) => {
+      console.error("Error removing from watchlist:", error);
+    });
+}
+
+function setupToggleWathclist(symbol) {
+  checkInWatchlist(symbol);
+  $("#followBtn").on("click", function (event) {
+    event.preventDefault();
+    const isFollowing = $("#followBtn").hasClass("following");
+    isFollowing ? removeFromWatchlist(symbol) : addToWatchlist(symbol);
+  });
+}
+
 $(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);
   const symbol = urlParams.get("symbol") || "META";
-  fetchStockData(symbol);
   getTickerOverview(symbol);
-
-  // Add event listener for the follow button
-  $("#followBtn").on("click", function () {
-    addToWatchlist();
-  });
-
+  getStockData(symbol, "daily");
+  setupToggleCandlestickChart(symbol);
+  setupToggleWathclist(symbol);
   Sidebar.getInstance();
   SearchBar.getInstance();
   TradeCard.getInstance(symbol);
