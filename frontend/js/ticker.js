@@ -345,11 +345,9 @@ function getDailyData(symbol) {
     });
 }
 
-function getWeeklyData(symbol) {
-}
+function getWeeklyData(symbol) {}
 
-function getMonthlyData(symbol) {
-}
+function getMonthlyData(symbol) {}
 
 async function fetchStockData(symbol) {
   if (gStockMap && gStockMap[symbol] && gStockMap[symbol]["hisotry"]) {

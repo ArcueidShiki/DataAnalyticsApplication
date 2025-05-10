@@ -121,39 +121,69 @@ class USCompany(db.Model):
     list_date = Column(Date)
     phone_number = Column(String)
     total_employees = Column(Integer)
-    address = db.relationship('USAddress', back_populates='company')
+    address = db.relationship('USAddress', back_populates='company', uselist=False)
     financials = db.relationship('Financials', back_populates='company')
     news = db.relationship("News", back_populates="company")
     def __repr__(self):
         return f"<Company {self.name} ({self.symbol})>"
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "domain": self.domain,
+            "symbol": self.symbol,
+            "sic_code": self.sic_code,
+            "sector": self.sector.description if self.sector else None,
+            "list_date": self.list_date.isoformat() if self.list_date else None,
+            "phone_number": self.phone_number,
+            "total_employees": self.total_employees,
+            "address": self.address.to_dict() if self.address else None,
+        }
 
 class USAddress(db.Model):
     __tablename__ = 'us_addresses'
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(Integer, ForeignKey('us_companies.id'), nullable=False)
-    company = db.relationship('USCompany', back_populates='address')
+    company = db.relationship('USCompany', back_populates='address', uselist=False)
     address = Column(String(255))
     city = Column(String(100))
     post_code = Column(String(20))
     state = Column(String(100))
+    __table_args__ = (db.UniqueConstraint('company_id', 'post_code', name='company_post_code'),)
     def __repr__(self):
         return f"<Address {self.address}, {self.city}, {self.state}>"
-
+    def to_dict(self):
+        return {
+            "address": self.address,
+            "city": self.city,
+            "post_code": self.post_code,
+            "state": self.state,
+        }
 class USStock(db.Model):
     __tablename__ = 'us_stocks'
     symbol = Column(String(20), primary_key=True, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
     primary_exchange = Column(String)
     market_cap = Column(Float)
-    shares_outstanding = Column(Float)
+    share_class_shares_outstanding = Column(Float)
     weighted_shares_outstanding = Column(Float)
-    company = db.relationship('USCompany', back_populates='stock')
+    company = db.relationship('USCompany', back_populates='stock', uselist=False)
     intraday_market_data = db.relationship('IntradayUSMarket', back_populates='stock')
     daily_market_data = db.relationship('DailyUSMarketData', back_populates='stock')
     weekly_market_data = db.relationship('WeeklyUSMarketData', back_populates='stock')
     monthly_market_data = db.relationship('MonthlyUSMarketData', back_populates='stock')
     def __repr__(self):
         return f"<Stock {self.symbol} >"
+    def to_dict(self):
+        return {
+            "symbol": self.symbol,
+            "active": self.active,
+            "primary_exchange": self.primary_exchange,
+            "market_cap": self.market_cap,
+            "share_class_shares_outstanding": self.share_class_shares_outstanding,
+            "weighted_shares_outstanding": self.weighted_shares_outstanding,
+            "company": self.company.to_dict() if self.company else None,
+        }
 
 class IntradayUSMarket(db.Model):
     __tablename__ = 'intraday_us_market'
@@ -190,6 +220,16 @@ class DailyUSMarketData(db.Model):
     __table_args__ = (db.UniqueConstraint('symbol', 'timestamp', name='unique_daily_data'),)
     def __repr__(self):
         return f"<DailyMarketData {self.symbol}>"
+    def to_dict(self):
+        return {
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "open": self.open,
+            "close": self.close,
+            "high": self.high,
+            "low": self.low,
+            "volume": self.volume,
+        }
+
 
 class WeeklyUSMarketData(db.Model):
     __tablename__ = 'weekly_us_market'
@@ -207,6 +247,15 @@ class WeeklyUSMarketData(db.Model):
     __table_args__ = (db.UniqueConstraint('symbol', 'timestamp', name='unique_weekly_data'),)
     def __repr__(self):
         return f"<WeeklyMarketData {self.symbol}>"
+    def to_dict(self):
+        return {
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "open": self.open,
+            "close": self.close,
+            "high": self.high,
+            "low": self.low,
+            "volume": self.volume,
+        }
 
 class MonthlyUSMarketData(db.Model):
     __tablename__ = 'monthly_us_market'
@@ -224,6 +273,15 @@ class MonthlyUSMarketData(db.Model):
     __table_args__ = (db.UniqueConstraint('symbol', 'timestamp', name='unique_monthly_data'),)
     def __repr__(self):
         return f"<WeeklyMarketData {self.symbol}>"
+    def to_dict(self):
+        return {
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "open": self.open,
+            "close": self.close,
+            "high": self.high,
+            "low": self.low,
+            "volume": self.volume,
+        }
 class Financials(db.Model):
     __tablename__ = 'financials'
     id = Column(Integer, primary_key=True, autoincrement=True)

@@ -192,55 +192,69 @@ def fetch_data_from_polygon(csv_file_path, date):
 
 def get_ticker_overview(symbol):
     try:
-        stock = (db.session.query(USStock).options(
-                joinedload(USStock.company).joinedload(USCompany.address),
-                joinedload(USStock.company).joinedload(USCompany.sector),
-            ).filter(USStock.symbol == symbol).first())
-        if stock and stock.market_cap and stock.company and stock.company.name:
-            return jsonify(stock), 200
+        stock = (
+            db.session.query(USStock).join(USCompany)
+                .join(USAddress).join(Sector).filter(USStock.symbol == symbol).first()
+        )
+        if stock and stock.market_cap and stock.company:
+            return jsonify(stock.to_dict()), 200
         data = polygon.get_ticker_overview(symbol)
         if data:
             stock = db.session.query(USStock).filter_by(symbol=data.ticker).first()
-            if not stock:
+            if stock:
+                stock.active = data.active
+                stock.primary_exchange = data.primary_exchange
+                stock.market_cap = data.market_cap
+                stock.share_class_shares_outstanding = data.share_class_shares_outstanding
+                stock.weighted_shares_outstanding = data.weighted_shares_outstanding
+            else:
                 stock = USStock(
                     symbol=data.ticker,
                     active=data.active,
                     primary_exchange=data.primary_exchange,
                     market_cap=data.market_cap,
-                    shares_outstanding=data.shares_outstanding,
+                    share_class_shares_outstanding=data.share_class_shares_outstanding,
                     weighted_shares_outstanding=data.weighted_shares_outstanding,
                 )
                 db.session.add(stock)
-                db.session.commit()
+            db.session.commit()
             sector = db.session.query(Sector).filter_by(code=data.sic_code).first()
             if not sector:
                 sector = Sector(
                     code=data.sic_code,
-                    name=data.sic_description
+                    description=data.sic_description
                 )
                 db.session.add(sector)
                 db.session.commit()
-            company = db.session.query(USCompany).filter_by(name=data.name).first()
-            if not company:
+            company = db.session.query(USCompany).filter_by(name=data.name, symbol=data.ticker).first()
+            if company:
+                company.description = data.description
+                company.domain = polygon.website_to_domain(data.homepage_url)
+                company.symbol = data.ticker
+                company.sic_code = data.sic_code
+                company.list_date = datetime.strptime(data.list_date, '%Y-%m-%d').date()
+                company.phone_number = data.phone_number
+                company.total_employees = data.total_employees
+            else:
                 company = USCompany(
                     name=data.name,
                     description=data.description,
                     domain=polygon.website_to_domain(data.homepage_url),
                     symbol=data.ticker,
                     sic_code=data.sic_code,
-                    list_date=data.list_date,
+                    list_date=datetime.strptime(data.list_date, '%Y-%m-%d').date(),
                     phone_number=data.phone_number,
                     total_employees=data.total_employees,
                 )
                 db.session.add(company)
-                db.session.commit()
+            db.session.commit()
             address = db.session.query(USAddress).filter_by(company_id=company.id).first()
             if not address:
                 address = USAddress(
                     company_id=company.id,
                     address=data.address.address1,
                     city=data.address.city,
-                    post_code=data.address.post_code,
+                    post_code=data.address.postal_code,
                     state=data.address.state,
                 )
                 db.session.add(address)
@@ -401,7 +415,7 @@ def get_monthly_data(symbol):
     try:
         # get data from database
         toDate = datetime.utcnow().date()
-        fromDate = toDate - timedelta(days=700)
+        fromDate = toDate - timedelta(days=365)
         results = db.session.query(MonthlyUSMarketData).filter(
             MonthlyUSMarketData.symbol == symbol,
             and_(
