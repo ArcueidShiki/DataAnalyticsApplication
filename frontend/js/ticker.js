@@ -8,12 +8,12 @@ var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
 function drawCandleStickChart(symbol, data) {
   var dom = document.getElementById("candlestickChart");
-  dom.style.width = '100%';
+  dom.style.width = "100%";
 
   var chart = echarts.init(dom, "dark", {
     renderer: "canvas", // "svg" or "canvas"
     useDirtyRect: false,
-    width: 'auto'
+    width: "auto",
   });
   // "https://echarts.apache.org/examples/data/asset/data/stock-DJI.json"; exmaple data.
   var app = {};
@@ -410,6 +410,9 @@ function fillDayPrice(data) {
 
   $("#volume").text(formatNumber(volume));
   $("#turnover").text(formatNumber(volume * close));
+  symbolItem.close = close;
+  symbolItem.change = close - open;
+  symbolItem.percent_change = ((close - open) / open) * 100;
 }
 
 function drawLineChart(symbol, data) {
@@ -495,6 +498,20 @@ function drawLineChart(symbol, data) {
 
 function getNews() {}
 
+class WatchlistItem {
+  constructor(symbol, name, close, change, percent_change, market_cap, domain) {
+    this.symbol = symbol;
+    this.company = name;
+    this.close = close;
+    this.change = change;
+    this.percent_change = percent_change;
+    this.market_cap = market_cap;
+    this.domain = domain;
+  }
+}
+
+let symbolItem = new WatchlistItem();
+
 function getTickerOverview(symbol) {
   if (gStockMap && gStockMap[symbol] && gStockMap[symbol]["overview"]) {
     fillOverviewInfo(symbol, gStockMap[symbol]["overview"]);
@@ -545,6 +562,10 @@ function fillOverviewInfo(symbol, data) {
   $("#company-postal-code").text(data.company.address.post_code);
   // $("#company-logo").attr("src", logo_url);
   // $("#company-icon").attr("src", logo_url);
+  symbolItem.symbol = symbol;
+  symbolItem.company = data.company.name;
+  symbolItem.domain = data.company.domain;
+  symbolItem.market_cap = data.market_cap;
 }
 
 function setupToggleCandlestickChart(symbol) {
@@ -562,6 +583,17 @@ function setupToggleCandlestickChart(symbol) {
   });
 }
 
+function updateWatchlist(isAdd) {
+  let watchlist = JSON.parse(localStorage.getItem("watchlist"));
+  if (isAdd) {
+    watchlist.push(symbolItem);
+  } else {
+    watchlist = watchlist.filter((item) => item.symbol !== symbolItem.symbol);
+  }
+  localStorage.setItem("watchlist", JSON.stringify(watchlist));
+  Sidebar.getInstance().loadWatchlistFromCache();
+}
+
 function addToWatchlist(symbol) {
   $("#followBtn").html('<i class="fas fa-spinner fa-spin"></i> Adding...');
   const requestData = {
@@ -573,6 +605,7 @@ function addToWatchlist(symbol) {
     .then(() => {
       $("#followBtn").html('<i class="fas fa-check"></i> Added to Watchlist');
       $("#followBtn").addClass("following");
+      updateWatchlist(true);
     })
     .catch((error) => {
       console.error("Error adding to watchlist:", error);
@@ -599,7 +632,6 @@ function addToWatchlist(symbol) {
 function checkInWatchlist(symbol) {
   Http.get(`/stock/watchlist/exists/${symbol}`)
     .then((response) => {
-      console.log("Check watchlist response:", response);
       if (response.exists) {
         $("#followBtn").html('<i class="fas fa-check"></i> Following');
         $("#followBtn").addClass("following");
@@ -619,6 +651,7 @@ function removeFromWatchlist(symbol) {
     .then(() => {
       $("#followBtn").html('<i class="fas fa-plus"></i> Add to Watchlist');
       $("#followBtn").removeClass("following");
+      updateWatchlist(false);
     })
     .catch((error) => {
       console.error("Error removing from watchlist:", error);

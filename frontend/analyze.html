@@ -1,65 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analyze My Portfolio</title>
-  <link rel="icon" href="assets/favicon.png" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
-  <link rel="stylesheet" href="css/analyze.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-</head>
-<body>
-  <div class="app-container">
-    <div class="sidebar">
-      <ul class="sidebar-menu">
-        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-        <li><a href="myasset.html"><i class="fas fa-wallet"></i> My Assets</a></li>
-        <li><a href="analyze.html"><i class="fas fa-chart-pie"></i> Analyze Portfolio</a></li>
-      </ul>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyze My Portfolio</title>
+    <link rel="icon" href="assets/favicon.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/analyze.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li>
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+          </li>
+          <li>
+            <a href="myasset.html"><i class="fas fa-wallet"></i> My Assets</a>
+          </li>
+          <li>
+            <a href="analyze.html"
+              ><i class="fas fa-chart-pie"></i> Analyze Portfolio</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="main-content">
+        <h1 class="page-title">📊 Analyze My Portfolio</h1>
+
+        <!-- Upload CSV -->
+        <div class="card" style="margin-bottom: 2rem">
+          <label for="csvFile">📁 Upload CSV Portfolio File:</label><br />
+          <input type="file" id="csvFile" accept=".csv" />
+        </div>
+
+        <div class="dashboard-cards">
+          <div class="card">
+            <h3>Total Investment</h3>
+            <p class="value" id="totalInvestment">--</p>
+          </div>
+          <div class="card">
+            <h3>Total Profit / Loss</h3>
+            <p class="value" id="totalPnL">--</p>
+          </div>
+          <div class="card">
+            <h3>Avg Return (%)</h3>
+            <p class="value" id="avgReturn">--</p>
+          </div>
+          <div class="card">
+            <h3>Most Risky Stock</h3>
+            <p class="value" id="mostRisky">--</p>
+          </div>
+        </div>
+
+        <div class="chart-section">
+          <div class="chart-card small-chart">
+            <h3>📈 Sector Allocation</h3>
+            <canvas id="sectorChart"></canvas>
+          </div>
+          <div class="chart-card small-chart">
+            <h3>🏢 Company Distribution</h3>
+            <canvas id="companyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="gainers-losers">
+          <div class="card">
+            <h3>Top Gainers</h3>
+            <ul id="gainersList">
+              Upload CSV first
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Top Losers</h3>
+            <ul id="losersList">
+              Upload CSV first
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="main-content">
-      <h1 class="page-title">📊 Analyze My Portfolio</h1>
-
-      <!-- Upload CSV -->
-      <div class="card" style="margin-bottom: 2rem;">
-        <label for="csvFile">📁 Upload CSV Portfolio File:</label><br />
-        <input type="file" id="csvFile" accept=".csv" />
-      </div>
-
-      <div class="dashboard-cards">
-        <div class="card"><h3>Total Investment</h3><p class="value" id="totalInvestment">--</p></div>
-        <div class="card"><h3>Total Profit / Loss</h3><p class="value" id="totalPnL">--</p></div>
-        <div class="card"><h3>Avg Return (%)</h3><p class="value" id="avgReturn">--</p></div>
-        <div class="card"><h3>Most Risky Stock</h3><p class="value" id="mostRisky">--</p></div>
-      </div>
-
-      <div class="chart-section">
-        <div class="chart-card small-chart">
-          <h3>📈 Sector Allocation</h3>
-          <canvas id="sectorChart"></canvas>
-        </div>
-        <div class="chart-card small-chart">
-          <h3>🏢 Company Distribution</h3>
-          <canvas id="companyChart"></canvas>
-        </div>
-      </div>
-
-      <div class="gainers-losers">
-        <div class="card">
-          <h3>Top Gainers</h3>
-          <ul id="gainersList">Upload CSV first</ul>
-        </div>
-        <div class="card">
-          <h3>Top Losers</h3>
-          <ul id="losersList">Upload CSV first</ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="js/analyze.js" type="module"></script>
-</body>
+    <script src="js/analyze.js" type="module"></script>
+  </body>
 </html>

@@ -276,7 +276,6 @@
   letter-spacing: 0.5px;
 }
 
-
 .setting-section.hidden {
   height: 0;
   transform: translateY(100%);
@@ -284,7 +283,6 @@
   background-color: var(--sidebar-bg);
   z-index: -1;
   box-sizing: border-box;
-
 }
 
 .setting-section.expanded {

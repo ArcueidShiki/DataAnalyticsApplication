@@ -26,7 +26,6 @@ function setupTabNavigation() {
   });
 }
 
-
 function loadUserData() {
   // Populate form fields
   $("#fullname").val(userData.name);
