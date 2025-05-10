@@ -1,5 +1,7 @@
 // https://polygon.io/docs/rest/stocks/tickers/ticker-overview this for company logo and description and financials
 import Sidebar from "./sidebar.js";
+import SearchBar from "./search.js";
+import TradeCard from "./trade.js";
 const apiKey = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"; // Replace with your actual API key
 var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
@@ -13,8 +15,8 @@ function drawCandleStickChart(symbol, data) {
   var app = {};
   var option;
 
-  const upColor = "#08c53d";
-  const downColor = "#ec0000";
+  const upColor = "#13d249";
+  const downColor = "#d91c1c";
 
   chart.setOption(
     (option = {
@@ -609,12 +611,13 @@ $(document).ready(function () {
   const symbol = urlParams.get("symbol") || "META";
   fetchStockData(symbol);
   getTickerOverview(symbol);
-  
+
   // Add event listener for the follow button
   $("#followBtn").on("click", function () {
     addToWatchlist();
   });
 
   Sidebar.getInstance();
-
+  SearchBar.getInstance();
+  TradeCard.getInstance(symbol);
 });

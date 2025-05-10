@@ -1,3 +1,4 @@
+import Http from "./http.js";
 function RegisterHandler(e) {
   e.preventDefault();
   const username = $("#username").val();

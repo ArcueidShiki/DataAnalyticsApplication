@@ -137,11 +137,6 @@ function initTabSwitching() {
   }
 }
 
-/**
- * Get appropriate date format for chart tooltip based on timeframe
- * @param {string} timeframe - The timeframe (1D, 1W, 1M, 1Y, ALL)
- * @returns {string} Date format string
- */
 function getTooltipDateFormat(timeframe) {
   switch (timeframe) {
     case "1D":
@@ -159,9 +154,6 @@ function getTooltipDateFormat(timeframe) {
   }
 }
 
-/**
- * Initialize timeframe buttons
- */
 function initTimeframeButtons() {
   const timeframeBtns = document.querySelectorAll(".timeframe-btn");
   timeframeBtns.forEach((btn) => {
@@ -170,70 +162,20 @@ function initTimeframeButtons() {
         "Timeframe button clicked:",
         this.getAttribute("data-timeframe"),
       );
-
-      // Remove all active states
       timeframeBtns.forEach((b) => b.classList.remove("active"));
-      // Add active state to current button
       this.classList.add("active");
-
-      // Get timeframe and update chart
       const timeframe = this.getAttribute("data-timeframe");
       updateChartWithDummyData(timeframe);
     });
   });
 }
 
-/**
- * Function to guess a company's domain name
- * @param {string} companyName - Name of the company
- * @returns {string} Guessed domain name
- */
-function guessDomainFromCompany(companyName) {
-  // Remove common corporate suffixes and spaces
-  let domain = companyName
-    .toLowerCase()
-    .replace(
-      /\s+inc\.?$|\s+incorporated$|\s+corp\.?$|\s+corporation$|\s+llc$|\s+ltd\.?$|\s+limited$|\s+sa$|\s+s\.a\.$/i,
-      "",
-    )
-    .replace(/[\s'",.&]+/g, "")
-    .trim();
-
-  // Special cases for common companies
-  const specialCases = {
-    apple: "apple.com",
-    amazon: "amazon.com",
-    microsoft: "microsoft.com",
-    google: "google.com",
-    alphabet: "abc.xyz",
-    tesla: "tesla.com",
-    facebook: "fb.com",
-    meta: "meta.com",
-    netflix: "netflix.com",
-    spotify: "spotify.com",
-  };
-
-  if (specialCases[domain]) {
-    return specialCases[domain];
-  }
-
-  // Default fallback
-  return domain + ".com";
-}
-
-/**
- * Generate a consistent color from a string
- * @param {string} name - String to generate color from
- * @returns {string} Hex color code
- */
 function getColorFromName(name) {
-  // Simple hash function
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  // Convert to hex color
   let color = "#";
   for (let i = 0; i < 3; i++) {
     const value = (hash >> (i * 8)) & 0xff;

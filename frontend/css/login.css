@@ -10,7 +10,7 @@ body {
   overflow: scroll;
   background-color: #1a1a1a;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center; /* Centers the content vertically */
 }
 
@@ -80,8 +80,6 @@ body {
   margin-bottom: 2rem;
 }
 
-/* Frosted glass effect */
-/* Login form container */
 .login-container {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px); /* blur for frosted effect */
@@ -283,7 +281,7 @@ body {
 /* Media Query for smaller screens (iPhone SE, etc.) */
 @media (max-width: 576px) {
   .container-fluid {
-    flex-direction: column; /* Stacks the columns vertically on small screens */
+    flex-direction: row; /* Stacks the columns vertically on small screens */
   }
 
   .left-column,

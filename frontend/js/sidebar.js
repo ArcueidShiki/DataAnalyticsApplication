@@ -4,7 +4,9 @@ export default class Sidebar {
   static instance = null; // sidebar singleton
   constructor() {
     if (Sidebar.instance) {
-      console.log("Sidebar instance already exists. Returning the existing instance.");
+      console.log(
+        "Sidebar instance already exists. Returning the existing instance.",
+      );
       return Sidebar.instance;
     }
     Sidebar.instance = this;
