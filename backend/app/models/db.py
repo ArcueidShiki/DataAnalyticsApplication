@@ -14,12 +14,25 @@ class User(db.Model):
     date_of_birth = Column(Date)
     is_google_user = Column(Boolean, default=False)
     is_apple_user = Column(Boolean, default=False)
+    profile_img = Column(String, default="static/users/profile/default.png")
     portfolio = db.relationship('Portfolio', back_populates="user")
     balance = db.relationship('Balance', back_populates="user")
     watchlist = db.relationship('Watchlist', back_populates="user")
     transactions = db.relationship('Transaction', back_populates="user")
     def __repr__(self):
         return f"<User {self.username}>"
+    def to_dict(self):
+        return {
+            "email": self.email,
+            "phone": self.phone,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "date_of_birth": self.date_of_birth.isoformat() if self.date_of_birth else None,
+            "profile_img": self.profile_img,
+            "balance": [balance.to_dict() for balance in self.balance],
+            "portfolio": [portfolio.to_dict() for portfolio in self.portfolio],
+        }
 
 class Currency(db.Model):
     __tablename__ = 'currencies'
@@ -37,6 +50,13 @@ class Balance(db.Model):
     amount = Column(Float, nullable=False, default=0.0)
     user = db.relationship('User', back_populates='balance')
     __table_args__ = (db.UniqueConstraint('user_id', 'currency', name='unique_user_currency'),)
+    def __repr__(self):
+        return f"<Balance {self.user_id} {self.currency} {self.amount}>"
+    def to_dict(self):
+        return {
+            "currency": self.currency,
+            "amount": self.amount,
+        }
 
 class Asset(db.Model):
     __tablename__ = 'assets'
@@ -62,6 +82,14 @@ class Portfolio(db.Model):
     __table_args__ = (db.UniqueConstraint('user_id', 'asset_id', name='unique_user_asset'),)
     def __repr__(self):
         return f"<Portfolio(asset_id='{self.asset_id}', avg_cost={self.avg_cost}, cur_price={self.cur_price}, quantity={self.quantity}, user_id={self.user_id})>"
+    def to_dict(self):
+        return {
+            "avg_cost": self.avg_cost,
+            "cur_price": self.cur_price,
+            "quantity": self.quantity,
+            "symbol": self.asset.symbol if self.asset else None,
+            "name": self.asset.name if self.asset else None,
+        }
 
 class Watchlist(db.Model):
     __tablename__ = 'watchlist'

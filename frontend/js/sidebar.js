@@ -1,5 +1,6 @@
 import * as Utils from "./utils.js";
 import Http from "./http.js";
+import AccountSettingCard from "./accountsetting.js";
 export default class Sidebar {
   static instance = null; // sidebar singleton
   constructor() {
@@ -24,6 +25,7 @@ export default class Sidebar {
       if (!this.loadWatchlistFromCache() && !this.loadWatchlist()) {
         this.loadWatchlistFromMockData();
       }
+      this.loadUserInfo();
       this.setupMenuItems();
       this.setupSettingToggle();
     });
@@ -34,15 +36,30 @@ export default class Sidebar {
         <div class="sidebar-header">
           <div class="user-profile" id="profile-toggle">
             <div class="profile-avatar">
-              <img src="assets/user.jpeg" alt="User Avatar" />
             </div>
             <div class="profile-info">
-              <div class="profile-name">Rojo Arab Oktov</div>
-              <div class="profile-balance">$56,320.00</div>
+              <div class="profile-name"></div>
+              <div class="profile-balance"></div>
             </div>
           </div>
         </div>
     `);
+  }
+
+  loadUserInfo() {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) {
+      const profileName = $(".profile-name");
+      const profileBalance = $(".profile-balance");
+      if (profileName && profileBalance) {
+        profileName.text(user.username);
+        profileBalance.text(`$${user.balance[0].amount} ${user.balance[0].currency}`);
+        const profileAvatar = $(".profile-avatar");
+        profileAvatar.append($(`<img src="${Http.baseUrl}/${user.profile_img}" alt="${user.username} id="sidebar-profile" "/>`));
+      }
+    } else {
+      console.warn("User info not found in local storage.");
+    }
   }
 
   createMenu() {
@@ -141,7 +158,7 @@ export default class Sidebar {
       "my asset": () => (window.location.href = "myasset.html"),
       "top chart": () => (window.location.href = "analysis.html"),
       contact: () => (window.location.href = "chat.html"),
-      "account setting": () => this.showAccountSettingsModal(),
+      "account setting": () => AccountSettingCard.getInstance().showAccountSettingsModal(),
       "help center": () => (window.location.href = "help.html"),
       logout: this.handleLogout,
     };
@@ -199,7 +216,8 @@ export default class Sidebar {
     Http.get("/auth/logout").then((response) => {
       console.log(response);
       document.cookie = "";
-      localStorage.clear();
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("watchlist");
       window.location.href = "login.html";
     });
   }
@@ -316,40 +334,6 @@ export default class Sidebar {
       document.body.setAttribute("data-theme", newTheme);
       this.updateThemeUI(newTheme, icon, text);
       localStorage.setItem("theme", newTheme);
-    });
-  }
-
-  showAccountSettingsModal() {
-    if ($("#account-settings-modal").length === 0) {
-      this.createAccountSettingsModal();
-    } else {
-      $("#account-settings-modal").addClass("show");
-    }
-  }
-
-  createAccountSettingsModal() {
-    const modal = $(
-      '<div id="account-settings-modal" class="account-settings-modal"></div>',
-    );
-
-    $.get("accountsetting.html", function (content) {
-      const modalContent = $('<div class="modal-main-content"></div>').html(
-        content,
-      );
-      modal.append(modalContent);
-
-      const closeButton = $('<span class="modal-close">&times;</span>');
-      closeButton.on("click", function () {
-        $("#account-settings-modal").removeClass("show");
-      });
-
-      modalContent.prepend(closeButton);
-
-      $("body").append(modal);
-      setTimeout(() => {
-        modal.addClass("show");
-        new AccountSettings(true); // true indicates it's in a modal
-      }, 100);
     });
   }
 }

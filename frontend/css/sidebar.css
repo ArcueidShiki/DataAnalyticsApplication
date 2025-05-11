@@ -1,10 +1,9 @@
 @import url("base.css");
-
 .sidebar {
   top: 0;
   left: 0;
   height: 100vh;
-  width: auto;
+  width: 12vw;
   background-color: var(--sidebar-bg);
   color: var(--text-color);
   display: flex;
@@ -276,24 +275,22 @@
   letter-spacing: 0.5px;
 }
 
+/* Don't touch this */
 .setting-section.hidden {
-  height: 0;
-  transform: translateY(100%);
-  transition: transform 0.5s ease;
+  position: absolute;
+  transform: translateY(60%);
+  transition: transform 0.8s ease;
   background-color: var(--sidebar-bg);
-  z-index: -1;
+  z-index: 1;
   box-sizing: border-box;
 }
 
+/* Don't touch this */
 .setting-section.expanded {
-  display: block;
-  width: 100%;
-  height: auto;
-  position: relative;
-  left: 0;
-  bottom: 25%;
-  transform: translateY(0);
-  transition: transform 0.5s ease;
+  position: absolute;
+  bottom: -20;
+  transform: translateY(-120%);
+  transition: transform 0.8s ease;
   background-color: var(--sidebar-bg);
   z-index: 1;
   box-sizing: border-box;
