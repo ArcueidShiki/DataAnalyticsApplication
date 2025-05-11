@@ -2,6 +2,7 @@ import * as Utils from "./utils.js";
 import Http from "./http.js";
 import AccountSettingCard from "./accountsetting.js";
 export default class Sidebar {
+  accountSetting = null;
   static instance = null; // sidebar singleton
   constructor() {
     if (Sidebar.instance) {
@@ -53,9 +54,15 @@ export default class Sidebar {
       const profileBalance = $(".profile-balance");
       if (profileName && profileBalance) {
         profileName.text(user.username);
-        profileBalance.text(`$${user.balance[0].amount} ${user.balance[0].currency}`);
+        profileBalance.text(
+          `$${user.balance[0].amount} ${user.balance[0].currency}`,
+        );
         const profileAvatar = $(".profile-avatar");
-        profileAvatar.append($(`<img src="${Http.baseUrl}/${user.profile_img}" alt="${user.username} id="sidebar-profile" "/>`));
+        profileAvatar.append(
+          $(
+            `<img src="${Http.baseUrl}/${user.profile_img}" alt="${user.username} id="sidebar-profile" "/>`,
+          ),
+        );
       }
     } else {
       console.warn("User info not found in local storage.");
@@ -158,7 +165,10 @@ export default class Sidebar {
       "my asset": () => (window.location.href = "myasset.html"),
       "top chart": () => (window.location.href = "analysis.html"),
       contact: () => (window.location.href = "chat.html"),
-      "account setting": () => AccountSettingCard.getInstance().showAccountSettingsModal(),
+      "account setting": (() => {
+        this.accountSetting = AccountSettingCard.getInstance();
+        this.accountSetting.showDialog();
+      }),
       "help center": () => (window.location.href = "help.html"),
       logout: this.handleLogout,
     };
@@ -214,7 +224,6 @@ export default class Sidebar {
 
   handleLogout() {
     Http.get("/auth/logout").then((response) => {
-      console.log(response);
       document.cookie = "";
       localStorage.removeItem("userInfo");
       localStorage.removeItem("watchlist");

@@ -4,7 +4,7 @@ import Http from "./http.js";
 export default class AccountSettingCard {
   formData = null;
   static instance = null;
-
+  modalDialog = null;
   constructor() {
     if (AccountSettingCard.instance) {
       console.log(
@@ -13,7 +13,7 @@ export default class AccountSettingCard {
       return AccountSettingCard.instance;
     }
     AccountSettingCard.instance = this;
-    this.init();
+    this.createAccountSettingsModal();
   }
 
   static getInstance() {
@@ -23,78 +23,82 @@ export default class AccountSettingCard {
     return AccountSettingCard.instance;
   }
 
-  showAccountSettingsModal() {
+  showDialog() {
     $("#account-settings-modal").addClass("show");
+    $(".modal-main-content").addClass("show");
   }
 
   createAccountSettingsModal() {
-    const modal = $(
-      '<div id="account-settings-modal" class="account-settings-modal"></div>',
-    );
-    $.get("accountsetting.html", (content) => {
-      const modalContent = $('<div class="modal-main-content"></div>').html(
-        content,
+    if (!this.modalDialog) {
+      this.modalDialog = $(
+        '<div id="account-settings-modal" class="account-settings-modal"></div>'
       );
-      modal.append(modalContent);
-      const closeButton = $('<span class="modal-close">&times;</span>');
-      modalContent.prepend(closeButton);
-      $("body").append(modal);
-      modal.addClass("show");
-      $("body").on("click", ".modal-close", () => {
-        console.log("Modal close button clicked");
-        $("#account-settings-modal").removeClass("show");
-        $(".modal-main-content").removeClass("show");
+      $.get("accountsetting.html", (content) => {
+        let modalContent = $('<div class="modal-main-content"></div>').html(
+          content
+        );
+        this.modalDialog.append(modalContent);
+        const closeButton = $('<span class="modal-close">&times;</span>');
+        modalContent.prepend(closeButton);
+        $("body").append(this.modalDialog);
+        this.modalDialog.addClass("show");
+        setTimeout(() => {
+          $(".modal-close").on("click", () => {
+            $("#account-settings-modal").removeClass("show");
+            $(".modal-main-content").removeClass("show");
+          });
+          this.setupEventListeners();
+          this.loadUserData();
+          this.setupTabNavigation();
+          this.setupPasswordStrengthMeter();
+        }, 0);
       });
-    });
-  }
-
-  init() {
-    this.createAccountSettingsModal();
-    this.loadUserData();
-    this.setupEventListeners();
-    this.setupPasswordStrengthMeter();
-    this.setupTabNavigation();
+    }
   }
 
   setupTabNavigation() {
-    $(".tab-button").on("click", () => {
+    $(".tab-button").on("click", function () {
       $(".tab-button").removeClass("active");
-      $(".tab-content").removeClass("active");
+      $(".account-setting-tab-content").removeClass("active");
       $(this).addClass("active");
       const tabId = $(this).data("tab");
-      $("#" + tabId).addClass("active");
+      console.log("Tab ID:", tabId);
+      $(`#${tabId}`).addClass("active");
     });
   }
 
   loadUserData() {
     let user = JSON.parse(localStorage.getItem("userInfo"));
-    console.log("User data loaded:", user);
+    const img_url = user ? `${Http.baseUrl}/${user.profile_img}` : "assets/user.jpeg";
     user = user ? user : mockUser;
+    console.log("User data loaded:", user);
     $("#fullname").val(user.username);
     $("#email").val(user.email);
     $("#phone").val(user.phone);
     $("#birthdate").val(user.date_of_birth);
-    const img_url = `${Http.baseUrl}/${user.profile_img}`;
-    $("#profile-avatar").attr("src", img_url || "assets/user.jpeg");
-    // $("#email-notifications").prop("checked", user.notifications.email);
-    // $("#push-notifications").prop("checked", user.notifications.push);
-    // $("#market-alerts").prop("checked", user.notifications.market);
-    // $("#newsletter").prop("checked", user.notifications.newsletter);
+    $("#profile-avatar").attr("src", img_url);
+    $("#email-notifications").prop("checked", user.notifications.email);
+    $("#push-notifications").prop("checked", user.notifications.push);
+    $("#market-alerts").prop("checked", user.notifications.market);
+    $("#newsletter").prop("checked", user.notifications.newsletter);
   }
 
   setupEventListeners() {
     $("#avatar-upload").on("change", (event) => {
-      // event.preventDefault();
       this.handleAvatarUpload(event);
     });
     $(".avatar-container").on("click", () => {
       $("#avatar-upload").click();
     });
-    $("#save-settings").on("click", this.showConfirmationModal);
+    $("#avatar-upload").on("click", (event) => {
+      console.log("Avatar upload clicked");
+    });
+    // $("#save-settings").on("click", this.showConfirmationModal);
     $(".cancel-btn").on("click", () => {
-      if (confirm("Discard changes?")) {
-        // window.location.reload();
-      }
+      confirm("Discard changes?");
+    });
+    $(".save-btn").on("click", () => {
+      confirm("Save changes?");
     });
 
     $(".close-modal").on("click", this.showConfirmationModal);
@@ -155,7 +159,7 @@ export default class AccountSettingCard {
   }
 
   handleAvatarUpload(event) {
-    // event.preventDefault();
+    event.preventDefault();
     const file = event.target.files[0];
     if (!file) return;
 
@@ -168,25 +172,21 @@ export default class AccountSettingCard {
       alert("File too large. Maximum size is 5MB.");
       return;
     }
-
-    formData.append("file", file);
-
+    this.formData = new FormData();
+    this.formData.append("file", file);
+    Http.formSubmit("/auth/upload/img", this.formData)
+    .then((response) => {
+      let user = JSON.parse(localStorage.getItem("userInfo"));
+      user.profile_img = response.image_url;
+      $("#profile-avatar").attr("src", `${Http.baseUrl}/${response.image_url}`);
+      localStorage.setItem("userInfo", JSON.stringify(user));
+    })
     const reader = new FileReader();
     reader.onload = (e) => {
       $("#profile-avatar").attr("src", e.target.result);
     };
     reader.readAsDataURL(file);
   }
-
-  showConfirmationModal() {
-    if (!validateForm()) return;
-    $("#confirmation-modal").addClass("show");
-  }
-
-  hideConfirmationModal() {
-    $("#confirmation-modal").removeClass("show");
-  }
-
   validateForm() {
     const fullname = $("#fullname").val().trim();
     const email = $("#email").val().trim();
@@ -230,10 +230,21 @@ export default class AccountSettingCard {
     return true;
   }
 
+  showConfirmationModal() {
+    if (!this.validateForm()) return;
+    $("#confirmation-modal").addClass("show");
+  }
+
+  hideConfirmationModal() {
+    $("#confirmation-modal").removeClass("show");
+  }
+
+
+
   saveSettings() {
     this.hideConfirmationModal();
 
-    formData = {
+    this.formData = {
       name: $("#fullname").val().trim(),
       email: $("#email").val().trim(),
       phone: $("#phone").val().trim(),
@@ -248,7 +259,7 @@ export default class AccountSettingCard {
       },
     };
 
-    console.log("Saving settings:", formData);
+    console.log("Saving settings:", this.formData);
 
     this.showSavingIndicator();
 
@@ -298,4 +309,4 @@ export default class AccountSettingCard {
       }, 3000);
     }, 100);
   }
-};
+}

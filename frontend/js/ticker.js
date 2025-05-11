@@ -3,12 +3,10 @@ import Sidebar from "./sidebar.js";
 import SearchBar from "./search.js";
 import TradeCard from "./trade.js";
 import { formatMarketCap } from "./utils.js";
-const apiKey = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"; // Replace with your actual API key
 var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
 function drawCandleStickChart(symbol, data) {
   var dom = document.getElementById("candlestickChart");
-
   var chart = echarts.init(dom, "dark", {
     renderer: "canvas", // "svg" or "canvas"
     useDirtyRect: false,
@@ -396,8 +394,7 @@ function fillDayPrice(data) {
   $("#intradayLow").text(low.toFixed(2));
   $("#intradayHigh").text(high.toFixed(2));
   $("#currentPrice").text(close.toFixed(2));
-  const changeClass =
-    close >= open ? "positive" : "negative";
+  const changeClass = close >= open ? "positive" : "negative";
   $("#priceChange").removeClass("positive negative").addClass(changeClass);
   $("#priceChange").addClass(changeClass);
   $("#priceChange").text((close - open).toFixed(2));
@@ -662,7 +659,7 @@ function removeFromWatchlist(symbol) {
 }
 
 function setupToggleWathclist(symbol) {
-  // checkInWatchlist(symbol);
+  checkInWatchlist(symbol);
   $("#followBtn").on("click", function (event) {
     event.preventDefault();
     const isFollowing = $("#followBtn").hasClass("following");

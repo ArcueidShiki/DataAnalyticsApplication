@@ -294,7 +294,7 @@
 }
 
 #candlestickChart {
-  position: relative;;
+  position: relative;
   height: 70vh;
   width: 100%;
   left: 0;
@@ -302,7 +302,7 @@
 }
 
 #priceChart {
-  position: relative;;
+  position: relative;
   height: 50vh;
   width: 100%;
   left: 0;
