@@ -17,6 +17,7 @@ function LoginHandler(e) {
     .then((response) => {
       // access_token_cookie csrf_access_token in response header, type Set-Cookie
       console.log("Login response:", response);
+      localStorage.setItem("userInfo", JSON.stringify(response.user));
       const { access_token, csrf_token } = response;
       console.log("Access token:", access_token);
       console.log("CSRF token:", csrf_token);

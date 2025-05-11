@@ -1,27 +1,21 @@
+import os
 import re
 import uuid
 from app import db
-from flask import jsonify, logging, request
+from flask import app, jsonify, logging, request
 from datetime import datetime
 from datetime import timedelta
-from app.models.db import Asset, Portfolio, User
+from app.models.db import Asset, Balance, Portfolio, User
+from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token, get_csrf_token, set_access_cookies, unset_jwt_cookies
+from flask_jwt_extended import create_access_token, get_csrf_token, get_jwt_identity, set_access_cookies, unset_jwt_cookies
 
 def init_new_user_funds(userid):
-    print(f"Initializing funds for user {userid}!!!!!!!!!!!!")
-    assetid = db.session.query(Asset.id).filter_by(type='currency', symbol='USD').first()
-    if not assetid:
-        print(f"USD asset not found for user {userid}")
-        return jsonify({"msg": "USD asset not found"}), 400
-
-    new_portfolio = Portfolio(
+    balance = Balance(
         user_id=userid,
-        asset_id=assetid[0],
-        quantity=1000000  # 1 million USD
+        currency='USD',
     )
-
-    db.session.add(new_portfolio)
+    db.session.add(balance)
     db.session.commit()
 
 def register():
@@ -108,8 +102,6 @@ def login():
 
     user = User.query.filter_by(username=data['username']).first()
     if user is None or not check_password_hash(user.password, data['password']):
-    # For testing:
-    # if user.password != data['password']:
         return jsonify({"msg": "Invalid username or password"}), 401
     access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=30))
     csrf_token = get_csrf_token(access_token)
@@ -117,7 +109,8 @@ def login():
     response = jsonify({
         "msg": "Login successful",
         "access_token": access_token,
-        "csrf_token": csrf_token
+        "csrf_token": csrf_token,
+        "user": user.to_dict()
     })
     set_access_cookies(response, access_token)
     return response, 200
@@ -126,3 +119,33 @@ def logout():
     response = jsonify({"msg": "Logout successful"})
     unset_jwt_cookies(response)
     return response, 200
+
+def allowed_file(filename):
+    if '.' in filename:
+        suffix = filename.rsplit('.', 1)[1].lower()
+        return suffix in {'png', 'jpg', 'jpeg', 'gif'}
+    else:
+        return False
+
+def upload_profile_img():
+    user_id = get_jwt_identity()
+    if not user_id:
+        return jsonify({"msg": "Missing user_id"}), 400
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    if 'file' not in request.files:
+        return jsonify({"msg": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"msg": "No selected file"}), 400
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        user_folder = os.path.join('app/static/users/profile/', user_id)
+        os.makedirs(user_folder, exist_ok=True)
+        file_path = os.path.join(user_folder, filename)
+        file.save(file_path)
+        user.profile_img = f"static/users/profile/{user_id}/{filename}"
+        db.session.commit()
+        return jsonify({"message": "File uploaded successfully", "image_url": user.profile_img}), 200
+    return jsonify({"error": "File type not allowed"}), 400

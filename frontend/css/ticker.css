@@ -10,7 +10,7 @@
 }
 
 .main-column {
-  width: 50vw;
+  width: 70vw;
   height: 100%;
   position: relative;
   flex: 1;
@@ -256,6 +256,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: left;
   width: 100%;
   height: 100%;
 }
@@ -293,16 +294,15 @@
 }
 
 #candlestickChart {
+  position: relative;
   height: 70vh;
-  width: 100% !important;
-  /* position: fixed; */
-  top: 0;
+  width: 100%;
   left: 0;
-  z-index: 0;
   background-color: var(--bg-color);
 }
 
 #priceChart {
+  position: relative;
   height: 50vh;
   width: 100%;
   left: 0;
@@ -563,6 +563,6 @@
   padding: 1rem;
   top: auto;
   right: 0;
-  width: auto;
+  width: 18vw;
   flex-shrink: 0;
 }

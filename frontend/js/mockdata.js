@@ -267,3 +267,16 @@ function generateVolumeData(candlestickData) {
   }
   return data;
 }
+
+export var mockUser = {
+  username: "Rojo Arab Oktov",
+  email: "rojo@example.com",
+  phone: "+1 (555) 123-4567",
+  date_of_birth: "1990-01-01",
+  notifications: {
+    email: true,
+    push: true,
+    market: true,
+    newsletter: false,
+  },
+};

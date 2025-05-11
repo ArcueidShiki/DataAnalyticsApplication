@@ -3,13 +3,10 @@ import Sidebar from "./sidebar.js";
 import SearchBar from "./search.js";
 import TradeCard from "./trade.js";
 import { formatMarketCap } from "./utils.js";
-const apiKey = "O0f43W3ucKbFkB32_1JpehLCLIznObMz"; // Replace with your actual API key
 var gStockMap = JSON.parse(localStorage.getItem("stockDataCache")) || {};
 
 function drawCandleStickChart(symbol, data) {
   var dom = document.getElementById("candlestickChart");
-  dom.style.width = "100%";
-
   var chart = echarts.init(dom, "dark", {
     renderer: "canvas", // "svg" or "canvas"
     useDirtyRect: false,
@@ -68,7 +65,7 @@ function drawCandleStickChart(symbol, data) {
           },
         ],
         label: {
-          backgroundColor: "#bab5b5",
+          backgroundColor: "#77777760",
         },
       },
       toolbox: {
@@ -405,6 +402,9 @@ function fillDayPrice(data) {
   $("#intradayLow").text(low.toFixed(2));
   $("#intradayHigh").text(high.toFixed(2));
   $("#currentPrice").text(close.toFixed(2));
+  const changeClass = close >= open ? "positive" : "negative";
+  $("#priceChange").removeClass("positive negative").addClass(changeClass);
+  $("#priceChange").addClass(changeClass);
   $("#priceChange").text((close - open).toFixed(2));
   const formatNumber = (num) => {
     if (num >= 1e9) {
@@ -611,7 +611,7 @@ function addToWatchlist(symbol) {
 
   Http.post("/stock/watchlist/add", requestData)
     .then(() => {
-      $("#followBtn").html('<i class="fas fa-check"></i> Added to Watchlist');
+      $("#followBtn").html('<i class="fas fa-check"></i> Following');
       $("#followBtn").addClass("following");
       updateWatchlist(true);
     })
@@ -682,7 +682,7 @@ $(document).ready(function () {
   getStockData(symbol, "daily");
   setupToggleCandlestickChart(symbol);
   setupToggleWathclist(symbol);
-  Sidebar.getInstance();
   SearchBar.getInstance();
+  Sidebar.getInstance();
   TradeCard.getInstance(symbol);
 });

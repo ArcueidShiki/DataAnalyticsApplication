@@ -59,6 +59,30 @@ const Http = {
     });
   },
 
+  formSubmit: function (api, formData = {}, headers = {}) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: `${this.baseUrl}${api}`,
+        method: "POST",
+        headers: Http._addAuthHeaders(headers),
+        xhrFields: {
+          withCredentials: true, // Send cookies with the request
+        },
+        contentType: false,
+        processData: false,
+        data: formData,
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (xhr, status, error) {
+          reject(
+            xhr.responseText ||
+              `An error:${error} with code:${status} occurred while processing the request.`,
+          );
+        },
+      });
+    });
+  },
   // Put request
   put: function (api, data = {}, headers = {}) {
     return new Promise((resolve, reject) => {
