@@ -99,7 +99,7 @@ def register(data):
     response = jsonify({"msg": "User registered successfully"})
     return response, 201
 
-def login():
+def login(data):
     data = request.get_json()
     required_fields = ['username', 'password']
     for f in required_fields:
