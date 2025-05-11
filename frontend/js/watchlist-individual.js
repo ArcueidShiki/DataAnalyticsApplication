@@ -24,92 +24,6 @@ function initThemeObserver() {
   });
 }
 
-/**
- * Initialize follow button functionality
- */
-function initFollowButton() {
-  // Store followed stock data
-  let followedStocks = JSON.parse(localStorage.getItem("followedStocks")) || {};
-
-  // Follow button functionality
-  const followBtn = document.getElementById("followBtn");
-  if (followBtn) {
-    // Check if the current stock is already followed and update button state
-    const currentSymbol =
-      document.querySelector(".stock-details")?.textContent.split(": ")[1] ||
-      "AAPL";
-    const isFollowed = followedStocks[currentSymbol];
-
-    if (isFollowed) {
-      followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
-      followBtn.classList.add("followed");
-    }
-
-    // Initialize stock logo on page load
-    const stockCompany =
-      document.querySelector(".stock-company")?.textContent || "Apple Inc.";
-    // updateStockLogo(stockCompany, currentSymbol);
-
-    followBtn.addEventListener("click", function () {
-      const stockCompany =
-        document.querySelector(".stock-company")?.textContent || "Apple Inc.";
-      const stockSymbol =
-        document.querySelector(".stock-details")?.textContent.split(": ")[1] ||
-        "AAPL";
-
-      if (followBtn.classList.contains("followed")) {
-        // Unfollow the stock
-        followBtn.innerHTML = '<i class="fas fa-plus"></i> Follow';
-        followBtn.classList.remove("followed");
-
-        // Remove from localStorage
-        delete followedStocks[stockSymbol];
-        localStorage.setItem("followedStocks", JSON.stringify(followedStocks));
-
-        // Remove from watchlist if exists
-        const watchlistItem = document.querySelector(
-          `.watchlist-item[data-symbol="${stockSymbol}"]`,
-        );
-        if (watchlistItem) {
-          watchlistItem.remove();
-        }
-      } else {
-        // Follow the stock
-        followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
-        followBtn.classList.add("followed");
-
-        // Generate a random trend for the mini chart
-        const trendIsPositive = Math.random() > 0.5;
-        const trendPath = trendIsPositive
-          ? "M1,15 L10,13 L20,10 L30,8 L40,5 L50,3 L59,1"
-          : "M1,5 L10,8 L20,12 L30,10 L40,13 L50,15 L59,18";
-        const trendColor = trendIsPositive
-          ? "var(--positive-color)"
-          : "var(--negative-color)";
-
-        // Get the logo URL if we already fetched it for the stock logo
-        const stockLogoImg = document.querySelector(".stock-logo img");
-        const logoUrl = stockLogoImg?.src || null;
-
-        // Save to localStorage with timestamp
-        followedStocks[stockSymbol] = {
-          name: stockCompany,
-          symbol: stockSymbol,
-          dateAdded: new Date().toISOString(),
-          logo: logoUrl, // Use the already fetched logo if available
-        };
-        localStorage.setItem("followedStocks", JSON.stringify(followedStocks));
-
-        // Add to watchlist
-        addToWatchlist(stockCompany, stockSymbol, trendPath, trendColor);
-      }
-    });
-  }
-}
-
-/**
- * Initialize tab switching functionality
- */
 function initTabSwitching() {
   const tabs = document.querySelectorAll(".tab");
   tabs.forEach((tab) => {
@@ -137,11 +51,6 @@ function initTabSwitching() {
   }
 }
 
-/**
- * Get appropriate date format for chart tooltip based on timeframe
- * @param {string} timeframe - The timeframe (1D, 1W, 1M, 1Y, ALL)
- * @returns {string} Date format string
- */
 function getTooltipDateFormat(timeframe) {
   switch (timeframe) {
     case "1D":
@@ -159,81 +68,23 @@ function getTooltipDateFormat(timeframe) {
   }
 }
 
-/**
- * Initialize timeframe buttons
- */
 function initTimeframeButtons() {
   const timeframeBtns = document.querySelectorAll(".timeframe-btn");
   timeframeBtns.forEach((btn) => {
     btn.addEventListener("click", function () {
-      console.log(
-        "Timeframe button clicked:",
-        this.getAttribute("data-timeframe"),
-      );
-
-      // Remove all active states
       timeframeBtns.forEach((b) => b.classList.remove("active"));
-      // Add active state to current button
       this.classList.add("active");
-
-      // Get timeframe and update chart
       const timeframe = this.getAttribute("data-timeframe");
-      updateChartWithDummyData(timeframe);
     });
   });
 }
 
-/**
- * Function to guess a company's domain name
- * @param {string} companyName - Name of the company
- * @returns {string} Guessed domain name
- */
-function guessDomainFromCompany(companyName) {
-  // Remove common corporate suffixes and spaces
-  let domain = companyName
-    .toLowerCase()
-    .replace(
-      /\s+inc\.?$|\s+incorporated$|\s+corp\.?$|\s+corporation$|\s+llc$|\s+ltd\.?$|\s+limited$|\s+sa$|\s+s\.a\.$/i,
-      "",
-    )
-    .replace(/[\s'",.&]+/g, "")
-    .trim();
-
-  // Special cases for common companies
-  const specialCases = {
-    apple: "apple.com",
-    amazon: "amazon.com",
-    microsoft: "microsoft.com",
-    google: "google.com",
-    alphabet: "abc.xyz",
-    tesla: "tesla.com",
-    facebook: "fb.com",
-    meta: "meta.com",
-    netflix: "netflix.com",
-    spotify: "spotify.com",
-  };
-
-  if (specialCases[domain]) {
-    return specialCases[domain];
-  }
-
-  // Default fallback
-  return domain + ".com";
-}
-
-/**
- * Generate a consistent color from a string
- * @param {string} name - String to generate color from
- * @returns {string} Hex color code
- */
 function getColorFromName(name) {
-  // Simple hash function
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  // Convert to hex color
   let color = "#";
   for (let i = 0; i < 3; i++) {
     const value = (hash >> (i * 8)) & 0xff;
@@ -303,25 +154,6 @@ function updateMainContentWithStock(name, symbol) {
   if (stockCompanyEl) stockCompanyEl.textContent = name;
   if (stockDetailsEl) stockDetailsEl.textContent = `NASDAQ: ${symbol}`;
 
-  // Update follow button state
-  const followBtn = document.getElementById("followBtn");
-  const followedStocks =
-    JSON.parse(localStorage.getItem("followedStocks")) || {};
-
-  if (followBtn) {
-    if (followedStocks[symbol]) {
-      followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
-      followBtn.classList.add("followed");
-    } else {
-      followBtn.innerHTML = '<i class="fas fa-plus"></i> Follow';
-      followBtn.classList.remove("followed");
-    }
-  }
-
-  // Update chart with new data
-  updateChartWithDummyData("1D");
-
-  // Update breadcrumb
   const breadcrumbSpan = document.querySelector(".breadcrumb span");
   if (breadcrumbSpan) {
     breadcrumbSpan.textContent = name;
@@ -331,6 +163,5 @@ function updateMainContentWithStock(name, symbol) {
 document.addEventListener("DOMContentLoaded", function () {
   initTabSwitching();
   initTimeframeButtons();
-  initFollowButton();
   initThemeObserver();
 });

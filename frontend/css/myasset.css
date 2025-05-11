@@ -1,5 +1,5 @@
 @import url("sidebar.css");
-
+@import url("trade.css");
 .dashboard-cards {
   height: auto;
   position: relative;

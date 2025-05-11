@@ -4,7 +4,9 @@ export default class Sidebar {
   static instance = null; // sidebar singleton
   constructor() {
     if (Sidebar.instance) {
-      console.log("Sidebar instance already exists. Returning the existing instance.");
+      console.log(
+        "Sidebar instance already exists. Returning the existing instance.",
+      );
       return Sidebar.instance;
     }
     Sidebar.instance = this;
@@ -19,8 +21,8 @@ export default class Sidebar {
   init() {
     $(document).ready(() => {
       this.createSidebarElments();
-      if (!this.loadHotTopStocksFromCache() && !this.loadHotTopStocks()) {
-        this.loadHotTopStocksFromMockData();
+      if (!this.loadWatchlistFromCache() && !this.loadWatchlist()) {
+        this.loadWatchlistFromMockData();
       }
       this.setupMenuItems();
       this.setupSettingToggle();
@@ -72,10 +74,10 @@ export default class Sidebar {
     `);
   }
 
-  createHotTop() {
+  createWatchlist() {
     return $(`
         <div class="watchlist-header">
-          <div class="watchlist-title">TOP HOT</div>
+          <div class="watchlist-title">Watchlist</div>
           <div class="watchlist-dropdown">24h</div>
         </div>
 
@@ -124,7 +126,7 @@ export default class Sidebar {
     const sidebarContainer = $(`<div class="sidebar"></div>`);
     sidebarContainer.append(this.createUserProfile());
     sidebarContainer.append(this.createMenu());
-    sidebarContainer.append(this.createHotTop());
+    sidebarContainer.append(this.createWatchlist());
     sidebarContainer.append(this.createSettings());
     $(".app-container").prepend(sidebarContainer);
     this.setupThemeToggle();
@@ -139,7 +141,7 @@ export default class Sidebar {
       "my asset": () => (window.location.href = "myasset.html"),
       "top chart": () => (window.location.href = "analysis.html"),
       contact: () => (window.location.href = "chat.html"),
-      "account setting": () => (window.location.href = "accountsetting.html"),
+      "account setting": () => this.showAccountSettingsModal(),
       "help center": () => (window.location.href = "help.html"),
       logout: this.handleLogout,
     };
@@ -150,8 +152,9 @@ export default class Sidebar {
       const menuTextNoSpace = menuText.replace(/\s+/g, "");
 
       if (
-        currentPage.includes(menuTextNoSpace) ||
-        menuTextNoSpace.includes(currentPage)
+        currentPage === menuTextNoSpace ||
+        // Special case for multi-word menu items
+        (menuText.includes(" ") && currentPage === menuText.replace(/\s+/g, ""))
       ) {
         $(this).addClass("active");
       }
@@ -201,25 +204,26 @@ export default class Sidebar {
     });
   }
 
-  loadHotTopStocks() {
-    Http.get("/stock/hot")
+  loadWatchlist() {
+    Http.get("/stock/watchlist")
       .then((stocks) => {
-        this.populateHotStocks(stocks);
-        localStorage.setItem("hotStocks", JSON.stringify(stocks));
+        this.populateWatchlist(stocks);
+        localStorage.setItem("watchlist", JSON.stringify(stocks));
         return true;
       })
       .catch((error) => {
-        console.error("Error loading hot stocks:", error);
+        console.error("Error loading wathclist stocks:", error);
         return false;
       });
+    return true;
   }
 
-  loadHotTopStocksFromCache() {
-    const cachedStocks = localStorage.getItem("hotStocks");
+  loadWatchlistFromCache() {
+    const cachedStocks = localStorage.getItem("watchlist");
     if (cachedStocks) {
       try {
         const stocks = JSON.parse(cachedStocks);
-        this.populateHotStocks(stocks);
+        this.populateWatchlist(stocks);
         return true;
       } catch (error) {
         console.error("Error parsing cached stocks:", error);
@@ -229,31 +233,15 @@ export default class Sidebar {
     return false;
   }
 
-  populateHotStocks(stocks) {
+  populateWatchlist(stocks) {
     const currentPage = Utils.getCurrentPage();
     const urlParams = new URLSearchParams(window.location.search);
     const currentSymbol = urlParams.get("symbol") || "AAPL";
     const watchlistContainer = $("#watchlistContainer");
     watchlistContainer.empty();
+    stocks.sort((a, b) => b.percent_change - a.percent_change);
     stocks.forEach((stock) => {
-      const changeClass = stock.percent_change >= 0 ? "positive" : "negative";
-      const changeIcon =
-        stock.percent_change >= 0 ? "fa-caret-up" : "fa-caret-down";
-      const stockItem = $(`
-              <div class="watchlist-item">
-                <div class="watchlist-icon">
-                    <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
-                </div>
-                <div class="watchlist-info">
-                    <div class="stock-name">${stock.symbol}</div>
-                    <div class="stock-symbol">${stock.price}</div>
-                </div>
-                <div class="price-change ${changeClass}">
-                    <i class="fas ${changeIcon}"></i>
-                    ${Math.abs(stock.percent_change)}%
-                </div>
-              </div>
-            `);
+      const stockItem = this.getGenerateStockItem(stock);
       if (currentPage === "ticker" && stock.symbol === currentSymbol) {
         stockItem.addClass("active");
       }
@@ -264,9 +252,30 @@ export default class Sidebar {
     });
   }
 
-  loadHotTopStocksFromMockData() {
+  getGenerateStockItem(stock) {
+    const changeClass = stock.change >= 0 ? "positive" : "negative";
+    const changeIcon = stock.change >= 0 ? "fa-caret-up" : "fa-caret-down";
+    const stockItem = $(`
+      <div class="watchlist-item">
+        <div class="watchlist-icon">
+            <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
+        </div>
+        <div class="watchlist-info">
+            <div class="stock-name">${stock.symbol}</div>
+            <div class="stock-symbol">${stock.close.toFixed(2)}</div>
+        </div>
+        <div class="price-change ${changeClass}">
+            <i class="fas ${changeIcon}"></i>
+            ${Math.abs(stock.percent_change).toFixed(2)}%
+        </div>
+      </div>
+    `);
+    return stockItem;
+  }
+
+  loadWatchlistFromMockData() {
     const stocks = getMockStocks();
-    this.populateHotStocks(stocks);
+    this.populateWatchlist(stocks);
   }
 
   updateThemeUI(theme, icon, text) {
@@ -307,6 +316,40 @@ export default class Sidebar {
       document.body.setAttribute("data-theme", newTheme);
       this.updateThemeUI(newTheme, icon, text);
       localStorage.setItem("theme", newTheme);
+    });
+  }
+
+  showAccountSettingsModal() {
+    if ($("#account-settings-modal").length === 0) {
+      this.createAccountSettingsModal();
+    } else {
+      $("#account-settings-modal").addClass("show");
+    }
+  }
+
+  createAccountSettingsModal() {
+    const modal = $(
+      '<div id="account-settings-modal" class="account-settings-modal"></div>',
+    );
+
+    $.get("accountsetting.html", function (content) {
+      const modalContent = $('<div class="modal-main-content"></div>').html(
+        content,
+      );
+      modal.append(modalContent);
+
+      const closeButton = $('<span class="modal-close">&times;</span>');
+      closeButton.on("click", function () {
+        $("#account-settings-modal").removeClass("show");
+      });
+
+      modalContent.prepend(closeButton);
+
+      $("body").append(modal);
+      setTimeout(() => {
+        modal.addClass("show");
+        new AccountSettings(true); // true indicates it's in a modal
+      }, 100);
     });
   }
 }

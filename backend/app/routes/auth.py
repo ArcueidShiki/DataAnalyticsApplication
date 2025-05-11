@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required
 import app.controllers.user_controller as controller
 from flasgger import Swagger, swag_from
 

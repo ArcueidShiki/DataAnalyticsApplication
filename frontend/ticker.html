@@ -26,15 +26,12 @@
       src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"
     ></script>
     <link rel="stylesheet" href="css/ticker.css" />
-    <script src="js/stock.js"></script>
+    <link rel="stylesheet" href="css/company-tab.css" />
     <script src="js/watchlist-individual.js"></script>
     <script src="js/ticker.js" type="module"></script>
-    <script src="js/search.js"></script>
-    <script src="js/trade.js"></script>
   </head>
   <body>
     <div class="app-container">
-
       <div class="main-content">
         <!-- <div class="breadcrumb">
           <a href="watchlist.html">Quote</a>
@@ -60,7 +57,11 @@
               </div>
               <!-- Moved to the right side of the header -->
               <div class="stock-header-right">
-                <button class="action-btn follow-btn" id="followBtn">
+                <button
+                  type="button"
+                  class="action-btn follow-btn"
+                  id="followBtn"
+                >
                   <i class="fas fa-plus"></i>Add to Watchlist
                 </button>
                 <button class="action-btn buy-btn">Trade</button>
@@ -102,12 +103,6 @@
                       </button>
                       <button class="timeframe-btn" data-timeframe="1M">
                         1M
-                      </button>
-                      <button class="timeframe-btn" data-timeframe="1Y">
-                        1Y
-                      </button>
-                      <button class="timeframe-btn" data-timeframe="ALL">
-                        All time
                       </button>
                     </div>
 
@@ -270,17 +265,7 @@
           </div>
 
           <div class="side-column">
-            <div class="search-container">
-              <i class="fas fa-search search-icon"></i>
-              <input
-                type="text"
-                class="search-input"
-                placeholder="Search stocks..."
-                id="stockSearch"
-              />
-              <div class="search-dropdown" id="searchResults">
-              </div>
-            </div>
+            <div class="search-container"></div>
 
             <div class="stats-section">
               <div class="section-header">
@@ -381,86 +366,6 @@
                       </svg>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-            <div class="trading-interface-section">
-              <div class="section-header">
-                <div class="section-title">Trading</div>
-              </div>
-
-              <div class="trading-tabs">
-                <button class="trading-tab active" data-action="buy">
-                  Buy
-                </button>
-                <button class="trading-tab" data-action="sell">Sell</button>
-              </div>
-
-              <div class="trading-type-options">
-                <button class="type-option active" data-type="stocks">
-                  Stocks
-                </button>
-                <button class="type-option" data-type="global">Option</button>
-                <button class="type-option" data-type="futures">Futures</button>
-              </div>
-
-              <div class="trading-input-group">
-                <div class="trading-input-label">Price</div>
-                <div class="trading-input-container">
-                  <input
-                    type="text"
-                    class="trading-input"
-                    id="tradePrice"
-                    value="152.35"
-                  />
-                  <div class="trading-input-suffix">USDT</div>
-                  <div class="trading-input-controls">
-                    <button class="input-control decrease">
-                      <i class="fas fa-minus"></i>
-                    </button>
-                    <button class="input-control increase">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="trading-input-group">
-                <div class="trading-input-label">Quantity</div>
-                <div class="trading-input-container">
-                  <input
-                    type="text"
-                    class="trading-input"
-                    id="tradeQuantity"
-                    placeholder="0"
-                  />
-                  <button class="max-button">FAVR</button>
-                </div>
-              </div>
-
-              <div class="trading-slider-container">
-                <div class="trading-slider-track">
-                  <button class="slider-option" data-value="10">10%</button>
-                  <button class="slider-option" data-value="25">25%</button>
-                  <button class="slider-option" data-value="50">50%</button>
-                  <button class="slider-option active" data-value="75">
-                    75%
-                  </button>
-                  <button class="slider-option" data-value="100">100%</button>
-                  <div class="slider-progress" style="width: 25%"></div>
-                </div>
-              </div>
-
-              <button class="place-order-button">Place Order</button>
-
-              <div class="trading-summary">
-                <div class="summary-item">
-                  <div class="summary-label">Est. Cost</div>
-                  <div class="summary-value">114.26 USDT</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Available</div>
-                  <div class="summary-value">1,245.00 USDT</div>
                 </div>
               </div>
             </div>

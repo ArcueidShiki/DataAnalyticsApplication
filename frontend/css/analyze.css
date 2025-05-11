@@ -1,0 +1,128 @@
+/* analyze.css - dark theme for stock analysis */
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  margin: 0;
+  padding: 0;
+  color: #ffffff;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #1e1e1e;
+  padding-top: 2rem;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.sidebar-menu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+}
+
+.sidebar-menu a:hover {
+  background-color: #333333;
+  border-radius: 6px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.dashboard-cards {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  min-width: 200px;
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  color: #cccccc;
+  margin-bottom: 0.5rem;
+}
+
+.card p.value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.chart-section {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  justify-content: space-between;
+}
+
+.chart-card {
+  flex: 1;
+  min-width: 300px;
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+.small-chart canvas {
+  max-width: 280px;
+  margin: auto;
+}
+
+.gainers-losers {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+#gainersList li {
+  color: #81c784;
+  font-weight: 500;
+  padding: 0.2rem 0;
+}
+
+#losersList li {
+  color: #e57373;
+  font-weight: 500;
+  padding: 0.2rem 0;
+}
+
+canvas {
+  max-width: 100%;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+}

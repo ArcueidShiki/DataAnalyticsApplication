@@ -3,8 +3,8 @@
 .sidebar {
   top: 0;
   left: 0;
-  width: 15%;
   height: 100vh;
+  width: auto;
   background-color: var(--sidebar-bg);
   color: var(--text-color);
   display: flex;
@@ -73,9 +73,8 @@
 
 /* Menu Styles */
 .sidebar-menu {
-  padding: 0;
-  overflow-y: auto;
-  scrollbar-width: none;
+  position: relative;
+  width: 100%;
 }
 
 .sidebar .menu-item a {
@@ -227,8 +226,13 @@
 .settings {
   margin-top: auto;
   border-top: 1px solid var(--border-color);
-  padding-top: 10px;
   width: 100%;
+  position: relative;
+}
+
+.watchlist-header-row {
+  position: sticky;
+  top: 0;
 }
 
 .account-arrow {
@@ -244,9 +248,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 15%;
-  height: 5vh;
+  width: 100%;
   position: absolute;
+  left: 0;
   bottom: 0;
   background-color: var(--sidebar-bg);
   z-index: 10;
@@ -273,27 +277,26 @@
 }
 
 .setting-section.hidden {
-  padding: 0 12px;
-  width: 15%;
-  height: auto;
-  position: absolute;
-  bottom: 0;
+  height: 0;
   transform: translateY(100%);
   transition: transform 0.5s ease;
   background-color: var(--sidebar-bg);
-  z-index: 5;
+  z-index: -1;
+  box-sizing: border-box;
 }
 
 .setting-section.expanded {
-  padding: 0 12px;
-  width: 15%;
+  display: block;
+  width: 100%;
   height: auto;
-  position: absolute;
-  bottom: 0;
-  transform: translateY(-30%);
+  position: relative;
+  left: 0;
+  bottom: 25%;
+  transform: translateY(0);
   transition: transform 0.5s ease;
   background-color: var(--sidebar-bg);
-  z-index: 5;
+  z-index: 1;
+  box-sizing: border-box;
 }
 
 #watchlistContainer {

@@ -1,7 +1,12 @@
+import Http from "./http.js";
 import Sidebar from "./sidebar.js";
+import SearchBar from "./search.js";
+import { getMockStocks } from "./mockdata.js";
+import { formatMarketCap } from "./utils.js";
 function popluateWatchlistTable(stocks) {
   const table = $("#watchlistTableBody");
   table.empty();
+  stocks.sort((a, b) => b.percent_change - a.percent_change);
   stocks.forEach((stock) => {
     const changeClass = stock.change >= 0 ? "positive" : "negative";
     const changeIcon = stock.change >= 0 ? "fa-caret-up" : "fa-caret-down";
@@ -10,7 +15,7 @@ function popluateWatchlistTable(stocks) {
       <div class="watchlist-row watchlist-stock-row">
           <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="30px"/>
           <div>${stock.symbol}</div>
-          <div>${stock.info}</div>
+          <div>${stock.company}</div>
           <div>$${stock.close.toFixed(2)}</div>
           <div class="price-change ${changeClass}">
               <i class="fas ${changeIcon}"></i>
@@ -20,7 +25,7 @@ function popluateWatchlistTable(stocks) {
               <i class="fas ${changeIcon}"></i>
               ${changePrefix}${Math.abs(stock.percent_change).toFixed(2)}%
           </div>
-          <div>${stock.marketCap}</div>
+          <div>${formatMarketCap(stock.market_cap)}</div>
       <div>
     `);
     row.on("click", () => {
@@ -34,7 +39,7 @@ function loadWatchlist() {
   Http.get("/stock/watchlist")
     .then((stocks) => {
       popluateWatchlistTable(stocks);
-      localStorage.setItem("watchlistStocks", JSON.stringify(stocks));
+      localStorage.setItem("watchlist", JSON.stringify(stocks));
       return true;
     })
     .catch((error) => {
@@ -44,7 +49,7 @@ function loadWatchlist() {
 }
 
 function loadWatchlistFromCache() {
-  const cachedStocks = localStorage.getItem("watchlistStocks");
+  const cachedStocks = localStorage.getItem("watchlist");
   if (cachedStocks) {
     try {
       const stocks = JSON.parse(cachedStocks);
@@ -64,8 +69,9 @@ function loadWatchlistFromMockData() {
 }
 
 $(document).ready(function () {
+  Sidebar.getInstance();
+  SearchBar.getInstance();
   if (!loadWatchlistFromCache() && !loadWatchlist()) {
     loadWatchlistFromMockData();
   }
-  Sidebar.getInstance();
 });
