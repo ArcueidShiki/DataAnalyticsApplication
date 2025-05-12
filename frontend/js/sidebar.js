@@ -1,8 +1,10 @@
 import * as Utils from "./utils.js";
 import Http from "./http.js";
 import AccountSettingCard from "./accountsetting.js";
+import User from "./user.js";
 export default class Sidebar {
   accountSetting = null;
+  user = null;
   static instance = null; // sidebar singleton
   constructor() {
     if (Sidebar.instance) {
@@ -48,19 +50,19 @@ export default class Sidebar {
   }
 
   loadUserInfo() {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
-    if (user) {
+    this.user = User.getInstance();
+    if (this.user) {
       const profileName = $(".profile-name");
       const profileBalance = $(".profile-balance");
       if (profileName && profileBalance) {
-        profileName.text(user.username);
+        profileName.text(this.user.username);
         profileBalance.text(
-          `$${user.balance[0].amount} ${user.balance[0].currency}`,
+          `$${this.user.balance[0].amount} ${this.user.balance[0].currency}`,
         );
         const profileAvatar = $(".profile-avatar");
         profileAvatar.append(
           $(
-            `<img src="${Http.baseUrl}/${user.profile_img}" alt="${user.username} id="sidebar-profile" "/>`,
+            `<img src="${Http.baseUrl}/${this.user.profile_img}" alt="${this.user.username} id="sidebar-profile" "/>`,
           ),
         );
       }

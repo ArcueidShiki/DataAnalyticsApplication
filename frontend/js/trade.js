@@ -8,7 +8,7 @@ export default class TradeCard {
   amount = null;
   maxQtyToBuy = 0;
   maxQtyToSell = 0;
-
+  user = null;
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
@@ -33,6 +33,7 @@ export default class TradeCard {
   }
 
   init() {
+    this.user = JSON.parse(localStorage.getItem("userInfo"));
     this.createTradeCardElements();
     this.initTradingTabs();
     this.initPlaceOrderButton();
@@ -204,7 +205,7 @@ export default class TradeCard {
     const quantityInput = $("#tradeQuantity");
 
     placeOrderButton.on("click", () => {
-      const action = $(".trading-tab.active").dataset.action;
+      const action = $(".trading-tab.active").attr("data-action");
       console.log("Action:", action);
       const price = parseFloat(priceInput.val());
       const quantity = parseFloat(quantityInput.val());
