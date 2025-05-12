@@ -13,16 +13,8 @@ Stock Market Paper trading Web application
 | 24300013 | Srinidhi Perala | SrinidhiPerala2104 |
 | 24312242 | Samradnyee Surve | samradnyees |
 
-## Installation
+## How to RUN
 
-### Frontend
+[See frontend Instructions](docs/StartFrontend.md)
 
-Go to `frontend/` directory to see details
-
-### Backend
-
-Go to `backend/` direcotry to see details
-
-## Get Started
-
-## Run Tests
+[See backend Instructions](docs/StartBackend.md)
