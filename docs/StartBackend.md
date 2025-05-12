@@ -18,9 +18,9 @@ pip install -r requirements.txt
 # update/sync the latest database schema changes
 flask db upgrade
 
-# !!!(only first time) initilize database with data
+# !!!(only first time) initialize database with data
 cd app # under backend/app directory
-sqlite3 app.db < app.dump.sql # this will give your the initilial data to run the database
+sqlite3 app.db < app.dump.sql # this will provide the initial data to run the database
 
 # under backend directory, cd ..
 # start the backend
