@@ -105,7 +105,7 @@ function drawCandleStickChart(symbol, data) {
           left: "10%",
           right: "8%",
           height: "50%",
-          top: "10%"
+          top: "10%",
         },
         {
           left: "10%",
@@ -149,10 +149,10 @@ function drawCandleStickChart(symbol, data) {
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed',
-              color: 'rgba(180, 180, 180, 0.2)' // Light gray dashed lines
-            }
-          }
+              type: "dashed",
+              color: "rgba(180, 180, 180, 0.2)", // Light gray dashed lines
+            },
+          },
         },
         {
           scale: true,

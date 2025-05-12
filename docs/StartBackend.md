@@ -58,6 +58,9 @@ flask db upgrade
 # it has to be plain text, UTF-8 encoded
 sqlite3 app.db .dump > app.dump.sql
 
+# if this file not work on MacOS, it's UTF-16 UTF-8 encoding issues
+iconv -f UTF-16 -t UTF-8 app.dump.sql > app.dump.sql
+
 # so, anyone can initilize the database by running the following cmd
 # portable for everyone
 sqlite3 app.db < app.dump.sql

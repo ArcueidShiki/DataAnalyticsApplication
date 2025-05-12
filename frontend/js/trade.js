@@ -1,14 +1,15 @@
-// import Http from "./http";
+import Http from "./http.js";
+import User from "./user.js";
 export default class TradeCard {
   static instance = null;
   symbol = null;
   quantity = null;
   currentPrice = null;
-  targetPrice = null;
+  marketPrice = null;
   amount = null;
   maxQtyToBuy = 0;
   maxQtyToSell = 0;
-
+  user = null;
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
@@ -20,6 +21,8 @@ export default class TradeCard {
     this.init();
     this.symbol = symbol;
     this.currentPrice = price;
+    this.marketPrice = price;
+    this.updateAll = this.updateAll.bind(this);
   }
 
   static getInstance(symbol = null, price = null) {
@@ -39,12 +42,37 @@ export default class TradeCard {
     this.setupResponsiveTrading();
   }
 
+  calMaxQty() {
+    User.getInstance().update();
+    this.user = User.getInstance();
+    const cash = this.user.balance["USD"].amount;
+    const price = parseFloat($("#tradePrice").val().trim());
+    const quantity = parseFloat($("#tradeQuantity").val().trim());
+    if (isNaN(price)) {
+      return;
+    }
+    this.maxQtyToBuy = Math.floor(cash / price);
+    if (quantity > this.maxQtyToBuy) {
+      $("#tradeQuantity").attr("title", "Max Qty to Buy: " + this.maxQtyToBuy);
+      $("#tradeQuantity").css("color", "red");
+    } else {
+      $("#tradeQuantity").removeAttr("title");
+      $("#tradeQuantity").css("color", "#4dd118");
+    }
+
+    const position = this.user.portfolio[this.symbol];
+    this.maxQtyToSell = position ? Math.floor(position.quantity) : 0;
+    $(".summary-value.buy").text(this.maxQtyToBuy);
+    $(".summary-value.sell").text(this.maxQtyToSell);
+  }
+
   createTradeCardElements() {
     const tradeCard = $(`<div class="trading-interface-section">`);
     tradeCard.append(this.createHeader());
     tradeCard.append(this.createInputGroups());
     tradeCard.append(this.createSummary());
     $(".app-container").append(tradeCard);
+    $(".app-container").append(this.createModal());
   }
   createHeader() {
     return $(`
@@ -69,7 +97,9 @@ export default class TradeCard {
             type="number"
             class="trading-input"
             id="tradePrice"
-            value="152.35"
+            value=""
+            min="0"
+            placeholder="0"
           />
           <div class="trading-input-suffix">USD</div>
           <div class="trading-input-controls">
@@ -90,7 +120,10 @@ export default class TradeCard {
             type="number"
             class="trading-input"
             id="tradeQuantity"
+            step="1"
+            min="0"
             placeholder="0"
+            data-toggle="tooltip" data-placement="top" title="Please enter a number"
           />
         </div>
       </div>
@@ -131,21 +164,16 @@ export default class TradeCard {
         </button>
         <button class="trading-tab" data-action="sell">Sell</button>
       </div>
-      <button class="place-order-button">Place Order</button>
+      <button class="place-order-button btn" data-toggle="modal" data-target="#confirmOrderModal">Place Order</button>
     `);
   }
 
   updateSymbol(symbol, price) {
     this.symbol = symbol;
     this.currentPrice = price;
-    const symbolElement = document.querySelector(".type-option.active");
-    const priceElement = document.getElementById("tradePrice");
-    if (symbolElement) {
-      symbolElement.textContent = symbol;
-    }
-    if (priceElement) {
-      priceElement.value = price;
-    }
+    this.marketPrice = price;
+    $(".type-option.active").text(symbol);
+    $("#tradePrice").val(price);
   }
 
   initTradingTabs() {
@@ -170,65 +198,193 @@ export default class TradeCard {
     });
   }
 
+  updateAll() {
+    $("#tradePrice").val(this.currentPrice.toFixed(2));
+    $("#tradeQuantity").val(this.quantity);
+    this.amount = this.currentPrice * this.quantity;
+    $("#amount").val(this.amount.toFixed(2));
+    this.calMaxQty();
+  }
+
   initPriceControls() {
     this.currentPrice = parseFloat($("#currentPrice").text());
+    this.marketPrice = this.currentPrice;
     const priceInput = $("#tradePrice");
     const quantityInput = $("#tradeQuantity");
     const decreaseBtn = $(".decrease");
     const increaseBtn = $(".increase");
     priceInput.val(this.currentPrice.toFixed(2));
+    this.calMaxQty();
 
     decreaseBtn.on("click", () => {
-      let currentValue = parseFloat(priceInput.val());
-      if (!isNaN(currentValue)) {
-        priceInput.val((currentValue - 0.01).toFixed(2));
-        this.updateTradingSummary();
-      }
+      this.currentPrice -= 0.01;
+      this.updateAll();
     });
 
     increaseBtn.on("click", () => {
-      let currentValue = parseFloat(priceInput.val());
-      if (!isNaN(currentValue)) {
-        priceInput.val((currentValue + 0.01).toFixed(2));
-        this.updateTradingSummary();
-      }
+      this.currentPrice += 0.01;
+      this.updateAll();
     });
 
-    priceInput.on("input", this.updateTradingSummary);
-    quantityInput.on("input", this.updateTradingSummary);
+    priceInput.on("input", (event) => {
+      const value = event.target.value;
+      event.target.value = value.replace(/[^0-9]/g, "");
+      this.currentPrice = event.target.value;
+      this.updateAll();
+    });
+    priceInput.on("keypress", (event) => {
+      const charCode = event.which || event.keyCode;
+      // (-) (.)
+      if (charCode === 45 || charCode === 46) {
+        event.preventDefault();
+      }
+    });
+    priceInput.on("blur", () => {
+      const value = parseFloat(priceInput.val());
+      if (isNaN(value) || value < 0) {
+        alert("Please enter a valid non-negative number.");
+        priceInput.val(this.currentPrice);
+      }
+    });
+    quantityInput.on("input", (event) => {
+      const value = event.target.value;
+      event.target.value = value.replace(/[^0-9]/g, "");
+      this.quantity = event.target.value;
+      this.updateAll();
+    });
+
+    quantityInput.on("keypress", (event) => {
+      const charCode = event.which || event.keyCode;
+      // (-) (.)
+      if (charCode === 45 || charCode === 46) {
+        event.preventDefault();
+      }
+    });
+    quantityInput.on("blur", () => {
+      const value = parseFloat(quantityInput.val());
+      if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
+        alert("Please enter a valid non-negative integer.");
+        quantityInput.val("");
+      }
+    });
+  }
+
+  createModal() {
+    return $(`
+      <div class="modal fade" id="confirmOrderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Confirm Order</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-success" type="button" id="confirm-order-btn">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+  }
+
+  checkOrder(action) {
+    if (this.currentPrice <= 0) {
+      return {
+        isValid: false,
+        msg: "Price must be greater than 0",
+      };
+    }
+    if (this.currentPrice < this.marketPrice) {
+      return {
+        isValid: false,
+        msg: "Price must be greater than or equal to market price",
+      };
+    }
+    if (this.quantity <= 0) {
+      return {
+        isValid: false,
+        msg: "Quantity must be greater than 0",
+      };
+    }
+    if (
+      (this.quantity > this.maxQtyToBuy && action == "buy") ||
+      (this.quantity > this.maxQtyToSell && action == "sell")
+    ) {
+      return {
+        isValid: false,
+        msg: "Exceeds max quantity",
+      };
+    }
+
+    if (this.currentPrice > this.marketPrice) {
+      console.log("Price is higher than market price", this.marketPrice);
+      return {
+        isValid: true,
+        msg: "Your price is higher than market price",
+      };
+    }
+    return {
+      isValid: true,
+      msg: "",
+    };
+  }
+
+  showAlertDialog(msg) {
+    $(".modal-title").text("Warning");
+    $(".modal-body").text(msg);
+    $("#confirm-order-btn").css("display", "none");
+    $("#confirmOrderModal").modal({
+      backdrop: false,
+    });
+  }
+
+  showConfirmDialog(msg, action) {
+    $(".modal-title").text("Confirm Order");
+    $(".modal-body").text(
+      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`,
+    );
+    $("#confirm-order-btn").css("display", "block");
+    $("#confirmOrderModal").modal({
+      backdrop: false,
+    });
+    $("#confirm-order-btn")
+      .off("click")
+      .on("click", () => {
+        const orderData = {
+          symbol: this.symbol,
+          price: parseFloat(this.currentPrice),
+          quantity: parseInt(this.quantity),
+        };
+        Http.post(`/stock/${action}`, orderData)
+          .then((response) => {
+            User.getInstance().updateBalance(response.balance);
+            User.getInstance().updatePortfolio(response.portfolio);
+            $("#confirmOrderModal").modal("hide");
+            $(".modal-body").empty();
+          })
+          .catch((error) => {
+            console.error("Error placing order:", error);
+          });
+      });
   }
 
   initPlaceOrderButton() {
     const placeOrderButton = $(".place-order-button");
-    const priceInput = $("#tradePrice");
-    const quantityInput = $("#tradeQuantity");
-
     placeOrderButton.on("click", () => {
-      const action = $(".trading-tab.active").dataset.action;
-      console.log("Action:", action);
-      const price = parseFloat(priceInput.val());
-      const quantity = parseFloat(quantityInput.val());
-
-      if (isNaN(price) || isNaN(quantity)) {
-        alert("Please enter valid price and quantity");
+      const action = $(".trading-tab.active").attr("data-action");
+      const { isValid, msg } = this.checkOrder(action);
+      if (!isValid) {
+        this.showAlertDialog(msg);
         return;
       }
-      alert(
-        `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`,
-      );
+      this.showConfirmDialog(msg, action);
     });
-  }
-
-  updateTradingSummary() {
-    const priceInput = $("#tradePrice");
-    const quantityInput = $("#tradeQuantity");
-    const price = parseFloat(priceInput.val());
-    const quantity = parseFloat(quantityInput.val());
-
-    if (!isNaN(price) && !isNaN(quantity)) {
-      this.amount = price * quantity;
-      $("#amount").val(this.amount.toFixed(2));
-    }
   }
 
   toggleTradingExpand() {

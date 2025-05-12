@@ -8,7 +8,7 @@ export default class AccountSettingCard {
   constructor() {
     if (AccountSettingCard.instance) {
       console.log(
-        "AccountSettingCard instance already exists. Returning the existing instance."
+        "AccountSettingCard instance already exists. Returning the existing instance.",
       );
       return AccountSettingCard.instance;
     }
@@ -31,11 +31,11 @@ export default class AccountSettingCard {
   createAccountSettingsModal() {
     if (!this.modalDialog) {
       this.modalDialog = $(
-        '<div id="account-settings-modal" class="account-settings-modal"></div>'
+        '<div id="account-settings-modal" class="account-settings-modal"></div>',
       );
       $.get("accountsetting.html", (content) => {
         let modalContent = $('<div class="modal-main-content"></div>').html(
-          content
+          content,
         );
         this.modalDialog.append(modalContent);
         const closeButton = $('<span class="modal-close">&times;</span>');
@@ -69,7 +69,9 @@ export default class AccountSettingCard {
 
   loadUserData() {
     let user = JSON.parse(localStorage.getItem("userInfo"));
-    const img_url = user ? `${Http.baseUrl}/${user.profile_img}` : "assets/user.jpeg";
+    const img_url = user
+      ? `${Http.baseUrl}/${user.profile_img}`
+      : "assets/user.jpeg";
     user = user ? user : mockUser;
     console.log("User data loaded:", user);
     $("#fullname").val(user.username);
@@ -174,13 +176,12 @@ export default class AccountSettingCard {
     }
     this.formData = new FormData();
     this.formData.append("file", file);
-    Http.formSubmit("/auth/upload/img", this.formData)
-    .then((response) => {
+    Http.formSubmit("/auth/upload/img", this.formData).then((response) => {
       let user = JSON.parse(localStorage.getItem("userInfo"));
       user.profile_img = response.image_url;
       $("#profile-avatar").attr("src", `${Http.baseUrl}/${response.image_url}`);
       localStorage.setItem("userInfo", JSON.stringify(user));
-    })
+    });
     const reader = new FileReader();
     reader.onload = (e) => {
       $("#profile-avatar").attr("src", e.target.result);
@@ -238,8 +239,6 @@ export default class AccountSettingCard {
   hideConfirmationModal() {
     $("#confirmation-modal").removeClass("show");
   }
-
-
 
   saveSettings() {
     this.hideConfirmationModal();
