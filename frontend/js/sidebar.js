@@ -167,10 +167,10 @@ export default class Sidebar {
       "my asset": () => (window.location.href = "myasset.html"),
       "top chart": () => (window.location.href = "analysis.html"),
       contact: () => (window.location.href = "chat.html"),
-      "account setting": (() => {
+      "account setting": () => {
         this.accountSetting = AccountSettingCard.getInstance();
         this.accountSetting.showDialog();
-      }),
+      },
       "help center": () => (window.location.href = "help.html"),
       logout: this.handleLogout,
     };

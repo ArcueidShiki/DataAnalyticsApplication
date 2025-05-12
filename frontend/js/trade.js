@@ -1,4 +1,5 @@
-// import Http from "./http";
+import Http from "./http.js";
+import User from "./user.js";
 export default class TradeCard {
   static instance = null;
   symbol = null;
@@ -33,11 +34,35 @@ export default class TradeCard {
   }
 
   init() {
-    this.user = JSON.parse(localStorage.getItem("userInfo"));
     this.createTradeCardElements();
     this.initTradingTabs();
     this.initPlaceOrderButton();
     this.setupResponsiveTrading();
+  }
+
+  calMaxQty() {
+    this.user = User.getInstance();
+    const cash = this.user.balance[0].amount;
+    const price = parseFloat($("#tradePrice").val().trim());
+    console.log("Price:", price);
+    if (isNaN(price)) {
+      return;
+    }
+    this.maxQtyToBuy = Math.floor(cash / price);
+    if (!this.user.portfolio) {
+      this.maxQtyToSell = 0;
+      return;
+    }
+    const stock = this.user.portfolio.find(
+      (stock) => stock.symbol === this.symbol,
+    );
+    if (stock) {
+      this.maxQtyToSell = Math.floor(stock.quantity);
+    } else {
+      this.maxQtyToSell = 0;
+    }
+    $(".summary-value.buy").text(this.maxQtyToBuy);
+    $(".summary-value.sell").text(this.maxQtyToSell);
   }
 
   createTradeCardElements() {
@@ -183,7 +208,7 @@ export default class TradeCard {
       let currentValue = parseFloat(priceInput.val());
       if (!isNaN(currentValue)) {
         priceInput.val((currentValue - 0.01).toFixed(2));
-        this.updateTradingSummary();
+        this.updateAmount();
       }
     });
 
@@ -191,12 +216,13 @@ export default class TradeCard {
       let currentValue = parseFloat(priceInput.val());
       if (!isNaN(currentValue)) {
         priceInput.val((currentValue + 0.01).toFixed(2));
-        this.updateTradingSummary();
+        this.updateAmount();
       }
     });
 
-    priceInput.on("input", this.updateTradingSummary);
-    quantityInput.on("input", this.updateTradingSummary);
+    priceInput.on("input", this.updateAmount);
+    quantityInput.on("input", this.updateAmount);
+    this.calMaxQty();
   }
 
   initPlaceOrderButton() {
@@ -220,7 +246,7 @@ export default class TradeCard {
     });
   }
 
-  updateTradingSummary() {
+  updateAmount() {
     const priceInput = $("#tradePrice");
     const quantityInput = $("#tradeQuantity");
     const price = parseFloat(priceInput.val());

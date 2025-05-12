@@ -14,7 +14,7 @@ export default class User {
   constructor() {
     if (User.instance) {
       console.log(
-        "User instance already exists. Returning the existing instance."
+        "User instance already exists. Returning the existing instance.",
       );
       return User.instance;
     }
