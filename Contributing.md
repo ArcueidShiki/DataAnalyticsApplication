@@ -10,6 +10,11 @@
    git checkout -b [issue_branch_name] [issue_branch_name]
 
 3. Coding / solve issue / bugfix / writing test
+   - if database changed: under backend directory
+   - flask db migrate -m "what have been changed"
+   - flask db upgrade
+   - if new data inserted, backup your data under backend/app directory
+   - sqlite3 app.db .dump > app.dump.sql
 
 # publish your changes
 4. git add .
