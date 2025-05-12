@@ -62,7 +62,7 @@ export default class Sidebar {
         const profileAvatar = $(".profile-avatar");
         profileAvatar.append(
           $(
-            `<img src="${Http.baseUrl}/${this.user.profile_img}" alt="${this.user.username} id="sidebar-profile" "/>`,
+            `<img src="${Http.baseUrl}/${this.user.profile_img}" alt="${this.user.username} id="sidebar-profile"/>`,
           ),
         );
       }

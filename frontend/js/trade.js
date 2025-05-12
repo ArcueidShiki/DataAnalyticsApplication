@@ -243,7 +243,7 @@ export default class TradeCard {
       const value = parseFloat(priceInput.val());
       if (isNaN(value) || value < 0) {
         alert("Please enter a valid non-negative number.");
-        priceInput.value = this.currentPrice;
+        priceInput.val(this.currentPrice);
       }
     });
     quantityInput.on("input", (event) => {
@@ -264,7 +264,7 @@ export default class TradeCard {
       const value = parseFloat(quantityInput.val());
       if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
         alert("Please enter a valid non-negative integer.");
-        quantityInput.value = "";
+        quantityInput.val("");
       }
     });
   }
