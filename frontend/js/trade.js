@@ -5,7 +5,7 @@ export default class TradeCard {
   symbol = null;
   quantity = null;
   currentPrice = null;
-  targetPrice = null;
+  marketPrice = null;
   amount = null;
   maxQtyToBuy = 0;
   maxQtyToSell = 0;
@@ -13,7 +13,7 @@ export default class TradeCard {
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
-        "TradeCard instance already exists. Returning the existing instance.",
+        "TradeCard instance already exists. Returning the existing instance."
       );
       return TradeCard.instance;
     }
@@ -21,6 +21,7 @@ export default class TradeCard {
     this.init();
     this.symbol = symbol;
     this.currentPrice = price;
+    this.marketPrice = price;
     this.updateAll = this.updateAll.bind(this);
   }
 
@@ -63,7 +64,7 @@ export default class TradeCard {
       return;
     }
     const stock = this.user.portfolio.find(
-      (stock) => stock.symbol === this.symbol,
+      (stock) => stock.symbol === this.symbol
     );
     if (stock) {
       this.maxQtyToSell = Math.floor(stock.quantity);
@@ -105,7 +106,9 @@ export default class TradeCard {
             type="number"
             class="trading-input"
             id="tradePrice"
-            value="152.35"
+            value=""
+            min="0"
+            placeholder="0"
           />
           <div class="trading-input-suffix">USD</div>
           <div class="trading-input-controls">
@@ -126,6 +129,8 @@ export default class TradeCard {
             type="number"
             class="trading-input"
             id="tradeQuantity"
+            step="1"
+            min="0"
             placeholder="0"
             data-toggle="tooltip" data-placement="top" title="Please enter a number"
           />
@@ -175,6 +180,7 @@ export default class TradeCard {
   updateSymbol(symbol, price) {
     this.symbol = symbol;
     this.currentPrice = price;
+    this.marketPrice = price;
     $(".type-option.active").text(symbol);
     $("#tradePrice").val(price);
   }
@@ -191,7 +197,7 @@ export default class TradeCard {
         if (placeOrderButton) {
           let action = $(this).attr("data-action");
           placeOrderButton.text(
-            action === "buy" ? "Place Buy Order" : "Place Sell Order",
+            action === "buy" ? "Place Buy Order" : "Place Sell Order"
           );
           placeOrderButton.removeClass("buy-action sell-action");
           action = $(this).attr("data-action");
@@ -211,6 +217,7 @@ export default class TradeCard {
 
   initPriceControls() {
     this.currentPrice = parseFloat($("#currentPrice").text());
+    this.marketPrice = this.currentPrice;
     const priceInput = $("#tradePrice");
     const quantityInput = $("#tradeQuantity");
     const decreaseBtn = $(".decrease");
@@ -228,14 +235,46 @@ export default class TradeCard {
       this.updateAll();
     });
 
-    priceInput.on("input", () => {
-      this.currentPrice = parseFloat(priceInput.val());
+    priceInput.on("input", (event) => {
+      const value = event.target.value;
+      event.target.value = value.replace(/[^0-9]/g, "");
+      this.currentPrice = event.target.value;
+      this.updateAll();
+    });
+    priceInput.on("keypress", (event) => {
+      const charCode = event.which || event.keyCode;
+      // (-) (.)
+      if (charCode === 45 || charCode === 46) {
+        event.preventDefault();
+      }
+    });
+    priceInput.on("blur", () => {
+      const value = parseFloat(priceInput.val());
+      if (isNaN(value) || value < 0) {
+        alert("Please enter a valid non-negative number.");
+        priceInput.value = this.currentPrice;
+      }
+    });
+    quantityInput.on("input", (event) => {
+      const value = event.target.value;
+      event.target.value = value.replace(/[^0-9]/g, "");
+      this.quantity = event.target.value;
       this.updateAll();
     });
 
-    quantityInput.on("input", () => {
-      this.quantity = parseFloat(quantityInput.val());
-      this.updateAll();
+    quantityInput.on("keypress", (event) => {
+      const charCode = event.which || event.keyCode;
+      // (-) (.)
+      if (charCode === 45 || charCode === 46) {
+        event.preventDefault();
+      }
+    });
+    quantityInput.on("blur", () => {
+      const value = parseFloat(quantityInput.val());
+      if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
+        alert("Please enter a valid non-negative integer.");
+        quantityInput.value = "";
+      }
     });
   }
 
@@ -255,31 +294,84 @@ export default class TradeCard {
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-success" id="confirm-order-btn">Submit</button>
+              <button type="button" class="btn btn-success" id="confirm-order-btn">Confirm</button>
             </div>
           </div>
         </div>
       </div>
-    `)
+    `);
   }
 
-  initPlaceOrderButton() {
-    const placeOrderButton = $(".place-order-button");
-    placeOrderButton.on("click", () => {
-      console.log("Place Order Button Clicked");
-      const action = $(".trading-tab.active").attr("data-action");
-      $(".modal-body").text(`${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice}`);
-      $("#confirmOrderModal").modal({
-        backdrop: false,
-      });
-      $("#confirm-order-btn").off("click").on("click", () => {
+  checkOrder(action) {
+    if (this.currentPrice <= 0) {
+      return {
+        isValid: false,
+        msg: "Price must be greater than 0",
+      };
+    }
+    if (this.currentPrice < this.marketPrice) {
+      return {
+        isValid: false,
+        msg: "Price must be greater than or equal to market price",
+      };
+    }
+    if (this.quantity <= 0) {
+      return {
+        isValid: false,
+        msg: "Quantity must be greater than 0",
+      };
+    }
+    if (
+      (this.quantity > this.maxQtyToBuy && action == "buy") ||
+      (this.quantity > this.maxQtyToSell && action == "sell")
+    ) {
+      return {
+        isValid: false,
+        msg: "Exceeds max quantity",
+      };
+    }
+
+    if (this.currentPrice > this.marketPrice) {
+      console.log("Price is higher than market price", this.marketPrice);
+      return {
+        isValid: true,
+        msg: "Your price is higher than market price",
+      };
+    }
+    return {
+      isValid: true,
+      msg: "",
+    };
+  }
+
+  showAlertDialog(msg) {
+    $(".modal-title").text("Warning");
+    $(".modal-body").text(msg);
+    $("#confirm-order-btn").css("display", "none");
+    $("#confirmOrderModal").modal({
+      backdrop: false,
+    });
+  }
+
+  showConfirmDialog(msg, action) {
+    $(".modal-title").text("Confirm Order");
+    $(".modal-body").text(
+      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`
+    );
+    $("#confirm-order-btn").css("display", "block");
+    $("#confirmOrderModal").modal({
+      backdrop: false,
+    });
+    $("#confirm-order-btn")
+      .off("click")
+      .on("click", () => {
         const orderData = {
           symbol: this.symbol,
           price: this.currentPrice,
           quantity: this.quantity,
           action: action,
         };
-        Http.post("/stock/buy", orderData)
+        Http.post(`/stock/${action}`, orderData)
           .then((response) => {
             console.log("Order placed successfully:", response);
             $("#confirmOrderModal").modal("hide");
@@ -289,6 +381,18 @@ export default class TradeCard {
             console.error("Error placing order:", error);
           });
       });
+  }
+
+  initPlaceOrderButton() {
+    const placeOrderButton = $(".place-order-button");
+    placeOrderButton.on("click", () => {
+      const action = $(".trading-tab.active").attr("data-action");
+      const { isValid, msg } = this.checkOrder(action);
+      if (!isValid) {
+        this.showAlertDialog(msg);
+        return;
+      }
+      this.showConfirmDialog(msg, action);
     });
   }
 
