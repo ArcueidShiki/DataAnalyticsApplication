@@ -268,3 +268,13 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.modal {
+  top: 20%;
+  margin: 0 auto;
+  z-index: 1050; /* Ensure the modal is above the backdrop */
+}
+
+.modal-backdrop {
+  z-index: 1040; /* Ensure the backdrop is below the modal */
+}

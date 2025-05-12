@@ -13,7 +13,7 @@ export default class TradeCard {
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
-        "TradeCard instance already exists. Returning the existing instance."
+        "TradeCard instance already exists. Returning the existing instance.",
       );
       return TradeCard.instance;
     }
@@ -46,7 +46,6 @@ export default class TradeCard {
     const cash = this.user.balance[0].amount;
     const price = parseFloat($("#tradePrice").val().trim());
     const quantity = parseFloat($("#tradeQuantity").val().trim());
-    console.log("Price:", price);
     if (isNaN(price)) {
       return;
     }
@@ -64,7 +63,7 @@ export default class TradeCard {
       return;
     }
     const stock = this.user.portfolio.find(
-      (stock) => stock.symbol === this.symbol
+      (stock) => stock.symbol === this.symbol,
     );
     if (stock) {
       this.maxQtyToSell = Math.floor(stock.quantity);
@@ -81,6 +80,7 @@ export default class TradeCard {
     tradeCard.append(this.createInputGroups());
     tradeCard.append(this.createSummary());
     $(".app-container").append(tradeCard);
+    $(".app-container").append(this.createModal());
   }
   createHeader() {
     return $(`
@@ -168,7 +168,7 @@ export default class TradeCard {
         </button>
         <button class="trading-tab" data-action="sell">Sell</button>
       </div>
-      <button class="place-order-button">Place Order</button>
+      <button class="place-order-button btn" data-toggle="modal" data-target="#confirmOrderModal">Place Order</button>
     `);
   }
 
@@ -191,7 +191,7 @@ export default class TradeCard {
         if (placeOrderButton) {
           let action = $(this).attr("data-action");
           placeOrderButton.text(
-            action === "buy" ? "Place Buy Order" : "Place Sell Order"
+            action === "buy" ? "Place Buy Order" : "Place Sell Order",
           );
           placeOrderButton.removeClass("buy-action sell-action");
           action = $(this).attr("data-action");
@@ -200,13 +200,11 @@ export default class TradeCard {
       });
     });
   }
+
   updateAll() {
-    const priceInput = $("#tradePrice");
-    priceInput.val(this.currentPrice.toFixed(2));
-    const quantityInput = $("#tradeQuantity");
-    const price = parseFloat(priceInput.val());
-    const quantity = parseFloat(quantityInput.val());
-    this.amount = price * quantity;
+    $("#tradePrice").val(this.currentPrice.toFixed(2));
+    $("#tradeQuantity").val(this.quantity);
+    this.amount = this.currentPrice * this.quantity;
     $("#amount").val(this.amount.toFixed(2));
     this.calMaxQty();
   }
@@ -235,27 +233,62 @@ export default class TradeCard {
       this.updateAll();
     });
 
-    quantityInput.on("input", this.updateAll);
+    quantityInput.on("input", () => {
+      this.quantity = parseFloat(quantityInput.val());
+      this.updateAll();
+    });
+  }
+
+  createModal() {
+    return $(`
+      <div class="modal fade" id="confirmOrderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Confirm Order</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-success" id="confirm-order-btn">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `)
   }
 
   initPlaceOrderButton() {
     const placeOrderButton = $(".place-order-button");
-    const priceInput = $("#tradePrice");
-    const quantityInput = $("#tradeQuantity");
-
     placeOrderButton.on("click", () => {
+      console.log("Place Order Button Clicked");
       const action = $(".trading-tab.active").attr("data-action");
-      console.log("Action:", action);
-      const price = parseFloat(priceInput.val());
-      const quantity = parseFloat(quantityInput.val());
-
-      if (isNaN(price) || isNaN(quantity)) {
-        alert("Please enter valid price and quantity");
-        return;
-      }
-      alert(
-        `${action.toUpperCase()} order placed: ${quantity} shares at $${price}`
-      );
+      $(".modal-body").text(`${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice}`);
+      $("#confirmOrderModal").modal({
+        backdrop: false,
+      });
+      $("#confirm-order-btn").off("click").on("click", () => {
+        const orderData = {
+          symbol: this.symbol,
+          price: this.currentPrice,
+          quantity: this.quantity,
+          action: action,
+        };
+        Http.post("/stock/buy", orderData)
+          .then((response) => {
+            console.log("Order placed successfully:", response);
+            $("#confirmOrderModal").modal("hide");
+            $(".modal-body").empty();
+          })
+          .catch((error) => {
+            console.error("Error placing order:", error);
+          });
+      });
     });
   }
 
