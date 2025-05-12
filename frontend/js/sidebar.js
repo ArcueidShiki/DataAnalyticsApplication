@@ -57,7 +57,7 @@ export default class Sidebar {
       if (profileName && profileBalance) {
         profileName.text(this.user.username);
         profileBalance.text(
-          `$${this.user.balance[0].amount} ${this.user.balance[0].currency}`,
+          `$${this.user.balance["USD"].amount.toFixed(2)}USD`,
         );
         const profileAvatar = $(".profile-avatar");
         profileAvatar.append(

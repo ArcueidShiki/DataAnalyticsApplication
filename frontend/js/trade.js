@@ -13,7 +13,7 @@ export default class TradeCard {
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
-        "TradeCard instance already exists. Returning the existing instance."
+        "TradeCard instance already exists. Returning the existing instance.",
       );
       return TradeCard.instance;
     }
@@ -43,8 +43,9 @@ export default class TradeCard {
   }
 
   calMaxQty() {
+    User.getInstance().update();
     this.user = User.getInstance();
-    const cash = this.user.balance[0].amount;
+    const cash = this.user.balance["USD"].amount;
     const price = parseFloat($("#tradePrice").val().trim());
     const quantity = parseFloat($("#tradeQuantity").val().trim());
     if (isNaN(price)) {
@@ -59,18 +60,8 @@ export default class TradeCard {
       $("#tradeQuantity").css("color", "#4dd118");
     }
 
-    if (!this.user.portfolio) {
-      this.maxQtyToSell = 0;
-      return;
-    }
-    const stock = this.user.portfolio.find(
-      (stock) => stock.symbol === this.symbol
-    );
-    if (stock) {
-      this.maxQtyToSell = Math.floor(stock.quantity);
-    } else {
-      this.maxQtyToSell = 0;
-    }
+    const position = this.user.portfolio[this.symbol];
+    this.maxQtyToSell = position ? Math.floor(position.quantity) : 0;
     $(".summary-value.buy").text(this.maxQtyToBuy);
     $(".summary-value.sell").text(this.maxQtyToSell);
   }
@@ -197,7 +188,7 @@ export default class TradeCard {
         if (placeOrderButton) {
           let action = $(this).attr("data-action");
           placeOrderButton.text(
-            action === "buy" ? "Place Buy Order" : "Place Sell Order"
+            action === "buy" ? "Place Buy Order" : "Place Sell Order",
           );
           placeOrderButton.removeClass("buy-action sell-action");
           action = $(this).attr("data-action");
@@ -294,7 +285,7 @@ export default class TradeCard {
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-success" id="confirm-order-btn">Confirm</button>
+              <button type="button" class="btn btn-success" type="button" id="confirm-order-btn">Confirm</button>
             </div>
           </div>
         </div>
@@ -356,7 +347,7 @@ export default class TradeCard {
   showConfirmDialog(msg, action) {
     $(".modal-title").text("Confirm Order");
     $(".modal-body").text(
-      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`
+      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`,
     );
     $("#confirm-order-btn").css("display", "block");
     $("#confirmOrderModal").modal({
@@ -367,13 +358,13 @@ export default class TradeCard {
       .on("click", () => {
         const orderData = {
           symbol: this.symbol,
-          price: this.currentPrice,
-          quantity: this.quantity,
-          action: action,
+          price: parseFloat(this.currentPrice),
+          quantity: parseInt(this.quantity),
         };
         Http.post(`/stock/${action}`, orderData)
           .then((response) => {
-            console.log("Order placed successfully:", response);
+            User.getInstance().updateBalance(response.balance);
+            User.getInstance().updatePortfolio(response.portfolio);
             $("#confirmOrderModal").modal("hide");
             $(".modal-body").empty();
           })

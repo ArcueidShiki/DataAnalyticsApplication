@@ -29,6 +29,22 @@ export default class User {
     return User.instance;
   }
 
+  updateBalance(balance) {
+    let user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) {
+      user.balance[balance.symbol] = balance;
+      localStorage.setItem("userInfo", JSON.stringify(user));
+    }
+  }
+
+  updatePortfolio(portfolio) {
+    let user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) {
+      user.portfolio[portfolio.symbol] = portfolio;
+      localStorage.setItem("userInfo", JSON.stringify(user));
+    }
+  }
+
   set(user) {
     this.balance = user.balance;
     this.date_of_birth = user.date_of_birth;
@@ -47,27 +63,13 @@ export default class User {
       this.set(user);
       return;
     }
-    Http.get("/auth/userInfo")
-      .then((response) => {
-        user = response;
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
-    this.set(user);
-    localStorage.setItem("userInfo", JSON.stringify(user));
   }
 
-  update(user) {
+  update() {
+    let user = JSON.parse(localStorage.getItem("userInfo"));
     if (user) {
-      Http.post("/auth/update", user)
-        .then((response) => {
-          console.log("User updated successfully:", response);
-          this.set(user);
-        })
-        .catch((error) => {
-          console.error("Error updating user data:", error);
-        });
+      this.set(user);
+      return;
     }
   }
 }

@@ -4,7 +4,7 @@ import logging
 from sqlalchemy import and_, func
 from app import db
 from datetime import datetime, timedelta
-from app.models.db import Asset, Currency, DailyUSMarketData, IntradayUSMarket, MonthlyUSMarketData, Sector, USAddress, USCompany, USStock, Watchlist, WeeklyUSMarketData
+from app.models.db import Asset, Balance, Currency, DailyUSMarketData, IntradayUSMarket, MonthlyUSMarketData, Portfolio, Sector, USAddress, USCompany, USStock, Watchlist, WeeklyUSMarketData
 from flask_jwt_extended import get_jwt_identity
 from flask import jsonify, make_response, request
 from app.utils.polygontool import polygon, Polygon
@@ -516,12 +516,67 @@ def get_monthly_data(symbol):
 
 
 def buy():
-    data = request.json()
-    return jsonify({"error": "Bull endpoint not implemented"}), 501
+    data = request.json
+    symbol = data["symbol"]
+    quantity = int(data["quantity"])
+    price = float(data["price"])
+    user_id = get_jwt_identity()
+    if not symbol or not quantity or not price:
+        return jsonify({"error": "Missing required fields"}), 400
+    if quantity <= 0 or price <= 0:
+        return jsonify({"error": "Quantity and price must be greater than 0"}), 400
+    # Check if the user has enough balance
+    # Check if the stock is in the user's watchlist
+    balance = db.session.query(Balance).filter_by(user_id=user_id, currency='USD').first()
+    if not balance:
+        return jsonify({"error": "User does not have a balance"}), 400
+    if balance.amount < quantity * price:
+        return jsonify({"error": "Insufficient balance"}), 400
+    balance.amount -= quantity * price
+    # Update user's portfolio
+    portfolio = db.session.query(Portfolio).filter_by(user_id=user_id, symbol=symbol).first()
+    if portfolio:
+        portfolio.avg_cost = (portfolio.avg_cost * portfolio.quantity + price * quantity) / (portfolio.quantity + quantity)
+        portfolio.quantity += quantity
+    else:
+        portfolio = Portfolio(user_id=user_id, symbol=symbol, quantity=quantity, avg_cost=price)
+        db.session.add(portfolio)
+    db.session.commit()
+    return jsonify({
+        "balance": balance.to_dict(),
+        "portfolio": portfolio.to_dict()
+    }), 200
 
 def sell():
-    data = request.json()
+    data = request.json
+    symbol = data["symbol"]
+    quantity = int(data["quantity"])
+    price = float(data["price"])
     user_id = get_jwt_identity()
-    symbol = data.symbol
-    quantity = data.quantity
-    return jsonify({"error": "Sell endpoint not implemented"}), 501
+    if not symbol or not quantity or not price:
+        return jsonify({"error": "Missing required fields"}), 400
+    if quantity <= 0 or price <= 0:
+        return jsonify({"error": "Quantity and price must be greater than 0"}), 400
+    # Check if the stock is in the user's portfolio
+    portfolio = db.session.query(Portfolio).filter_by(user_id=user_id, symbol=symbol).first()
+    if not portfolio:
+        return jsonify({"error": "Stock not in portfolio"}), 400
+    if portfolio.quantity < quantity:
+        return jsonify({"error": "Insufficient quantity in portfolio"}), 400
+    total = quantity * price
+    # Update user's portfolio
+    portfolio.avg_cost = (portfolio.avg_cost * portfolio.quantity - total) / (portfolio.quantity - quantity)
+    portfolio.quantity -= quantity
+    if portfolio.quantity == 0:
+        db.session.delete(portfolio)
+    balance = db.session.query(Balance).filter_by(user_id=user_id, currency='USD').first()
+    if not balance:
+        balance = Balance(user_id=user_id, currency='USD', amount=total)
+        db.session.add(balance)
+    else:
+        balance.amount += total
+    db.session.commit()
+    return jsonify({
+        "balance": balance.to_dict(),
+        "portfolio": portfolio.to_dict()
+    }), 200
