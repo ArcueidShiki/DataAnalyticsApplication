@@ -13,23 +13,24 @@ export default class TradeCard {
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
-        "TradeCard instance already exists. Returning the existing instance.",
+        "TradeCard instance already exists. Returning the existing instance."
       );
       return TradeCard.instance;
     }
     TradeCard.instance = this;
-    this.init();
+
     this.symbol = symbol;
     this.currentPrice = price;
     this.marketPrice = price;
     this.updateAll = this.updateAll.bind(this);
+    this.init();
   }
 
   static getInstance(symbol = null, price = null) {
     if (!TradeCard.instance) {
       TradeCard.instance = new TradeCard(symbol, price);
     }
-    if (symbol) {
+    if (price && symbol) {
       TradeCard.instance.updateSymbol(symbol, price);
     }
     return TradeCard.instance;
@@ -40,6 +41,7 @@ export default class TradeCard {
     this.initTradingTabs();
     this.initPlaceOrderButton();
     this.setupResponsiveTrading();
+    this.initPriceControls();
   }
 
   calMaxQty() {
@@ -188,7 +190,7 @@ export default class TradeCard {
         if (placeOrderButton) {
           let action = $(this).attr("data-action");
           placeOrderButton.text(
-            action === "buy" ? "Place Buy Order" : "Place Sell Order",
+            action === "buy" ? "Place Buy Order" : "Place Sell Order"
           );
           placeOrderButton.removeClass("buy-action sell-action");
           action = $(this).attr("data-action");
@@ -207,7 +209,6 @@ export default class TradeCard {
   }
 
   initPriceControls() {
-    this.currentPrice = parseFloat($("#currentPrice").text());
     this.marketPrice = this.currentPrice;
     const priceInput = $("#tradePrice");
     const quantityInput = $("#tradeQuantity");
@@ -239,13 +240,7 @@ export default class TradeCard {
         event.preventDefault();
       }
     });
-    priceInput.on("blur", () => {
-      const value = parseFloat(priceInput.val());
-      if (isNaN(value) || value < 0) {
-        alert("Please enter a valid non-negative number.");
-        priceInput.val(this.currentPrice);
-      }
-    });
+
     quantityInput.on("input", (event) => {
       const value = event.target.value;
       event.target.value = value.replace(/[^0-9]/g, "");
@@ -258,13 +253,6 @@ export default class TradeCard {
       // (-) (.)
       if (charCode === 45 || charCode === 46) {
         event.preventDefault();
-      }
-    });
-    quantityInput.on("blur", () => {
-      const value = parseFloat(quantityInput.val());
-      if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
-        alert("Please enter a valid non-negative integer.");
-        quantityInput.val("");
       }
     });
   }
@@ -323,7 +311,6 @@ export default class TradeCard {
     }
 
     if (this.currentPrice > this.marketPrice) {
-      console.log("Price is higher than market price", this.marketPrice);
       return {
         isValid: true,
         msg: "Your price is higher than market price",
@@ -347,7 +334,7 @@ export default class TradeCard {
   showConfirmDialog(msg, action) {
     $(".modal-title").text("Confirm Order");
     $(".modal-body").text(
-      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`,
+      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`
     );
     $("#confirm-order-btn").css("display", "block");
     $("#confirmOrderModal").modal({

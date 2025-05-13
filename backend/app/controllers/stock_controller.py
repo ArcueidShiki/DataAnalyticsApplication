@@ -564,11 +564,12 @@ def sell():
     if portfolio.quantity < quantity:
         return jsonify({"error": "Insufficient quantity in portfolio"}), 400
     total = quantity * price
-    # Update user's portfolio
-    portfolio.avg_cost = (portfolio.avg_cost * portfolio.quantity - total) / (portfolio.quantity - quantity)
+    # Update user's portfolio allow zero quantity
+    if portfolio.quantity == quantity:
+        portfolio.avg_cost = 0
+    else:
+        portfolio.avg_cost = (portfolio.avg_cost * portfolio.quantity - total) / (portfolio.quantity - quantity)
     portfolio.quantity -= quantity
-    if portfolio.quantity == 0:
-        db.session.delete(portfolio)
     balance = db.session.query(Balance).filter_by(user_id=user_id, currency='USD').first()
     if not balance:
         balance = Balance(user_id=user_id, currency='USD', amount=total)
