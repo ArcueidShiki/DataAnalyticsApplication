@@ -1,12 +1,39 @@
 @import url("sidebar.css");
 @import url("trade.css");
-.dashboard-cards {
-  height: auto;
+
+.main-content {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 20px;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 88vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--bg-color);
+  overflow: scroll;
+  scrollbar-width: none;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.dashboard-cards {
+  position: relative;
   margin-top: 10px;
+  top: 0;
+  left: 0;
+  height: 50%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-evenly;
+}
+
+.dashboard-cards div {
+  margin: 0 10px;
 }
 
 .card {
@@ -17,12 +44,9 @@
 }
 
 .wallet-card {
+  height: 100%;
   background-color: #ececec; /* Light gray background */
   color: #000000; /* Black text for contrast */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 30px 20px;
 }
 
@@ -73,8 +97,7 @@
 
 /* Portfolio Card Styles */
 .portfolio-card {
-  display: flex;
-  flex-direction: column;
+  height: 100%;
   color: var(--text-color);
 }
 
@@ -137,6 +160,8 @@
 /* Exchange Card Styles */
 .exchange-card {
   color: var(--text-color);
+  width: 0;
+  display: none;
 }
 
 .exchange-header {
@@ -144,6 +169,12 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+}
+
+#doughnutChart {
+  width: 100%;
+  height: 100%;
+  margin: 0 10px;
 }
 
 .exchange-header h3 {
@@ -259,17 +290,32 @@
 
 /* Assets Section Styles */
 .assets-section {
+  width: 100%;
+  position: relative;
   background-color: var(--card-bg);
   border-radius: 16px;
-  padding: 20px;
+  padding: 0 20px;
   margin-top: 20px;
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  background-color: var(--card-bg);
+  z-index: 1;
 }
 
 .section-header {
+  top: 0;
   display: flex;
+  padding: 20px 0;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  background-color: var(--card-bg);
 }
 
 .section-header h2 {
@@ -322,16 +368,26 @@
   gap: 8px;
   padding: 12px 16px;
   align-items: center;
+  overflow: scroll;
+  scrollbar-width: none;
 }
 
 .table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr 1.5fr 1fr 1fr;
+  gap: 8px;
   border-bottom: 1px solid var(--border-color);
   font-weight: 500;
   color: var(--text-secondary);
+  padding-bottom: 10px;
 }
 
 .table-row {
   border-bottom: 1px solid var(--border-color);
+}
+.table-row:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
 }
 
 .column {
@@ -375,7 +431,7 @@
   font-size: 0.8rem;
 }
 
-.trade-btn {
+.action-btn {
   background-color: var(--btn-color);
   color: var(--text-color);
   border: none;
@@ -385,7 +441,7 @@
   transition: background-color 0.2s;
 }
 
-.trade-btn:hover {
+.action-btn:hover {
   background-color: var(--accent-color);
   color: #000;
 }
@@ -403,33 +459,7 @@
   color: var(--neutral-color);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 1200px) {
-  .dashboard-cards {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .exchange-card {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .exchange-card {
-    grid-column: span 1;
-  }
-
-  .table-header,
-  .table-row {
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-  }
-
-  .chart-col,
-  .volume-col {
-    display: none;
-  }
+.table-body {
+  overflow: scroll;
+  scrollbar-width: none;
 }
