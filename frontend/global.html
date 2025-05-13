@@ -285,29 +285,54 @@
         <div class="column"><span class="positive">Closed</span></div>
         <div class="column">AUD</div>
         <div class="column">0.3290</div>
-        <div class="table-row">
+        </div> <!-- Correctly closes the 28th row -->
+
+        </div> <!-- Close .assets-table -->
+        </div> <!-- Close .assets-section -->
+        </div> <!-- Close .main-content -->
+        </div> <!-- Close .app-container -->
+
+        <script type="module">
+          export function filterTable(value) {
+            value = value.toLowerCase();
+            const rows = document.querySelectorAll(".table-row");
+            rows.forEach((row) => {
+              const text = row.textContent.toLowerCase();
+              row.style.display = text.includes(value) ? "" : "none";
+            });
+          }
+
+          import("./sidebar.js").then((module) => {
+            if (module.default && module.default.getInstance) {
+              module.default.getInstance("global");
+            }
+          });
+        </script>
+        </body>
+        </html>
 
 
 
 
 
-    </div>
-  </div>
 
-  <script type="module">
-    export function filterTable(value) {
-      value = value.toLowerCase();
-      const rows = document.querySelectorAll(".table-row");
-      rows.forEach((row) => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(value) ? "" : "none";
-      });
-    }
+            </div>
+          </div>
 
-    import("./sidebar.js").then((module) => {
-      if (module.default && module.default.getInstance) {
-        module.default.getInstance("global");
-      }
-    });
-  </script>
-</html>
+          <script type="module">
+            export function filterTable(value) {
+              value = value.toLowerCase();
+              const rows = document.querySelectorAll(".table-row");
+              rows.forEach((row) => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(value) ? "" : "none";
+              });
+            }
+
+            import("./sidebar.js").then((module) => {
+              if (module.default && module.default.getInstance) {
+                module.default.getInstance("global");
+              }
+            });
+          </script>
+        </html>
