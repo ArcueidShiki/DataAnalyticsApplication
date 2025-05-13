@@ -95,9 +95,7 @@ function calculateTotalValue(assets) {
   $(".balance-amount").text(totalValue.toFixed(2));
 }
 
-function getTotalAssets() {
-
-}
+function getTotalAssets() {}
 
 function drawDoughnutChart(portfolio, balance) {
   var dom = document.getElementById("doughnutChart");
@@ -131,7 +129,7 @@ function drawDoughnutChart(portfolio, balance) {
   option = {
     tooltip: {
       trigger: "item",
-      formatter: '{b} : {c} ({d}%)'
+      formatter: "{b} : {c} ({d}%)",
     },
     legend: {
       top: "5%",
@@ -157,7 +155,7 @@ function drawDoughnutChart(portfolio, balance) {
         labelLine: {
           show: false,
         },
-        data: data
+        data: data,
       },
     ],
   };
@@ -186,9 +184,9 @@ function popluatePortfolioTable(portfolio) {
       portfolio[symbol].profit_loss >= 0 ? "fa-caret-up" : "fa-caret-down";
     const changePrefix = portfolio[symbol].profit_loss >= 0 ? "+" : "-";
     const changeValue = Math.abs(portfolio[symbol].profit_loss).toFixed(2);
-    const changePercent = Math.abs(portfolio[symbol].profit_loss_percent).toFixed(
-      2
-    );
+    const changePercent = Math.abs(
+      portfolio[symbol].profit_loss_percent,
+    ).toFixed(2);
     const row = $(`
       <div class="table-row">
         <div class="column coin-col">
@@ -213,9 +211,14 @@ function popluatePortfolioTable(portfolio) {
       e.stopPropagation();
       const symbol = $(this).data("symbol");
       const price = $(this).data("price");
-      console.log("Trade button clicked for symbol:", symbol, "at price:", price);
+      console.log(
+        "Trade button clicked for symbol:",
+        symbol,
+        "at price:",
+        price,
+      );
       TradeCard.getInstance(symbol, parseFloat(price));
-      TradeCard.getInstance().initPriceControls();
+      TradeCard.getInstance().toggleTradingExpand();
     });
     row.on("click", () => {
       window.location.href = `ticker.html?symbol=${symbol}`;

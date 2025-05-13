@@ -684,5 +684,6 @@ $(document).ready(function () {
   setupToggleWathclist(symbol);
   SearchBar.getInstance();
   Sidebar.getInstance();
-  TradeCard.getInstance(symbol);
+  const currentPrice = parseFloat($("#currentPrice").text());
+  TradeCard.getInstance(symbol, currentPrice);
 });
