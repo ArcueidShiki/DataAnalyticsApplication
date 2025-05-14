@@ -13,13 +13,11 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-      integrity="sha512-abcdefghijklmnopqrstuvwxyz1234567890"
-      crossorigin="anonymous"
     />
     <link rel="stylesheet" href="css/accountsetting.css" />
     <!-- Defer non-critical JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
-    <script src="js/accountsetting.js" defer></script>
+    <script src="js/accountsetting.js" type="module" defer></script>
   </head>
   <body>
     <main class="account-settings-container">
@@ -128,7 +126,7 @@
 
           <!-- Security Tab Content -->
           <div
-            class="tab-content active"
+            class="account-setting-tab-content active"
             id="security-tab"
             role="tabpanel"
             aria-labelledby="security-tab-btn"
@@ -185,7 +183,7 @@
 
           <!-- Notifications Tab Content -->
           <div
-            class="tab-content"
+            class="account-setting-tab-content"
             id="notifications-tab"
             role="tabpanel"
             aria-labelledby="notifications-tab-btn"

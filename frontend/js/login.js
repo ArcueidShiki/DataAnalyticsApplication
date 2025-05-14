@@ -1,4 +1,5 @@
 import Http from "./http.js";
+import User from "./user.js";
 function LoginHandler(e) {
   e.preventDefault();
   const username = $('input[type="text"]').val();
@@ -17,17 +18,15 @@ function LoginHandler(e) {
     .then((response) => {
       // access_token_cookie csrf_access_token in response header, type Set-Cookie
       console.log("Login response:", response);
-      const { access_token, csrf_token } = response;
-      console.log("Access token:", access_token);
-      console.log("CSRF token:", csrf_token);
-      Http.setCookie("access_token_cookie", access_token);
-      Http.setCookie("csrf_access_token", csrf_token);
+      localStorage.setItem("userInfo", JSON.stringify(response.user));
+      User.getInstance().set(response.user);
+      Http.setCookie("access_token_cookie", response.access_token);
+      Http.setCookie("csrf_access_token", response.csrf_token);
       const accessToken = Http.getCookie("access_token_cookie");
       const csrfToken = Http.getCookie("csrf_access_token");
       console.log("Access Token:", accessToken);
       console.log("CSRF Token:", csrfToken);
       window.open("watchlist.html", "_blank"); // Redirect to dashboard
-      // window.location.href = "watchlist.html"; // Redirect to dashboard
     })
     .catch((error) => {
       console.error("Login error:", error);

@@ -17,3 +17,8 @@ def login():
     data = request.get_json()
     response, status_code = controller.login(data)
     return response, status_code
+
+@auth_bp.route('/upload/img', methods=('POST',))
+@jwt_required()
+def upload_profile_img():
+    return controller.upload_profile_img()

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Stock Markets</title>
+  <link rel="stylesheet" href="css/global.css" />
+</head>
+<body class="dark-theme">
+  <div class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebarContainer"></div>
+
+    <!-- Main content -->
+    <div class="main-content">
+      <h1 class="page-title">🌍 Global Stock Markets Overview</h1>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by country or index..."
+        oninput="filterTable(this.value)"
+      />
+
+      <div class="assets-section">
+        <div class="assets-table">
+          <div class="table-header">
+            <div class="column">#</div>
+            <div class="column">Country</div>
+            <div class="column">Index</div>
+            <div class="column">Change</div>
+            <div class="column">Status</div>
+            <div class="column">Currency</div>
+            <div class="column">Rate</div>
+          </div>
+
+
+          <div class="table-row">
+            <div class="column">1</div>
+            <div class="column">
+              <span style="display:flex;align-items:center;gap:8px;">
+                <img class="flag" src="https://flagcdn.com/us.svg" alt="US Flag" />United States
+              </span>
+            </div>
+            <div class="column">S&P 500</div>
+            <div class="column positive">+1.23%</div>
+            <div class="column"><span class="positive">Open</span></div>
+            <div class="column">USD</div>
+            <div class="column">1.0000</div>
+          </div>
+
+
+
+
+
+                <!-- Rows 1 to 10 -->
+        <div class="table-row">
+        <div class="column">1</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/us.svg" alt="US Flag" />United States</span></div>
+        <div class="column">S&P 500</div>
+        <div class="column positive">+1.23%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">USD</div>
+        <div class="column">1.0000</div>
+        </div>
+        <div class="table-row">
+        <div class="column">2</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/in.svg" alt="IN Flag" />India</span></div>
+        <div class="column">Nifty 50</div>
+        <div class="column negative">-0.45%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">INR</div>
+        <div class="column">0.0120</div>
+        </div>
+        <div class="table-row">
+        <div class="column">3</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/gb.svg" alt="GB Flag" />United Kingdom</span></div>
+        <div class="column">FTSE 100</div>
+        <div class="column positive">+0.67%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">GBP</div>
+        <div class="column">1.2500</div>
+        </div>
+        <div class="table-row">
+        <div class="column">4</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/de.svg" alt="DE Flag" />Germany</span></div>
+        <div class="column">DAX</div>
+        <div class="column negative">-0.33%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">EUR</div>
+        <div class="column">1.0900</div>
+        </div>
+        <div class="table-row">
+        <div class="column">5</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/jp.svg" alt="JP Flag" />Japan</span></div>
+        <div class="column">Nikkei 225</div>
+        <div class="column positive">+0.89%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">JPY</div>
+        <div class="column">0.0072</div>
+        </div>
+        <div class="table-row">
+        <div class="column">6</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/fr.svg" alt="FR Flag" />France</span></div>
+        <div class="column">CAC 40</div>
+        <div class="column negative">-0.21%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">EUR</div>
+        <div class="column">1.0900</div>
+        </div>
+        <div class="table-row">
+        <div class="column">7</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/ca.svg" alt="CA Flag" />Canada</span></div>
+        <div class="column">TSX</div>
+        <div class="column positive">+0.18%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">CAD</div>
+        <div class="column">0.7300</div>
+        </div>
+        <div class="table-row">
+        <div class="column">8</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/au.svg" alt="AU Flag" />Australia</span></div>
+        <div class="column">ASX 200</div>
+        <div class="column positive">+0.75%</div>
+        <div class="column"><span class="positive">Closed</span></div>
+        <div class="column">AUD</div>
+        <div class="column">0.6600</div>
+        </div>
+        <div class="table-row">
+        <div class="column">9</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/cn.svg" alt="CN Flag" />China</span></div>
+        <div class="column">Shanghai</div>
+        <div class="column negative">-0.65%</div>
+        <div class="column"><span class="negative">Open</span></div>
+        <div class="column">CNY</div>
+        <div class="column">0.1400</div>
+        </div>
+        <div class="table-row">
+        <div class="column">10</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/br.svg" alt="BR Flag" />Brazil</span></div>
+        <div class="column">Bovespa</div>
+        <div class="column positive">+0.95%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">BRL</div>
+        <div class="column">0.2000</div>
+        </div>
+        <div class="table-row">
+        <div class="column">11</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/us.svg" alt="US Flag" />United States</span></div>
+        <div class="column">S&P 500</div>
+        <div class="column positive">+1.23%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">USD</div>
+        <div class="column">1.0000</div>
+        </div>
+        <div class="table-row">
+        <div class="column">12</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/in.svg" alt="IN Flag" />India</span></div>
+        <div class="column">Nifty 50</div>
+        <div class="column negative">-0.45%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">INR</div>
+        <div class="column">0.0120</div>
+        </div>
+        <div class="table-row">
+        <div class="column">13</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/gb.svg" alt="GB Flag" />United Kingdom</span></div>
+        <div class="column">FTSE 100</div>
+        <div class="column positive">+0.67%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">GBP</div>
+        <div class="column">1.2500</div>
+        </div>
+        <div class="table-row">
+        <div class="column">14</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/de.svg" alt="DE Flag" />Germany</span></div>
+        <div class="column">DAX</div>
+        <div class="column negative">-0.33%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">EUR</div>
+        <div class="column">1.0900</div>
+        </div>
+        <div class="table-row">
+        <div class="column">15</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/jp.svg" alt="JP Flag" />Japan</span></div>
+        <div class="column">Nikkei 225</div>
+        <div class="column positive">+0.89%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">JPY</div>
+        <div class="column">0.0072</div>
+        </div>
+        <div class="table-row">
+        <div class="column">16</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/fr.svg" alt="FR Flag" />France</span></div>
+        <div class="column">CAC 40</div>
+        <div class="column negative">-0.21%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">EUR</div>
+        <div class="column">1.0900</div>
+        </div>
+        <div class="table-row">
+        <div class="column">17</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/ca.svg" alt="CA Flag" />Canada</span></div>
+        <div class="column">TSX</div>
+        <div class="column positive">+0.18%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">CAD</div>
+        <div class="column">0.7300</div>
+        </div>
+        <div class="table-row">
+        <div class="column">18</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/au.svg" alt="AU Flag" />Australia</span></div>
+        <div class="column">ASX 200</div>
+        <div class="column positive">+0.75%</div>
+        <div class="column"><span class="positive">Closed</span></div>
+        <div class="column">AUD</div>
+        <div class="column">0.6600</div>
+        </div>
+        <div class="table-row">
+        <div class="column">19</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/cn.svg" alt="CN Flag" />China</span></div>
+        <div class="column">Shanghai</div>
+        <div class="column negative">-0.65%</div>
+        <div class="column"><span class="negative">Open</span></div>
+        <div class="column">CNY</div>
+        <div class="column">0.1400</div>
+        </div>
+        <div class="table-row">
+        <div class="column">20</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/br.svg" alt="BR Flag" />Brazil</span></div>
+        <div class="column">Bovespa</div>
+        <div class="column positive">+0.95%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">BRL</div>
+        <div class="column">0.2000</div>
+        </div>
+        <div class="table-row">
+        <div class="column">21</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/us.svg" alt="US Flag" />United States</span></div>
+        <div class="column">S&P 500</div>
+        <div class="column positive">+1.23%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">USD</div>
+        <div class="column">1.0000</div>
+        </div>
+        <div class="table-row">
+        <div class="column">22</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/in.svg" alt="IN Flag" />India</span></div>
+        <div class="column">Nifty 50</div>
+        <div class="column negative">-0.45%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">INR</div>
+        <div class="column">0.0120</div>
+        </div>
+        <div class="table-row">
+        <div class="column">23</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/gb.svg" alt="GB Flag" />United Kingdom</span></div>
+        <div class="column">FTSE 100</div>
+        <div class="column positive">+0.67%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">GBP</div>
+        <div class="column">1.2500</div>
+        </div>
+        <div class="table-row">
+        <div class="column">24</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/de.svg" alt="DE Flag" />Germany</span></div>
+        <div class="column">DAX</div>
+        <div class="column negative">-0.33%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">EUR</div>
+        <div class="column">1.0900</div>
+        </div>
+        <div class="table-row">
+        <div class="column">25</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/jp.svg" alt="JP Flag" />Japan</span></div>
+        <div class="column">Nikkei 225</div>
+        <div class="column positive">+0.89%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">JPY</div>
+        <div class="column">0.0072</div>
+        </div>
+        <div class="table-row">
+        <div class="column">26</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/fr.svg" alt="FR Flag" />France</span></div>
+        <div class="column">CAC 40</div>
+        <div class="column negative">-0.21%</div>
+        <div class="column"><span class="negative">Closed</span></div>
+        <div class="column">EUR</div>
+        <div class="column">1.0900</div>
+        </div>
+        <div class="table-row">
+        <div class="column">27</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/ca.svg" alt="CA Flag" />Canada</span></div>
+        <div class="column">TSX</div>
+        <div class="column positive">+0.18%</div>
+        <div class="column"><span class="positive">Open</span></div>
+        <div class="column">CAD</div>
+        <div class="column">0.7300</div>
+        </div>
+        <div class="table-row">
+        <div class="column">28</div>
+        <div class="column"><span style="display:flex;align-items:center;gap:8px;"><img class="flag" src="https://flagcdn.com/au.svg" alt="AU Flag" />Australia</span></div>
+        <div class="column">ASX 200</div>
+        <div class="column positive">+0.75%</div>
+        <div class="column"><span class="positive">Closed</span></div>
+        <div class="column">AUD</div>
+
+        <div class="column">0.3290</div>
+        </div> <!-- Correctly closes the 28th row -->
+
+
+        </div> <!-- End .assets-table -->
+      </div> <!-- End .assets-section -->
+    </div> <!-- End .main-content -->
+  </div> <!-- End .app-container -->
+
+  <!-- Filter function script -->
+  <script>
+    function filterTable(value) {
+      value = value.toLowerCase();
+      const rows = document.querySelectorAll(".table-row");
+      rows.forEach((row) => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(value) ? "" : "none";
+      });
+    }
+  </script>
+
+  <!-- Import sidebar module -->
+  <script type="module">
+    import("./sidebar.js").then((module) => {
+      if (module.default && module.default.getInstance) {
+        module.default.getInstance("global");
+      }
+    });
+  </script>
+</body>
+</html>

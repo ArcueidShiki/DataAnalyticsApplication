@@ -14,12 +14,31 @@ class User(db.Model):
     date_of_birth = Column(Date)
     is_google_user = Column(Boolean, default=False)
     is_apple_user = Column(Boolean, default=False)
+    profile_img = Column(String, default="static/users/profile/default.png")
     portfolio = db.relationship('Portfolio', back_populates="user")
     balance = db.relationship('Balance', back_populates="user")
     watchlist = db.relationship('Watchlist', back_populates="user")
     transactions = db.relationship('Transaction', back_populates="user")
     def __repr__(self):
         return f"<User {self.username}>"
+    def to_dict(self):
+        balanceMap = {}
+        for balance in self.balance:
+            balanceMap[balance.currency] = balance.to_dict()
+        portfolioMap = {}
+        for portfolio in self.portfolio:
+            portfolioMap[portfolio.symbol] = portfolio.to_dict()
+        return {
+            "email": self.email,
+            "phone": self.phone,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "date_of_birth": self.date_of_birth.isoformat() if self.date_of_birth else None,
+            "profile_img": self.profile_img,
+            "balance": balanceMap,
+            "portfolio": portfolioMap,
+        }
 
 class Currency(db.Model):
     __tablename__ = 'currencies'
@@ -37,6 +56,13 @@ class Balance(db.Model):
     amount = Column(Float, nullable=False, default=0.0)
     user = db.relationship('User', back_populates='balance')
     __table_args__ = (db.UniqueConstraint('user_id', 'currency', name='unique_user_currency'),)
+    def __repr__(self):
+        return f"<Balance {self.user_id} {self.currency} {self.amount}>"
+    def to_dict(self):
+        return {
+            "symbol": self.currency,
+            "amount": self.amount,
+        }
 
 class Asset(db.Model):
     __tablename__ = 'assets'
@@ -46,7 +72,6 @@ class Asset(db.Model):
     type = Column(String, nullable=False)
     cur_price = Column(Float)
     last_updated = Column(DateTime)
-    portfolio = db.relationship('Portfolio', back_populates="asset")
     def __repr__(self):
         return f"<Asset {self.symbol}>"
 
@@ -54,14 +79,29 @@ class Portfolio(db.Model):
     __tablename__ = 'portfolio'
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(String, ForeignKey('users.id'), nullable=False)
-    asset_id = Column(Integer, ForeignKey('assets.id'), nullable=False)
+    symbol = Column(String, ForeignKey('us_stocks.symbol'), nullable=False)
     quantity = Column(Float, nullable=False, default=0.0)
     avg_cost = Column(Float, default=0.0)
     user = db.relationship('User', back_populates='portfolio')
-    asset = db.relationship('Asset', back_populates='portfolio')
-    __table_args__ = (db.UniqueConstraint('user_id', 'asset_id', name='unique_user_asset'),)
-    def __repr__(self):
-        return f"<Portfolio(asset_id='{self.asset_id}', avg_cost={self.avg_cost}, cur_price={self.cur_price}, quantity={self.quantity}, user_id={self.user_id})>"
+    usstock = db.relationship('USStock', back_populates='portfolio')
+    __table_args__ = (db.UniqueConstraint('user_id', 'symbol', name='unique_user_portfolio'),)
+    def to_dict(self):
+        price = None
+        if self.usstock and self.usstock.daily_market_data:
+            # Sort by timestamp and get the most recent entry
+            latest_data = max(self.usstock.daily_market_data, key=lambda x: x.timestamp, default=None)
+            price = latest_data.close if latest_data else None
+        unrealized_profit = (price - self.avg_cost) * self.quantity if price else 0
+        unrealized_profit_percent = (unrealized_profit / self.avg_cost * 100) if self.avg_cost else 0
+        return {
+            "symbol": self.symbol,
+            "price": price,
+            "quantity": self.quantity,
+            "avg_cost": self.avg_cost,
+            "total_value": self.quantity * price if price else 0,
+            "profit_loss": unrealized_profit,
+            "profit_loss_percent": unrealized_profit_percent,
+        }
 
 class Watchlist(db.Model):
     __tablename__ = 'watchlist'
@@ -172,6 +212,7 @@ class USStock(db.Model):
     daily_market_data = db.relationship('DailyUSMarketData', back_populates='stock')
     weekly_market_data = db.relationship('WeeklyUSMarketData', back_populates='stock')
     monthly_market_data = db.relationship('MonthlyUSMarketData', back_populates='stock')
+    portfolio = db.relationship('Portfolio', back_populates='usstock')
     def __repr__(self):
         return f"<Stock {self.symbol} >"
     def to_dict(self):
