@@ -4,7 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function handleFile(e) {
   const file = e.target.files[0];
-  if (!file) return;
+
+  // ✅ Validate file extension
+  if (!file || !file.name.endsWith(".csv")) {
+    alert("Please upload a valid CSV file (.csv extension).");
+    e.target.value = ""; // Clear invalid file
+    return;
+  }
+
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
