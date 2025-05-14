@@ -1,14 +1,15 @@
-jingtong
-1. Share function: my assets pie chart and profit and loss. post.
-2. Buy and Sell
+1. Share function: chatList
+3. Company News
+4. Company Financials
+5. gemini api text
+6. bugfix daily update (check localcahe if it is outdated, pull new data)
+7. writing testing 5+
+8. Threejs 3d globe earth.
+9. reusable chart components
+10. Beautify Readme with some screenshots badges. technologies
+11. Create Trump, Elon Account.
+12. sort frontend list function.
+13. Check 100 million
 
 Alice:
 2. Account Settings Page (bug)
-3. company tab
-
-7. Company Financials
-8. Company News
-
-10.  google map api
-11. gemini api text
-12. hide Crypto, Exchange Tab.
