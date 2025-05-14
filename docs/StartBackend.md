@@ -120,12 +120,4 @@ openssl rsa -in rsa_private.pem -pubout -out rsa_public.pem
 All the http status codes are at here.
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
-
-## Purify dependencies
-
-```bash
-pip install pipreqs
-pipreqs ./your_project_path --force
-```
-
-https://yfinance-python.org/reference/yfinance.price_history.html
+https://polygon.io/docs/rest/stocks/tickers/ticker-overview

@@ -19,6 +19,8 @@ class User(db.Model):
     balance = db.relationship('Balance', back_populates="user")
     watchlist = db.relationship('Watchlist', back_populates="user")
     transactions = db.relationship('Transaction', back_populates="user")
+    chat_list = db.relationship('ChatList', back_populates="user")
+    chat_history = db.relationship('ChatHistory', back_populates="user")
     def __repr__(self):
         return f"<User {self.username}>"
     def to_dict(self):
@@ -366,3 +368,40 @@ class News(db.Model):
     company = db.relationship('USCompany', back_populates='news')
     def __repr__(self):
         return f"<News {self.id} {self.title}>"
+
+class ChatList(db.Model):
+    __tablename__ = 'chat_list'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    from_user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    to_user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', back_populates='chat_list')
+    chat_history = db.relationship('ChatHistory', back_populates='chat_list')
+    __table_args__ = (db.UniqueConstraint('from_user_id', 'to_user_id', name='unique_chat_list'),)
+    def __repr__(self):
+        return f"<ChatList {self.from_user_id} to {self.to_user_id}>"
+    def to_dict(self):
+        return {
+            "from_user_id": self.from_user_id,
+            "to_user_id": self.to_user_id,
+        }
+
+class ChatHistory(db.Model):
+    __tablename__ = 'chat_history'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    chat_list_id = Column(Integer, ForeignKey('chat_list.id'), nullable=False)
+    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    message = Column(String, nullable=False)
+    message_type = Column(String, nullable=False)  # 'text' or 'image'
+    timestamp = Column(TIMESTAMP, default=datetime.utcnow)
+    chat_list = db.relationship('ChatList', back_populates='chat_history')
+    user = db.relationship('User', back_populates='chat_history')
+    def __repr__(self):
+        return f"<ChatHistory {self.chat_list_id} {self.user_id}>"
+    def to_dict(self):
+        return {
+            "chat_list_id": self.chat_list_id,
+            "user_id": self.user_id,
+            "message": self.message,
+            "message_type": self.message_type,
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+        }
