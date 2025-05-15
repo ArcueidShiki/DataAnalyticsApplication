@@ -47,38 +47,37 @@
                     <h2 class="text-light opacity-100 text-center mb-3">Login</h2>
                     <p class="text-light opacity-75 mb-3">Login to your portfolio account</p>
 
-                    <div class="google-login d-flex align-items-center justify-content-center mb-4">
+                    <div class="google-login d-flex align-items-center justify-content-center">
                         <img src="assets/google-icon.png" alt="Google" class="me-2">
                         <span>Google Login</span>
                     </div>
 
-                    <div class="divider mb-4">or use account</div>
+                    <div class="divider">or use account</div>
 
                     <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="username" class="form-label text-light">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Username" required>
+                        <div class="mb-3 input-group">
+                            <label for="username" class="form-label input-label">Username</label>
+                            <input type="text" class="input-field position-relative w-100" id="username" placeholder="Username">
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label text-light">Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="password" placeholder="Min. 8 characters" required>
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="fas fa-eye"></i>
+                        <div class="mb-3 input-group">
+                            <label for="password" class="form-label input-label">Password</label>
+                            <div class="password-container position-relative">
+                                <input type="password" class="input-field w-100" id="password" placeholder="Min. 8 characters">
+                                <button type="button" id="togglePassword" class="eye-icon-btn">
+                                    <i class="fa fa-eye" id="eyeIcon"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="remember">
-                                <label class="form-check-label text-light" for="remember">Remember me</label>
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="checkbox-group form-check">
+                                <input type="checkbox" class="form-check-input" id="remember">
+                                <label class="form-check-label" for="remember">Remember me</label>
                             </div>
-                            <a href="#" class="text-light">Forgot password?</a>
+                            <a href="#" class="forgot-password">Forgot password?</a>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
-                        <div class="text-center">
-                            <span class="text-light">Don't have an account?</span>
-                            <a href="register.html" class="text-primary">Create one</a>
+                        <button type="submit" class="login-button btn w-100">Login</button>
+                        <div class="register-link text-center mt-1">
+                            Don't have an account? <a href="register.html">Create one</a>
                         </div>
                     </form>
                 </div>

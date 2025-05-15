@@ -48,31 +48,35 @@
                     <p class="text-light opacity-75 mb-3">Create an account to unlock all features!</p>
 
                     <form id="registerForm">
-                        <div class="mb-3">
-                            <label for="username" class="form-label text-light">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Username" required>
+                        <div class="mb-3 input-group">
+                            <label for="username" class="form-label input-label">Username</label>
+                            <input type="text" class="input-field position-relative w-100" id="username" placeholder="Username">
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label text-light">Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="Email" required>
+                        <div class="mb-3 input-group">
+                            <label for="email" class="form-label input-label">Email</label>
+                            <input type="email" class="input-field position-relative w-100" id="email" placeholder="Email">
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label text-light">Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="password" placeholder="Min. 8 characters" required>
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="fas fa-eye"></i>
+                        <div class="mb-3 input-group">
+                            <label for="password" class="form-label input-label">Password</label>
+                            <div class="password-container position-relative">
+                                <input type="password" class="input-field w-100" id="password" placeholder="Min. 8 characters">
+                                <button type="button" id="togglePassword" class="eye-icon-btn">
+                                    <i class="fa fa-eye" id="eyeIcon"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="confirmPassword" class="form-label text-light">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                        <div class="mb-3 input-group">
+                            <label for="confirmPassword" class="form-label input-label">Confirm Password</label>
+                            <div class="password-container position-relative">
+                                <input type="password" class="input-field w-100" id="confirmPassword" placeholder="Confirm your password">
+                                <button type="button" id="toggleConfirmPassword" class="eye-icon-btn">
+                                    <i class="fa fa-eye" id="confirmEyeIcon"></i>
+                                </button>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 mb-3">Register</button>
-                        <div class="text-center">
-                            <span class="text-light">Already have an account?</span>
-                            <a href="login.html" class="text-primary">Login</a>
+                        <button type="submit" class="register-button btn w-100">Register</button>
+                        <div class="login-link text-center mt-1">
+                            Already have an account? <a href="login.html">Login</a>
                         </div>
                     </form>
                 </div>
