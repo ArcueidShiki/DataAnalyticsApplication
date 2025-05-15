@@ -21,7 +21,7 @@ def create_summary_image(bg_image_path, output_path, profit_value, symbol, price
 
     section_x_positions = [WIDTH * 0.2, WIDTH * 0.5, WIDTH * 0.8]
     header_texts = ["Symbol", "Price", "Cost"]
-    values_texts = [symbol, price, avg_cost]
+    values_texts = [symbol, str(price), str(avg_cost)]
 
     for i in range(3):
         draw.text((section_x_positions[i], HEIGHT * 0.86), header_texts[i], font=details_font, fill="white", anchor="mm")

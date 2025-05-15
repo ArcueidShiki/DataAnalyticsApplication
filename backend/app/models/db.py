@@ -31,6 +31,7 @@ class User(db.Model):
         for portfolio in self.portfolio:
             portfolioMap[portfolio.symbol] = portfolio.to_dict()
         return {
+            "id": self.id,
             "email": self.email,
             "phone": self.phone,
             "username": self.username,

@@ -2,6 +2,7 @@ import Http from "./http.js";
 
 export default class User {
   static instance = null;
+  id = null;
   balance = null;
   date_of_birth = null;
   email = null;
@@ -46,6 +47,7 @@ export default class User {
   }
 
   set(user) {
+    this.id = user.id;
     this.balance = user.balance;
     this.date_of_birth = user.date_of_birth;
     this.email = user.email;

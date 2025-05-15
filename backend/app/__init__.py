@@ -16,7 +16,7 @@ from flask_socketio import SocketIO
 db = SQLAlchemy()
 db_migrate = Migrate()
 redis_client = FlaskRedis()
-wsocket= SocketIO(acors_allowed_origins="http://127.0.0.1:*")
+wsocket = SocketIO(cors_allowed_origins=["http://127.0.0.1:5501"])
 from app.routes.auth import auth_bp
 from app.routes.stock import stock_bp
 from app.routes.asset import asset_bp
