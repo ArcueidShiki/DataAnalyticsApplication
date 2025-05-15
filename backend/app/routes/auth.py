@@ -21,3 +21,8 @@ def logout():
 @jwt_required()
 def upload_profile_img():
     return controller.upload_profile_img()
+
+@auth_bp.route('/user/update', methods=('Post',))
+@jwt_required()
+def update_user_info():
+    return controller.update_user_info()

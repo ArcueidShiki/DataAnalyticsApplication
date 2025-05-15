@@ -51,6 +51,7 @@ body {
   --hover-bg: rgba(255, 255, 255, 0.05);
   --bubble-user: #1e3b2c;
   --bubble-friend: #2a2a2a;
+  --icon-invert: 1;
 }
 
 [data-theme="light"] {
@@ -68,4 +69,5 @@ body {
   --hover-bg: rgba(0, 0, 0, 0.03);
   --bubble-user: #dcf8c6;
   --bubble-friend: #f0f0f0;
+  --icon-invert: 0;
 }

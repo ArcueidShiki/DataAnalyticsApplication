@@ -9,7 +9,7 @@ export default class Sidebar {
   constructor() {
     if (Sidebar.instance) {
       console.log(
-        "Sidebar instance already exists. Returning the existing instance.",
+        "Sidebar instance already exists. Returning the existing instance."
       );
       return Sidebar.instance;
     }
@@ -56,14 +56,23 @@ export default class Sidebar {
       const profileBalance = $(".profile-balance");
       if (profileName && profileBalance) {
         profileName.text(this.user.username);
-        profileBalance.text(
-          `$${this.user.balance["USD"].amount.toFixed(2)}USD`,
+
+        // Format the amount with thousands separators
+        const formattedAmount = this.user.balance["USD"].amount.toLocaleString(
+          "en-US",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
         );
+
+        profileBalance.text(`${formattedAmount} USD`);
+
         const profileAvatar = $(".profile-avatar");
         profileAvatar.append(
           $(
-            `<img src="${Http.baseUrl}/${this.user.profile_img}" alt="${this.user.username} id="sidebar-profile"/>`,
-          ),
+            `<img src="${Http.baseUrl}/${this.user.profile_img}" alt="${this.user.username} id="sidebar-profile"/>`
+          )
         );
       }
     } else {
@@ -287,7 +296,9 @@ export default class Sidebar {
     const stockItem = $(`
       <div class="watchlist-item">
         <div class="watchlist-icon">
-            <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
+            <img src="https://www.google.com/s2/favicons?sz=64&domain=${
+              stock.domain
+            }" alt="${stock.symbol} icon" width="15px"/>
         </div>
         <div class="watchlist-info">
             <div class="stock-name">${stock.symbol}</div>
