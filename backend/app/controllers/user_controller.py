@@ -127,25 +127,78 @@ def allowed_file(filename):
     else:
         return False
 
-def upload_profile_img():
+# def upload_profile_img():
+    # user_id = get_jwt_identity()
+    # if not user_id:
+    #     return jsonify({"msg": "Missing user_id"}), 400
+    # user = User.query.get(user_id)
+    # if not user:
+    #     return jsonify({"error": "User not found"}), 404
+    # if 'file' not in request.files:
+    #     return jsonify({"msg": "No file part"}), 400
+    # file = request.files['file']
+    # if file.filename == '':
+    #     return jsonify({"msg": "No selected file"}), 400
+    # if file and allowed_file(file.filename):
+    #     filename = secure_filename(file.filename)
+    #     user_folder = os.path.join('app/static/users/profile/', user_id)
+    #     os.makedirs(user_folder, exist_ok=True)
+    #     file_path = os.path.join(user_folder, filename)
+    #     file.save(file_path)
+    #     user.profile_img = f"static/users/profile/{user_id}/{filename}"
+    #     db.session.commit()
+    #     return jsonify({"message": "File uploaded successfully", "image_url": user.profile_img}), 200
+    # return jsonify({"error": "File type not allowed"}), 400
+
+def update_user_info():
     user_id = get_jwt_identity()
     if not user_id:
         return jsonify({"msg": "Missing user_id"}), 400
+
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    if 'file' not in request.files:
-        return jsonify({"msg": "No file part"}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"msg": "No selected file"}), 400
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        user_folder = os.path.join('app/static/users/profile/', user_id)
-        os.makedirs(user_folder, exist_ok=True)
-        file_path = os.path.join(user_folder, filename)
-        file.save(file_path)
-        user.profile_img = f"static/users/profile/{user_id}/{filename}"
-        db.session.commit()
-        return jsonify({"message": "File uploaded successfully", "image_url": user.profile_img}), 200
-    return jsonify({"error": "File type not allowed"}), 400
+    
+    data = request.form
+    if 'email' in data:
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
+            return jsonify({"msg": "Invalid email format"}), 400
+        else:
+            user.email = data['email']
+    if 'phone' in data:
+            user.phone = data['phone']
+    if 'username' in data:
+        if not re.match(r"^[a-zA-Z0-9_]+$", data['username']):
+            return jsonify({"msg": "Invalid username format"}), 400
+        else:
+            user.username = data['username']
+    if 'first_name' in data:
+        user.first_name = data['first_name']
+    if 'last_name' in data:
+        user.last_name = data['last_name']
+
+    if 'date_of_birth' in data:
+        birth_date_str = request.form['date_of_birth']
+        try:
+            # Convert the string to a date object
+            birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d').date()
+            user.date_of_birth = birth_date
+        except ValueError as e:
+            return jsonify({"error": f"Invalid date format: {str(e)}. Use YYYY-MM-DD"}), 400
+
+    if 'file' in request.files:
+        file = request.files['file']
+        if file.filename != '':
+            if allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                user_folder = os.path.join('app/static/users/profile/', user_id)
+                os.makedirs(user_folder, exist_ok=True)
+                file_path = os.path.join(user_folder, filename)
+                file.save(file_path)
+                user.profile_img = f"static/users/profile/{user_id}/{filename}"
+            else:
+                return jsonify({"error": "File type not allowed"}), 400
+
+
+    db.session.commit()
+    return jsonify({"msg": "User info updated successfully", "user": user.to_dict()}), 200
