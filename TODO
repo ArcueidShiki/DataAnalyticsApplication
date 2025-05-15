@@ -3,6 +3,8 @@
 4. Company Financials
 6. bugfix daily update (check localcahe if it is outdated, pull new data)
 7. writing testing 5+
+
+
 8. Threejs 3d globe earth.
 9. reusable chart components
 10. Beautify Readme with some screenshots badges. technologies

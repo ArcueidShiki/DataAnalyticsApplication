@@ -34,42 +34,36 @@ def handle_send_message(data):
 def handle_disconnect():
     print("Client disconnected")
 
-@chat_bp.route('/new', methods=('POST',))
-@jwt_required()
-def new_chat():
-    return controller.new_chat()
+
+
+
+
+
+
+
 
 @chat_bp.route('/list', methods=('GET',))
 @jwt_required()
-def get_list():
-    return controller.get_list()
+def get_chat_list():
+    return controller.get_chat_list()
 
-@chat_bp.route('/history', methods=('GET',))
+@chat_bp.route('/history/<string:partner_id>', methods=('GET',))
 @jwt_required()
-def get_history():
-    return controller.get_history()
+def get_history(partner_id):
+    return controller.get_history(partner_id)
 
-@chat_bp.route('/clear', methods=('DELETE',))
+@chat_bp.route('/close', methods=('POST',))
 @jwt_required()
-def clear_history():
-    return controller.clear_history()
+def close():
+    return controller.close()
+
+# send profit and loss picture
+@chat_bp.route('/send/pl', methods=('POST',))
+@jwt_required()
+def send_profit_loss():
+    return controller.send_profit_loss()
 
 @chat_bp.route('/send/text', methods=('POST',))
 @jwt_required()
 def send_text():
     return controller.send_text()
-
-@chat_bp.route('/send/img', methods=('POST',))
-@jwt_required()
-def send_img():
-    return controller.send_img()
-
-@chat_bp.route('/send/bulk/img', methods=('POST',))
-@jwt_required()
-def bulk_send_img():
-    return controller.bulk_send_img()
-
-@chat_bp.route('/send/bulk/text', methods=('POST',))
-@jwt_required()
-def bulk_send_text():
-    return controller.bulk_send_text()

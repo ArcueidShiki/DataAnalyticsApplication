@@ -3,7 +3,10 @@ import datetime
 
 FONT_PATH = "arial.ttf"
 
-def create_market_image(bg_image_path, output_path, profit_value, symbol, price, avg_cost, username):
+def create_summary_image(bg_image_path, output_path, profit_value, symbol, price, avg_cost, username):
+    profit_value = round(profit_value / price  * 100, 2)
+    price = round(price, 2)
+    avg_cost = round(avg_cost, 2)
     profit_text = f"Profit +{profit_value}%" if profit_value > 0 else f"Loss {profit_value}%"
 
     img = Image.open(bg_image_path)
