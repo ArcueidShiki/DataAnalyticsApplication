@@ -128,29 +128,6 @@ def allowed_file(filename):
     else:
         return False
 
-# def upload_profile_img():
-    # user_id = get_jwt_identity()
-    # if not user_id:
-    #     return jsonify({"msg": "Missing user_id"}), 400
-    # user = User.query.get(user_id)
-    # if not user:
-    #     return jsonify({"error": "User not found"}), 404
-    # if 'file' not in request.files:
-    #     return jsonify({"msg": "No file part"}), 400
-    # file = request.files['file']
-    # if file.filename == '':
-    #     return jsonify({"msg": "No selected file"}), 400
-    # if file and allowed_file(file.filename):
-    #     filename = secure_filename(file.filename)
-    #     user_folder = os.path.join('app/static/users/profile/', user_id)
-    #     os.makedirs(user_folder, exist_ok=True)
-    #     file_path = os.path.join(user_folder, filename)
-    #     file.save(file_path)
-    #     user.profile_img = f"static/users/profile/{user_id}/{filename}"
-    #     db.session.commit()
-    #     return jsonify({"message": "File uploaded successfully", "image_url": user.profile_img}), 200
-    # return jsonify({"error": "File type not allowed"}), 400
-
 def update_user_info():
     user_id = get_jwt_identity()
     if not user_id:
@@ -159,7 +136,7 @@ def update_user_info():
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     data = request.form
     if 'email' in data:
         if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
