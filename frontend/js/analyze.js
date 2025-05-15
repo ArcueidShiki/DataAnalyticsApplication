@@ -138,3 +138,19 @@ function genColors(data) {
   ];
   return Object.keys(data).map((_, i) => base[i % base.length]);
 }
+
+document.getElementById("clearButton").addEventListener("click", () => {
+  // Reset totals
+  document.getElementById("totalInvestment").textContent = "--";
+  document.getElementById("totalPnL").textContent = "--";
+  document.getElementById("avgReturn").textContent = "--";
+  document.getElementById("mostRisky").textContent = "--";
+
+  // Clear charts
+  document.getElementById("sectorChart").getContext("2d").clearRect(0, 0, 400, 400);
+  document.getElementById("companyChart").getContext("2d").clearRect(0, 0, 400, 400);
+
+  // Clear gainers/losers
+  document.getElementById("gainersList").innerHTML = "Upload CSV first";
+  document.getElementById("losersList").innerHTML = "Upload CSV first";
+});
