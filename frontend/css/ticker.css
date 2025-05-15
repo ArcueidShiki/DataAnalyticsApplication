@@ -93,8 +93,8 @@
 
 /* Follow button styles */
 .follow-btn.following {
-  background-color: var(--positive-color);
-  color: white;
+  background-color: #CFB787;
+  color: black;
 }
 
 .buy-btn {

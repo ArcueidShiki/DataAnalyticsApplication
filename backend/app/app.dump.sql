@@ -18,6 +18,7 @@ CREATE TABLE users (
 		UNIQUE (username)
 	);
 INSERT INTO users VALUES('166c1a5f-eaba-42eb-bb51-0eee0940ceaa','shiki@gmail.com',NULL,'arcueid','scrypt:32768:8:1$WL8jfhmyRUs1PWmF$1f51cef89670dd68d16f703158b94817be4e8f21faec331e7ddc12900cda5a125f1d126161dda14ff9f0521b76fd03aa49733a6e79121826e4c0524459517ced',NULL,NULL,NULL,0,0,'static/users/profile/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/profile.png');
+INSERT INTO users VALUES('30162134-ccc7-4dc3-9cc8-29004d4a86f0','alice@gmail.com','3455635','alice','scrypt:32768:8:1$GOGlobrwbmJL0Kde$4555bd30b825ca9bc95bbbf26661f522e65e5ca2ac5c490c903fc68b3cbe11d9c6e9f87d4e78c6c79d1a475f2ddef48ad362eab5ec8e22c7e28acb48b7093ce5',NULL,NULL,'2025-05-07',0,0,'static/users/profile/30162134-ccc7-4dc3-9cc8-29004d4a86f0/C6E7EAFB-1CCD-42A1-9B9A-869E93346A25_1_105_c.jpeg');
 CREATE TABLE currencies (
 		symbol VARCHAR(20) NOT NULL,
 		name VARCHAR(100),
@@ -89,6 +90,7 @@ INSERT INTO watchlist VALUES(19,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','CSCO',1)
 INSERT INTO watchlist VALUES(20,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','ORCL',0);
 INSERT INTO watchlist VALUES(21,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','MA',0);
 INSERT INTO watchlist VALUES(22,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','PLTR',0);
+INSERT INTO watchlist VALUES(23,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','TSLA',0);
 CREATE TABLE portfolio_history (
 		id INTEGER NOT NULL,
 		user_id VARCHAR NOT NULL,
@@ -16111,6 +16113,7 @@ CREATE TABLE IF NOT EXISTS "balances" (
 		FOREIGN KEY (user_id) REFERENCES users (id)
 	);
 INSERT INTO balances VALUES(0,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','USD',824212.2999999999301);
+INSERT INTO balances VALUES(1,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','USD',999920066.319999933);
 CREATE TABLE portfolio (
 	id INTEGER NOT NULL, 
 	user_id VARCHAR NOT NULL, 
@@ -16130,4 +16133,5 @@ INSERT INTO portfolio VALUES(5,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','JPM',80.0
 INSERT INTO portfolio VALUES(7,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','NVDA',300.0,116.6500000000000056);
 INSERT INTO portfolio VALUES(8,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','XOM',10.0,107.3100000000000022);
 INSERT INTO portfolio VALUES(9,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','PLTR',0.0,0.0);
+INSERT INTO portfolio VALUES(10,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','TSLA',268.0,298.259999999999991);
 COMMIT;

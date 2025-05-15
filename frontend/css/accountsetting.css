@@ -325,6 +325,10 @@
   outline: none;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(var(--icon-invert));
+}
+
 /* Password Strength */
 .password-strength {
   margin-top: 24px;
