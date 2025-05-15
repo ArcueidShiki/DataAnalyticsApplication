@@ -1,22 +1,13 @@
-1. Share function: chatList
-3. Company News
-4. Company Financials
-6. bugfix daily update (check localcahe if it is outdated, pull new data)
-7. writing testing 5+
+1. Company News
+2. Company Financials
+3. bugfix daily update (check localcahe if it is outdated, pull new data)
+-------------------------------------------------------------------------------
 
-
-8. Threejs 3d globe earth.
-9. reusable chart components
-10. Beautify Readme with some screenshots badges. technologies
-11. Create Trump, Elon Account.
-12. sort frontend list function.
-13. gemini AI chat bot api
-14. send picture by drag and drop. or select the file from device
-15. chat page has a button(send my portfolio)
-16. when at top winner rank, click their images, go to send message button
-17. or click select, into select mode, bulk sending
-18. pagnation and sorting.
-
-
-Alice:
-2. Account Settings Page (bug)
+1. Threejs 3d globe earth.
+2. reusable chart components
+3. sort frontend list function.
+4. gemini AI chat bot api
+5. send picture by drag and drop. or select the file from device
+6. chat page has a button(send my portfolio)
+7. when at top winner rank, click their images, go to send message button
+8. pagnation and sorting.
