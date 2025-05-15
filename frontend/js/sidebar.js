@@ -169,8 +169,8 @@ export default class Sidebar {
     const meuActions = {
       watchlist: () => (window.location.href = "watchlist.html"),
       "my asset": () => (window.location.href = "myasset.html"),
-      "analyze": () => (window.location.href = "analyze.html"),
-      "messages": () => (window.location.href = "chat.html"),
+      analyze: () => (window.location.href = "analyze.html"),
+      messages: () => (window.location.href = "chat.html"),
       "account setting": () => {
         this.accountSetting = AccountSettingCard.getInstance();
         this.accountSetting.showDialog();

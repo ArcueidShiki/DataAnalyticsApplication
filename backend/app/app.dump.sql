@@ -20,7 +20,15 @@ CREATE TABLE users (
 INSERT INTO users VALUES('166c1a5f-eaba-42eb-bb51-0eee0940ceaa','shiki@gmail.com',NULL,'arcueid','scrypt:32768:8:1$WL8jfhmyRUs1PWmF$1f51cef89670dd68d16f703158b94817be4e8f21faec331e7ddc12900cda5a125f1d126161dda14ff9f0521b76fd03aa49733a6e79121826e4c0524459517ced',NULL,NULL,NULL,0,0,'static/users/profile/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/profile.png');
 INSERT INTO users VALUES('519232c5-5df6-449c-ab7d-5fc9c914ba15','shikishiki@gmail.com',NULL,'shiki','scrypt:32768:8:1$ypZa505WcOvszA8R$9691a06652c53788d85b3432b9946e62d85f2f34548a5fbe0d755b0e18997d61dbd3298120e0479de49fe3a817b8eab236c26ffd3a1bfa9d59b5751363e13581',NULL,NULL,NULL,0,0,'static/users/profile/default.png');
 INSERT INTO users VALUES('9b6e460b-b3b4-4f4a-8282-bc264db173eb','akiha@gmail.com',NULL,'akiha','scrypt:32768:8:1$9EN3gBF1mALsCzZs$396a4e99ec45d81e099a6ac023c5f48d75e0d5c06294d0dfa8df2123fe3631b90a5b453e18968c2b90703ecf4680dd21558b3ccd76d1b45322b942b4409abd01',NULL,NULL,NULL,0,0,'static/users/profile/default.png');
-INSERT INTO users VALUES('30162134-ccc7-4dc3-9cc8-29004d4a86f0','alice@gmail.com','3455635','alice','scrypt:32768:8:1$GOGlobrwbmJL0Kde$4555bd30b825ca9bc95bbbf26661f522e65e5ca2ac5c490c903fc68b3cbe11d9c6e9f87d4e78c6c79d1a475f2ddef48ad362eab5ec8e22c7e28acb48b7093ce5',NULL,NULL,'2025-05-07',0,0,'static/users/profile/30162134-ccc7-4dc3-9cc8-29004d4a86f0/C6E7EAFB-1CCD-42A1-9B9A-869E93346A25_1_105_c.jpeg');
+INSERT INTO users VALUES('48079c2b-ae6b-4e8d-9e13-10c3f7ab20ef','JensenHuang@nvidia.com','123456789','JensenHuang','scrypt:32768:8:1$raJgAmTannuigb5c$ace64fb1946159ed706da01dd90e662923a0d7697e20a4adc95c71b69fce73a8b98f50dc4818d1aa74b6babfc39f54bd0d393efc37bccf8abc5e26592b5c56db',NULL,NULL,'2025-05-05',0,0,'static/users/profile/48079c2b-ae6b-4e8d-9e13-10c3f7ab20ef/3311825434.jpg');
+INSERT INTO users VALUES('ba109f16-a6dc-4c08-9d4a-a748ce939e6c','LisaSu@amd.com','111111111','LisaSu','scrypt:32768:8:1$llImf3dX8loqJDiH$51725ade6ff4bce887b3b9909946be5f61eb1ed65f57bea4235ed3d9c3b6b1b8baac7686b0e5b2b4ba5efd97ddaa126ca5c9fa940571602e1f008c24bd93c4c6',NULL,NULL,'2025-05-15',0,0,'static/users/profile/ba109f16-a6dc-4c08-9d4a-a748ce939e6c/21corner-superJumbo.jpg');
+INSERT INTO users VALUES('01421e76-2596-4ee2-819b-a7aeed25badd','DonaldTrump@trump.com','999999999','DonaldTrump','scrypt:32768:8:1$RedeJLzhkE7QZJTQ$adc4ff88a1b75d960a3a3d22d0bf92c1e04bcd81e818a16e6ccbeef7f35f239f25f121b90ab59ca038cf0f95209333f322d944fa07f656878f05924193fe4b1c',NULL,NULL,'2025-04-30',0,0,'static/users/profile/01421e76-2596-4ee2-819b-a7aeed25badd/TrumpPortrait.jpg');
+INSERT INTO users VALUES('f16bf3f4-c541-4d64-b717-eabc7a8cd80a','ElonMush@x.com','888888888','ElonMush','scrypt:32768:8:1$PkHba4x2QKM6acn5$235d33b895547b07061ad586767b57eae14897585a1512759dcbc63eb28cd34bd153a8d4fa3737f1419e84b40dea275093b96d89f7448539f330a344d92bbb39',NULL,NULL,'2025-05-07',0,0,'static/users/profile/f16bf3f4-c541-4d64-b717-eabc7a8cd80a/elon_musk.jpg');
+INSERT INTO users VALUES('d78520fd-2391-405e-8e7f-d1bd6c80d999','JoeBiden@whitehouse.com','777777777','JoeBiden','scrypt:32768:8:1$Zh7uFnyW815R1vY0$e05a15432122308f9561556123b89c916eb3b3a1243262eefbe8d954f8cb6ee3b78a7c17c57b4d1994f256d2f1b4f0e81dd9b9a8f4a6d079ca7df3be7d902b19',NULL,NULL,'2025-05-01',0,0,'static/users/profile/d78520fd-2391-405e-8e7f-d1bd6c80d999/Joe_Biden.jpg');
+INSERT INTO users VALUES('5a1d10a7-0bc5-4460-a8d5-58bb23bef2ec','NancyPelosi@whitehouse.com','666666666','NancyPelosi','scrypt:32768:8:1$kOkWx1vEZ011zhjd$5e8424ecb112a5971208e2b1e6f6e10c7bdd51140d73da9f8354c2a10ce2b13c8a086da0bc7727582aa9f10607ce37d910013dba0492c215a9e992647c482371',NULL,NULL,'2025-05-02',0,0,'static/users/profile/5a1d10a7-0bc5-4460-a8d5-58bb23bef2ec/Nancy_Pelosi.jpg');
+INSERT INTO users VALUES('5ce6d186-3656-4f8d-859d-2e036fa7294d','BarackObama@whitehouse.com','555555555','BarackObama','scrypt:32768:8:1$zVDBg8f1CfNaG9Nb$5482891705805b773f2d68332323fe803f66f276790c905f9e3e07bc112e3fa3e154a723548a0acc41cc41619aec557f608556cae65924c2957d5e1b37f78f8f',NULL,NULL,'2025-05-02',0,0,'static/users/profile/5ce6d186-3656-4f8d-859d-2e036fa7294d/Barack_Obama.jpg');
+INSERT INTO users VALUES('3495a803-426b-4fec-a0d6-5650d3d08371','KamalaHarris@whitehouse.com','444444444','KamalaHarris','scrypt:32768:8:1$SY5Mv5V84BeoO6hW$9fd6d0bf5fa9ce9992b7f095311e3cce3e3e1aee04ad06d5e20d5764fd5509d4faa7ecc1b1437b82763d5180bef3f4e4faaeac16bde222b022b95e3538895cf5',NULL,NULL,'2025-05-17',0,0,'static/users/profile/3495a803-426b-4fec-a0d6-5650d3d08371/Kamala_Harris.jpg');
+INSERT INTO users VALUES('2b5694df-e782-4e77-8b8d-b81b74898eef','JDVance@whitehouse.com','333333333','JDVance','scrypt:32768:8:1$69SEnYE5LE3rDd2Q$3d82df818ec796fc477b53eda131a96e3ef28e6a9eb13f86f9bd5e669e1d0753a7818698dcdb16465eb99e9717a36335b011afb2b20b1bc40f180eddff5368a0',NULL,NULL,'2025-05-17',0,0,'static/users/profile/2b5694df-e782-4e77-8b8d-b81b74898eef/VancePortrait.jpg');
 CREATE TABLE currencies (
 		symbol VARCHAR(20) NOT NULL,
 		name VARCHAR(100),
@@ -91,11 +99,8 @@ INSERT INTO watchlist VALUES(19,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','CSCO',1)
 INSERT INTO watchlist VALUES(20,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','ORCL',0);
 INSERT INTO watchlist VALUES(21,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','MA',0);
 INSERT INTO watchlist VALUES(22,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','PLTR',0);
-<<<<<<< HEAD
 INSERT INTO watchlist VALUES(23,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','TSLA',0);
-=======
-INSERT INTO watchlist VALUES(23,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','TSLA',0);
->>>>>>> a22d4023f1c9cbc24b9eaefa976c63cbaf083f76
+INSERT INTO watchlist VALUES(24,'2b5694df-e782-4e77-8b8d-b81b74898eef','MA',0);
 CREATE TABLE portfolio_history (
 		id INTEGER NOT NULL,
 		user_id VARCHAR NOT NULL,
@@ -16289,14 +16294,18 @@ CREATE TABLE IF NOT EXISTS "balances" (
 		FOREIGN KEY (currency) REFERENCES currencies (symbol),
 		FOREIGN KEY (user_id) REFERENCES users (id)
 	);
-<<<<<<< HEAD
 INSERT INTO balances VALUES(0,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','USD',887351.2999999999301);
 INSERT INTO balances VALUES(1,'519232c5-5df6-449c-ab7d-5fc9c914ba15','USD',1000000.0);
 INSERT INTO balances VALUES(2,'9b6e460b-b3b4-4f4a-8282-bc264db173eb','USD',1000000.0);
-=======
-INSERT INTO balances VALUES(0,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','USD',824212.2999999999301);
-INSERT INTO balances VALUES(1,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','USD',999920066.319999933);
->>>>>>> a22d4023f1c9cbc24b9eaefa976c63cbaf083f76
+INSERT INTO balances VALUES(3,'48079c2b-ae6b-4e8d-9e13-10c3f7ab20ef','USD',1000000.0);
+INSERT INTO balances VALUES(4,'ba109f16-a6dc-4c08-9d4a-a748ce939e6c','USD',1000000.0);
+INSERT INTO balances VALUES(5,'01421e76-2596-4ee2-819b-a7aeed25badd','USD',1000000.0);
+INSERT INTO balances VALUES(6,'f16bf3f4-c541-4d64-b717-eabc7a8cd80a','USD',1000000.0);
+INSERT INTO balances VALUES(7,'d78520fd-2391-405e-8e7f-d1bd6c80d999','USD',1000000.0);
+INSERT INTO balances VALUES(8,'5a1d10a7-0bc5-4460-a8d5-58bb23bef2ec','USD',1000000.0);
+INSERT INTO balances VALUES(9,'5ce6d186-3656-4f8d-859d-2e036fa7294d','USD',1000000.0);
+INSERT INTO balances VALUES(10,'3495a803-426b-4fec-a0d6-5650d3d08371','USD',1000000.0);
+INSERT INTO balances VALUES(11,'2b5694df-e782-4e77-8b8d-b81b74898eef','USD',1000000.0);
 CREATE TABLE portfolio (
 	id INTEGER NOT NULL, 
 	user_id VARCHAR NOT NULL, 
@@ -16330,5 +16339,9 @@ CREATE TABLE messages (
 	FOREIGN KEY(receiver_id) REFERENCES users (id), 
 	FOREIGN KEY(sender_id) REFERENCES users (id)
 );
-INSERT INTO portfolio VALUES(10,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','TSLA',268.0,298.259999999999991);
+INSERT INTO messages VALUES(1,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','fuck you trump','text','2025-05-15 19:15:53.039110',0,0,0);
+INSERT INTO messages VALUES(2,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','send','text','2025-05-15 19:26:37.535937',0,0,0);
+INSERT INTO messages VALUES(3,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','ba109f16-a6dc-4c08-9d4a-a748ce939e6c','send','text','2025-05-15 19:27:01.471852',0,0,0);
+INSERT INTO messages VALUES(4,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','ba109f16-a6dc-4c08-9d4a-a748ce939e6c','test','text','2025-05-15 19:27:05.587153',0,0,0);
+INSERT INTO messages VALUES(5,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16.png','image','2025-05-15 19:44:26.455434',0,0,0);
 COMMIT;

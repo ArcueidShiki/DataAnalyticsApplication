@@ -15,14 +15,19 @@ venv\Scripts\activate.bat
 # install python libraries
 pip install -r requirements.txt
 
-# update/sync the latest database schema changes
+# if you don't have app.db file under "backend/app/" directory
+# run the db initilization cmd
+sqlite3 app.db < app.dump.sql
+
+# check/update/sync the latest database schema changes
+# the database version should be align with in the app.dump.sql file, app.db version id, and migrations tracking file
 flask db upgrade
 
-# !!!(only first time) initialize database with data
-cd app # under backend/app directory
-sqlite3 app.db < app.dump.sql # this will provide the initial data to run the database
+# to see database current version and history
+flask db current
+flask db history
 
-# under backend directory, cd ..
+# under "backend/" directory
 # start the backend
 python run.py
 ```

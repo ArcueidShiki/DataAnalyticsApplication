@@ -23,7 +23,7 @@ function initSearch(users) {
 
     if (query) {
       const filteredUsers = users.filter((user) =>
-        user.username.toLowerCase().includes(query)
+        user.username.toLowerCase().includes(query),
       );
       if (filteredUsers.length > 0) {
         filteredUsers.forEach((user) => {
