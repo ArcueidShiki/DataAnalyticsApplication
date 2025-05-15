@@ -1,4 +1,5 @@
 import Sidebar from "./sidebar.js";
+import Http from "./http.js";
 document.addEventListener("DOMContentLoaded", function () {
   initChatListItems();
   initMessageInput();
@@ -67,3 +68,39 @@ function sendMessage() {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 }
+
+const socket = io("http://127.0.0.1:5000");
+
+// Authenticate the user
+socket.emit("authenticate", {
+  access_token: Http.getCookie("access_token_cookie"),
+});
+
+// Listen for authentication success
+socket.on("authenticated", (data) => {
+  console.log(data.message);
+});
+
+// Listen for errors
+socket.on("error", (data) => {
+  console.error(data.message);
+});
+
+function sendMsg(toUserId, message, messageType = "text") {
+  socket.emit("send_message", {
+    from_user_id: "current_user_id", // Replace with actual user ID
+    to_user_id: toUserId,
+    message: message,
+    message_type: messageType,
+  });
+}
+
+sendMsg("recipient_user_id", "Hello, how are you?");
+
+socket.on("message_sent", (data) => {
+  console.log("Message sent:", data);
+});
+
+socket.on("receive_message", (data) => {
+  console.log("New message received:", data);
+});

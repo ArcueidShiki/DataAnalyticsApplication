@@ -19,8 +19,8 @@ class User(db.Model):
     balance = db.relationship('Balance', back_populates="user")
     watchlist = db.relationship('Watchlist', back_populates="user")
     transactions = db.relationship('Transaction', back_populates="user")
-    chat_list = db.relationship('ChatList', back_populates="user")
-    chat_history = db.relationship('ChatHistory', back_populates="user")
+    sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', back_populates='sender')
+    received_messages = db.relationship('Message', foreign_keys='Message.receiver_id', back_populates='receiver')
     def __repr__(self):
         return f"<User {self.username}>"
     def to_dict(self):
@@ -369,39 +369,33 @@ class News(db.Model):
     def __repr__(self):
         return f"<News {self.id} {self.title}>"
 
-class ChatList(db.Model):
-    __tablename__ = 'chat_list'
+class Message(db.Model):
+    __tablename__ = 'messages'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    from_user_id = Column(String, ForeignKey('users.id'), nullable=False)
-    to_user_id = Column(String, ForeignKey('users.id'), nullable=False)
-    user = db.relationship('User', back_populates='chat_list')
-    chat_history = db.relationship('ChatHistory', back_populates='chat_list')
-    __table_args__ = (db.UniqueConstraint('from_user_id', 'to_user_id', name='unique_chat_list'),)
-    def __repr__(self):
-        return f"<ChatList {self.from_user_id} to {self.to_user_id}>"
-    def to_dict(self):
-        return {
-            "from_user_id": self.from_user_id,
-            "to_user_id": self.to_user_id,
-        }
-
-class ChatHistory(db.Model):
-    __tablename__ = 'chat_history'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    chat_list_id = Column(Integer, ForeignKey('chat_list.id'), nullable=False)
-    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    sender_id = Column(String, ForeignKey('users.id'), nullable=False)
+    receiver_id = Column(String, ForeignKey('users.id'), nullable=False)
     message = Column(String, nullable=False)
-    message_type = Column(String, nullable=False)  # 'text' or 'image'
+    type = Column(String, nullable=False, default='text')
     timestamp = Column(TIMESTAMP, default=datetime.utcnow)
-    chat_list = db.relationship('ChatList', back_populates='chat_history')
-    user = db.relationship('User', back_populates='chat_history')
+    is_read = Column(Boolean, default=False)
+    is_sender_deleted = Column(Boolean, default=False)
+    is_receiver_deleted = Column(Boolean, default=False)
+
+    sender = db.relationship('User', foreign_keys=[sender_id], back_populates='sent_messages')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], back_populates='received_messages')
+
     def __repr__(self):
-        return f"<ChatHistory {self.chat_list_id} {self.user_id}>"
+        return f"<Message {self.id} from {self.sender_id} to {self.receiver_id}>"
+
     def to_dict(self):
         return {
-            "chat_list_id": self.chat_list_id,
-            "user_id": self.user_id,
+            "id": self.id,
+            "sender_id": self.sender_id,
+            "receiver_id": self.receiver_id,
             "message": self.message,
-            "message_type": self.message_type,
+            "type": self.type,
             "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "is_read": self.is_read,
+            "is_sender_deleted": self.is_sender_deleted,
+            "is_receiver_deleted": self.is_receiver_deleted,
         }
