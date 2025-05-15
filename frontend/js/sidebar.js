@@ -56,9 +56,18 @@ export default class Sidebar {
       const profileBalance = $(".profile-balance");
       if (profileName && profileBalance) {
         profileName.text(this.user.username);
-        profileBalance.text(
-          `$${this.user.balance["USD"].amount.toFixed(2)}USD`,
+
+        // Format the amount with thousands separators
+        const formattedAmount = this.user.balance["USD"].amount.toLocaleString(
+          "en-US",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          },
         );
+
+        profileBalance.text(`${formattedAmount} USD`);
+
         const profileAvatar = $(".profile-avatar");
         profileAvatar.append(
           $(
@@ -287,7 +296,9 @@ export default class Sidebar {
     const stockItem = $(`
       <div class="watchlist-item">
         <div class="watchlist-icon">
-            <img src="https://www.google.com/s2/favicons?sz=64&domain=${stock.domain}" alt="${stock.symbol} icon" width="15px"/>
+            <img src="https://www.google.com/s2/favicons?sz=64&domain=${
+              stock.domain
+            }" alt="${stock.symbol} icon" width="15px"/>
         </div>
         <div class="watchlist-info">
             <div class="stock-name">${stock.symbol}</div>

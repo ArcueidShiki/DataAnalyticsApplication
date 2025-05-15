@@ -20,6 +20,7 @@ CREATE TABLE users (
 INSERT INTO users VALUES('166c1a5f-eaba-42eb-bb51-0eee0940ceaa','shiki@gmail.com',NULL,'arcueid','scrypt:32768:8:1$WL8jfhmyRUs1PWmF$1f51cef89670dd68d16f703158b94817be4e8f21faec331e7ddc12900cda5a125f1d126161dda14ff9f0521b76fd03aa49733a6e79121826e4c0524459517ced',NULL,NULL,NULL,0,0,'static/users/profile/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/profile.png');
 INSERT INTO users VALUES('519232c5-5df6-449c-ab7d-5fc9c914ba15','shikishiki@gmail.com',NULL,'shiki','scrypt:32768:8:1$ypZa505WcOvszA8R$9691a06652c53788d85b3432b9946e62d85f2f34548a5fbe0d755b0e18997d61dbd3298120e0479de49fe3a817b8eab236c26ffd3a1bfa9d59b5751363e13581',NULL,NULL,NULL,0,0,'static/users/profile/default.png');
 INSERT INTO users VALUES('9b6e460b-b3b4-4f4a-8282-bc264db173eb','akiha@gmail.com',NULL,'akiha','scrypt:32768:8:1$9EN3gBF1mALsCzZs$396a4e99ec45d81e099a6ac023c5f48d75e0d5c06294d0dfa8df2123fe3631b90a5b453e18968c2b90703ecf4680dd21558b3ccd76d1b45322b942b4409abd01',NULL,NULL,NULL,0,0,'static/users/profile/default.png');
+INSERT INTO users VALUES('30162134-ccc7-4dc3-9cc8-29004d4a86f0','alice@gmail.com','3455635','alice','scrypt:32768:8:1$GOGlobrwbmJL0Kde$4555bd30b825ca9bc95bbbf26661f522e65e5ca2ac5c490c903fc68b3cbe11d9c6e9f87d4e78c6c79d1a475f2ddef48ad362eab5ec8e22c7e28acb48b7093ce5',NULL,NULL,'2025-05-07',0,0,'static/users/profile/30162134-ccc7-4dc3-9cc8-29004d4a86f0/C6E7EAFB-1CCD-42A1-9B9A-869E93346A25_1_105_c.jpeg');
 CREATE TABLE currencies (
 		symbol VARCHAR(20) NOT NULL,
 		name VARCHAR(100),
@@ -90,7 +91,11 @@ INSERT INTO watchlist VALUES(19,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','CSCO',1)
 INSERT INTO watchlist VALUES(20,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','ORCL',0);
 INSERT INTO watchlist VALUES(21,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','MA',0);
 INSERT INTO watchlist VALUES(22,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','PLTR',0);
+<<<<<<< HEAD
 INSERT INTO watchlist VALUES(23,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','TSLA',0);
+=======
+INSERT INTO watchlist VALUES(23,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','TSLA',0);
+>>>>>>> a22d4023f1c9cbc24b9eaefa976c63cbaf083f76
 CREATE TABLE portfolio_history (
 		id INTEGER NOT NULL,
 		user_id VARCHAR NOT NULL,
@@ -16284,9 +16289,14 @@ CREATE TABLE IF NOT EXISTS "balances" (
 		FOREIGN KEY (currency) REFERENCES currencies (symbol),
 		FOREIGN KEY (user_id) REFERENCES users (id)
 	);
+<<<<<<< HEAD
 INSERT INTO balances VALUES(0,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','USD',887351.2999999999301);
 INSERT INTO balances VALUES(1,'519232c5-5df6-449c-ab7d-5fc9c914ba15','USD',1000000.0);
 INSERT INTO balances VALUES(2,'9b6e460b-b3b4-4f4a-8282-bc264db173eb','USD',1000000.0);
+=======
+INSERT INTO balances VALUES(0,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','USD',824212.2999999999301);
+INSERT INTO balances VALUES(1,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','USD',999920066.319999933);
+>>>>>>> a22d4023f1c9cbc24b9eaefa976c63cbaf083f76
 CREATE TABLE portfolio (
 	id INTEGER NOT NULL, 
 	user_id VARCHAR NOT NULL, 
@@ -16320,4 +16330,5 @@ CREATE TABLE messages (
 	FOREIGN KEY(receiver_id) REFERENCES users (id), 
 	FOREIGN KEY(sender_id) REFERENCES users (id)
 );
+INSERT INTO portfolio VALUES(10,'30162134-ccc7-4dc3-9cc8-29004d4a86f0','TSLA',268.0,298.259999999999991);
 COMMIT;

@@ -13,6 +13,7 @@ export default class AccountSettingCard {
       return AccountSettingCard.instance;
     }
     AccountSettingCard.instance = this;
+    this.formData = new FormData();
     this.createAccountSettingsModal();
   }
 
@@ -74,15 +75,17 @@ export default class AccountSettingCard {
       : "assets/user.jpeg";
     user = user ? user : mockUser;
     console.log("User data loaded:", user);
+    console.log("Date of birth:", user.date_of_birth);
     $("#fullname").val(user.username);
     $("#email").val(user.email);
     $("#phone").val(user.phone);
     $("#birthdate").val(user.date_of_birth);
     $("#profile-avatar").attr("src", img_url);
-    $("#email-notifications").prop("checked", user.notifications.email);
-    $("#push-notifications").prop("checked", user.notifications.push);
-    $("#market-alerts").prop("checked", user.notifications.market);
-    $("#newsletter").prop("checked", user.notifications.newsletter);
+
+    // $("#email-notifications").prop("checked", user.notifications.email);
+    // $("#push-notifications").prop("checked", user.notifications.push);
+    // $("#market-alerts").prop("checked", user.notifications.market);
+    // $("#newsletter").prop("checked", user.notifications.newsletter);
   }
 
   setupEventListeners() {
@@ -95,17 +98,16 @@ export default class AccountSettingCard {
     $("#avatar-upload").on("click", (event) => {
       console.log("Avatar upload clicked");
     });
-    // $("#save-settings").on("click", this.showConfirmationModal);
-    $(".cancel-btn").on("click", () => {
-      confirm("Discard changes?");
-    });
-    $(".save-btn").on("click", () => {
-      confirm("Save changes?");
+    $("#save-settings").on("click", () => this.showConfirmationModal());
+    $(".cancel-btn").on("click", () => this.showConfirmationModal());
+
+    $("#modal-confirm").on("click", () => {
+      this.hideConfirmationModal();
+      this.saveSettings();
     });
 
-    $(".close-modal").on("click", this.showConfirmationModal);
-    $("#modal-cancel").on("click", this.showConfirmationModal);
-    $("#modal-confirm").on("click", this.saveSettings);
+    $(".close-modal").on("click", () => this.showConfirmationModal());
+    $("#modal-cancel").on("click", () => this.hideConfirmationModal());
   }
 
   setupPasswordStrengthMeter() {
@@ -174,23 +176,20 @@ export default class AccountSettingCard {
       alert("File too large. Maximum size is 5MB.");
       return;
     }
-    this.formData = new FormData();
+
     this.formData.append("file", file);
-    Http.formSubmit("/auth/upload/img", this.formData).then((response) => {
-      let user = JSON.parse(localStorage.getItem("userInfo"));
-      user.profile_img = response.image_url;
-      $("#profile-avatar").attr("src", `${Http.baseUrl}/${response.image_url}`);
-      localStorage.setItem("userInfo", JSON.stringify(user));
-    });
     const reader = new FileReader();
     reader.onload = (e) => {
       $("#profile-avatar").attr("src", e.target.result);
     };
     reader.readAsDataURL(file);
   }
-  validateForm() {
+
+  validateFormPro() {
     const fullname = $("#fullname").val().trim();
     const email = $("#email").val().trim();
+    const phone = $("#phone").val().trim();
+    const birthdate = $("#birthdate").val();
     const currentPassword = $("#current-password").val();
     const newPassword = $("#new-password").val();
     const confirmPassword = $("#confirm-password").val();
@@ -202,6 +201,11 @@ export default class AccountSettingCard {
 
     if (!email) {
       alert("Email is required");
+      return false;
+    }
+
+    if (!phone) {
+      alert("Phone number is required");
       return false;
     }
 
@@ -228,11 +232,30 @@ export default class AccountSettingCard {
       }
     }
 
+    this.formData.append("username", fullname);
+    this.formData.append("email", email);
+    this.formData.append("phone", phone);
+    if (birthdate) {
+      this.formData.append("date_of_birth", birthdate);
+    }
+    if (currentPassword) {
+      this.formData.append("current_password", currentPassword);
+    }
+
+    if (newPassword) {
+      this.formData.append("password", newPassword);
+    }
+
+    // log the form data for debugging
+    console.log("Form data prepared for submission:");
+    for (let [key, value] of this.formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
     return true;
   }
 
   showConfirmationModal() {
-    if (!this.validateForm()) return;
+    if (!this.validateFormPro()) return;
     $("#confirmation-modal").addClass("show");
   }
 
@@ -241,33 +264,47 @@ export default class AccountSettingCard {
   }
 
   saveSettings() {
-    this.hideConfirmationModal();
-
-    this.formData = {
-      name: $("#fullname").val().trim(),
-      email: $("#email").val().trim(),
-      phone: $("#phone").val().trim(),
-      birthdate: $("#birthdate").val(),
-      currentPassword: $("#current-password").val(),
-      newPassword: $("#new-password").val(),
-      notifications: {
-        email: $("#email-notifications").is(":checked"),
-        push: $("#push-notifications").is(":checked"),
-        market: $("#market-alerts").is(":checked"),
-        newsletter: $("#newsletter").is(":checked"),
-      },
-    };
-
-    console.log("Saving settings:", this.formData);
-
+    console.log("Saving settings...");
+    if (!this.validateFormPro()) return;
+    // this.hideConfirmationModal();
     this.showSavingIndicator();
 
-    setTimeout(() => {
-      this.handleSaveSuccess({
-        success: true,
-        message: "Settings updated successfully",
+    Http.formSubmit("/auth/user/update", this.formData)
+      .then((response) => {
+        console.log("Settings saved successfully:", response);
+
+        let user = JSON.parse(localStorage.getItem("userInfo"));
+        if (response.user) {
+          // Update user info in local storage
+          user.username = response.user.username;
+          user.email = response.user.email;
+          user.phone = response.user.phone;
+          if (response.user.profile_img) {
+            user.profile_img = response.user.profile_img;
+          }
+          localStorage.setItem("userInfo", JSON.stringify(user));
+        }
+
+        // Update profile image if it was changed
+        if (response.image_url) {
+          user.profile_img = response.image_url;
+          $("#profile-avatar").attr(
+            "src",
+            `${Http.baseUrl}/${response.image_url}`,
+          );
+          localStorage.setItem("userInfo", JSON.stringify(user));
+        }
+
+        this.handleSaveSuccess(response);
+      })
+      .catch((error) => {
+        console.error("Error saving settings:", error);
+        this.showToast("Error saving settings", "error");
+
+        const saveBtn = $("#save-settings");
+        saveBtn.html("Save Changes");
+        saveBtn.prop("disabled", false);
       });
-    }, 1000);
   }
 
   showSavingIndicator() {
