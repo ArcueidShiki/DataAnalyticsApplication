@@ -93,7 +93,7 @@
 
 /* Follow button styles */
 .follow-btn.following {
-  background-color: #CFB787;
+  background-color: #cfb787;
   color: black;
 }
 
@@ -293,21 +293,22 @@
   transform: scale(0.95);
 }
 
-#candlestickChart {
+.ticker-chart {
   position: relative;
-  height: 70vh;
-  width: 100%;
   left: 0;
+  width: 70vw;
+  margin: 3px 3px;
   background-color: var(--bg-color);
+}
+
+#candlestickChart {
+  height: 70vh;
 }
 
 #priceChart {
   position: relative;
   height: 50vh;
-  width: 100%;
-  left: 0;
   bottom: 0;
-  margin: 3px auto;
   background-color: var(--bg-color);
 }
 
@@ -551,7 +552,7 @@
 .content-container {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-top: 30px;
   margin-bottom: 30px;
   width: 100%;
@@ -559,10 +560,11 @@
 }
 
 .side-column {
+  position: relative;
+  left: 1rem;
   margin: 1rem;
   padding: 1rem;
   top: auto;
-  right: 0;
-  width: 18vw;
+  width: 14vw;
   flex-shrink: 0;
 }

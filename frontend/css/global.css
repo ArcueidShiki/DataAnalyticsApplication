@@ -12,7 +12,8 @@
   --negative-color: #ff3b30;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -40,7 +41,7 @@ body.dark-theme {
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  overflow-y: auto;  /* ✅ SCROLL ENABLED */
+  overflow-y: auto; /* ✅ SCROLL ENABLED */
   height: 100vh;
 }
 
@@ -108,5 +109,3 @@ body.dark-theme {
 .negative {
   color: var(--negative-color);
 }
-
-

@@ -574,6 +574,10 @@ function fillOverviewInfo(symbol, data) {
   symbolItem.company = data.company.name;
   symbolItem.domain = data.company.domain;
   symbolItem.market_cap = data.market_cap;
+  $(".map-iframe").attr(
+    "src",
+    `https://maps.google.com/maps?q=${data.company.address.address},${data.company.address.city},${data.company.address.state}&output=embed`,
+  );
 }
 
 function setupToggleCandlestickChart(symbol) {

@@ -147,8 +147,14 @@ document.getElementById("clearButton").addEventListener("click", () => {
   document.getElementById("mostRisky").textContent = "--";
 
   // Clear charts
-  document.getElementById("sectorChart").getContext("2d").clearRect(0, 0, 400, 400);
-  document.getElementById("companyChart").getContext("2d").clearRect(0, 0, 400, 400);
+  document
+    .getElementById("sectorChart")
+    .getContext("2d")
+    .clearRect(0, 0, 400, 400);
+  document
+    .getElementById("companyChart")
+    .getContext("2d")
+    .clearRect(0, 0, 400, 400);
 
   // Clear gainers/losers
   document.getElementById("gainersList").innerHTML = "Upload CSV first";

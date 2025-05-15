@@ -14,6 +14,7 @@ def init_new_user_funds(userid):
     balance = Balance(
         user_id=userid,
         currency='USD',
+        amount=1000000,
     )
     db.session.add(balance)
     db.session.commit()

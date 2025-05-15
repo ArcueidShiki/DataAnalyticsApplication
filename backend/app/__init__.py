@@ -9,16 +9,18 @@ from flask_jwt_extended import JWTManager
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import rsa
-import subprocess
 from flask_migrate import Migrate, upgrade, migrate
 from alembic.config import Config
+from flask_socketio import SocketIO
 
 db = SQLAlchemy()
 db_migrate = Migrate()
 redis_client = FlaskRedis()
+wsocket = SocketIO(cors_allowed_origins=["http://127.0.0.1:5501"])
 from app.routes.auth import auth_bp
 from app.routes.stock import stock_bp
 from app.routes.asset import asset_bp
+from app.routes.chat import chat_bp
 
 KEY_FOLDER = "secrets"
 PRIVATE_KEY_PATH = os.path.join(KEY_FOLDER, "rsa_private.pem")
@@ -54,15 +56,15 @@ def init_database(app):
             # it will check if the tables already exist and will not create them again
             logging.info("Creating database...")
             db.create_all()
-    else:
-        with app.app_context():
-            # Configure Alembic
-            alembic_cfg = Config("migrations/alembic.ini")
-            try:
-                migrate(directory="migrations", message="Automatic migration")
-                upgrade()
-            except Exception as e:
-                logging.error(f"Error during upgrade: {e}")
+    # else:
+    #     with app.app_context():
+    #         # Configure Alembic
+    #         alembic_cfg = Config("migrations/alembic.ini")
+    #         try:
+    #             migrate(directory="migrations", message="Automatic migration")
+    #             upgrade()
+    #         except Exception as e:
+    #             logging.error(f"Error during upgrade: {e}")
 
 
 def init_jwt_config(app):
@@ -91,9 +93,11 @@ def create_app(TESTING=False):
     # CORS(app, origins=["null", r"http://localhost:\d+"], supports_credentials=True)
     # CORS(app, origins=["http://127.0.0.1:5500"], supports_credentials=True)
     CORS(app, supports_credentials=True)
+    wsocket.init_app(app)
     # CORS(app, supports_credentials=True, resources={r"/*": {"origins": r"http://127\.0\.0\.1:\d+"}})
     redis_client.init_app(app)
     app.register_blueprint(auth_bp)
     app.register_blueprint(stock_bp)
     app.register_blueprint(asset_bp)
+    app.register_blueprint(chat_bp)
     return app

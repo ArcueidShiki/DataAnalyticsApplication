@@ -13,7 +13,7 @@ export default class TradeCard {
   constructor(symbol, price) {
     if (TradeCard.instance) {
       console.log(
-        "TradeCard instance already exists. Returning the existing instance."
+        "TradeCard instance already exists. Returning the existing instance.",
       );
       return TradeCard.instance;
     }
@@ -190,7 +190,7 @@ export default class TradeCard {
         if (placeOrderButton) {
           let action = $(this).attr("data-action");
           placeOrderButton.text(
-            action === "buy" ? "Place Buy Order" : "Place Sell Order"
+            action === "buy" ? "Place Buy Order" : "Place Sell Order",
           );
           placeOrderButton.removeClass("buy-action sell-action");
           action = $(this).attr("data-action");
@@ -334,7 +334,7 @@ export default class TradeCard {
   showConfirmDialog(msg, action) {
     $(".modal-title").text("Confirm Order");
     $(".modal-body").text(
-      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`
+      `${action.toUpperCase()}  ${this.quantity} ${this.symbol} shares at $${this.currentPrice.toFixed(2)} ${msg}`,
     );
     $("#confirm-order-btn").css("display", "block");
     $("#confirmOrderModal").modal({

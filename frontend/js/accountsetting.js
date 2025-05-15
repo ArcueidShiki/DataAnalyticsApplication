@@ -8,7 +8,7 @@ export default class AccountSettingCard {
   constructor() {
     if (AccountSettingCard.instance) {
       console.log(
-        "AccountSettingCard instance already exists. Returning the existing instance."
+        "AccountSettingCard instance already exists. Returning the existing instance.",
       );
       return AccountSettingCard.instance;
     }
@@ -32,11 +32,11 @@ export default class AccountSettingCard {
   createAccountSettingsModal() {
     if (!this.modalDialog) {
       this.modalDialog = $(
-        '<div id="account-settings-modal" class="account-settings-modal"></div>'
+        '<div id="account-settings-modal" class="account-settings-modal"></div>',
       );
       $.get("accountsetting.html", (content) => {
         let modalContent = $('<div class="modal-main-content"></div>').html(
-          content
+          content,
         );
         this.modalDialog.append(modalContent);
         const closeButton = $('<span class="modal-close">&times;</span>');
@@ -108,7 +108,6 @@ export default class AccountSettingCard {
 
     $(".close-modal").on("click", () => this.showConfirmationModal());
     $("#modal-cancel").on("click", () => this.hideConfirmationModal());
-
   }
 
   setupPasswordStrengthMeter() {
@@ -260,7 +259,6 @@ export default class AccountSettingCard {
     $("#confirmation-modal").addClass("show");
   }
 
-
   hideConfirmationModal() {
     $("#confirmation-modal").removeClass("show");
   }
@@ -272,37 +270,41 @@ export default class AccountSettingCard {
     this.showSavingIndicator();
 
     Http.formSubmit("/auth/user/update", this.formData)
-    .then((response) => {
-      console.log("Settings saved successfully:", response);
+      .then((response) => {
+        console.log("Settings saved successfully:", response);
 
-      let user = JSON.parse(localStorage.getItem("userInfo"));
-      if (response.user) {
-        // Update user info in local storage
-        user.username = response.user.username;
-        user.email = response.user.email;
-        user.phone = response.user.phone;
-        if (response.user.profile_img) {
-          user.profile_img = response.user.profile_img;
+        let user = JSON.parse(localStorage.getItem("userInfo"));
+        if (response.user) {
+          // Update user info in local storage
+          user.username = response.user.username;
+          user.email = response.user.email;
+          user.phone = response.user.phone;
+          if (response.user.profile_img) {
+            user.profile_img = response.user.profile_img;
+          }
+          localStorage.setItem("userInfo", JSON.stringify(user));
         }
-        localStorage.setItem("userInfo", JSON.stringify(user));
-      }
 
-      // Update profile image if it was changed
-      if (response.image_url) {
-        user.profile_img = response.image_url;
-        $("#profile-avatar").attr("src", `${Http.baseUrl}/${response.image_url}`);
-        localStorage.setItem("userInfo", JSON.stringify(user));
-      }
+        // Update profile image if it was changed
+        if (response.image_url) {
+          user.profile_img = response.image_url;
+          $("#profile-avatar").attr(
+            "src",
+            `${Http.baseUrl}/${response.image_url}`,
+          );
+          localStorage.setItem("userInfo", JSON.stringify(user));
+        }
 
-      this.handleSaveSuccess(response);
-    }).catch((error) => {
-      console.error("Error saving settings:", error);
-      this.showToast("Error saving settings", "error");
+        this.handleSaveSuccess(response);
+      })
+      .catch((error) => {
+        console.error("Error saving settings:", error);
+        this.showToast("Error saving settings", "error");
 
-      const saveBtn = $("#save-settings");
-      saveBtn.html("Save Changes");
-      saveBtn.prop("disabled", false);
-    });
+        const saveBtn = $("#save-settings");
+        saveBtn.html("Save Changes");
+        saveBtn.prop("disabled", false);
+      });
   }
 
   showSavingIndicator() {

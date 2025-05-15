@@ -1,6 +1,6 @@
 import os
 from app import create_app
-
+from app import wsocket
 app = create_app()
 
 if __name__ == "__main__":
@@ -12,4 +12,4 @@ if __name__ == "__main__":
     app.config['port'] = port
     app.config['root'] = f"http://{app.config['ip']}:{port}"
     # don't listen to 0.0.0.0 in dev mode, it will listen to all the network requests
-    app.run(host=app.config['ip'], port=port, debug=debug)
+    wsocket.run(app, host=app.config['ip'], port=port, debug=debug)

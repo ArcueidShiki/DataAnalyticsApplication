@@ -9,7 +9,7 @@ export default class Sidebar {
   constructor() {
     if (Sidebar.instance) {
       console.log(
-        "Sidebar instance already exists. Returning the existing instance."
+        "Sidebar instance already exists. Returning the existing instance.",
       );
       return Sidebar.instance;
     }
@@ -63,7 +63,7 @@ export default class Sidebar {
           {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-          }
+          },
         );
 
         profileBalance.text(`${formattedAmount} USD`);
@@ -71,8 +71,8 @@ export default class Sidebar {
         const profileAvatar = $(".profile-avatar");
         profileAvatar.append(
           $(
-            `<img src="${Http.baseUrl}/${this.user.profile_img}" alt="${this.user.username} id="sidebar-profile"/>`
-          )
+            `<img src="${Http.baseUrl}/${this.user.profile_img}" alt="${this.user.username} id="sidebar-profile"/>`,
+          ),
         );
       }
     } else {
@@ -94,16 +94,11 @@ export default class Sidebar {
           </div>
           <div class="menu-item">
             <i class="fas fa-chart-line"></i>
-            <span>Top chart</span>
+            <span>Analyze</span>
           </div>
           <div class="menu-item">
-            <i class="fab fa-bitcoin"></i>
-            <span>Crypto</span>
-            <span class="new-badge">new</span>
-          </div>
-          <div class="menu-item">
-            <i class="fa-brands fa-rocketchat"></i>
-            <span>Contact</span>
+            <i class="fas fa-envelope"></i>
+            <span>Messages</span>
           </div>
         </div>
     `);
@@ -174,8 +169,8 @@ export default class Sidebar {
     const meuActions = {
       watchlist: () => (window.location.href = "watchlist.html"),
       "my asset": () => (window.location.href = "myasset.html"),
-      "top chart": () => (window.location.href = "analysis.html"),
-      contact: () => (window.location.href = "chat.html"),
+      analyze: () => (window.location.href = "analyze.html"),
+      messages: () => (window.location.href = "chat.html"),
       "account setting": () => {
         this.accountSetting = AccountSettingCard.getInstance();
         this.accountSetting.showDialog();

@@ -19,6 +19,8 @@ class User(db.Model):
     balance = db.relationship('Balance', back_populates="user")
     watchlist = db.relationship('Watchlist', back_populates="user")
     transactions = db.relationship('Transaction', back_populates="user")
+    sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', back_populates='sender')
+    received_messages = db.relationship('Message', foreign_keys='Message.receiver_id', back_populates='receiver')
     def __repr__(self):
         return f"<User {self.username}>"
     def to_dict(self):
@@ -29,6 +31,7 @@ class User(db.Model):
         for portfolio in self.portfolio:
             portfolioMap[portfolio.symbol] = portfolio.to_dict()
         return {
+            "id": self.id,
             "email": self.email,
             "phone": self.phone,
             "username": self.username,
@@ -366,3 +369,34 @@ class News(db.Model):
     company = db.relationship('USCompany', back_populates='news')
     def __repr__(self):
         return f"<News {self.id} {self.title}>"
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    sender_id = Column(String, ForeignKey('users.id'), nullable=False)
+    receiver_id = Column(String, ForeignKey('users.id'), nullable=False)
+    message = Column(String, nullable=False)
+    type = Column(String, nullable=False, default='text')
+    timestamp = Column(TIMESTAMP, default=datetime.utcnow)
+    is_read = Column(Boolean, default=False)
+    is_sender_deleted = Column(Boolean, default=False)
+    is_receiver_deleted = Column(Boolean, default=False)
+
+    sender = db.relationship('User', foreign_keys=[sender_id], back_populates='sent_messages')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], back_populates='received_messages')
+
+    def __repr__(self):
+        return f"<Message {self.id} from {self.sender_id} to {self.receiver_id}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "sender_id": self.sender_id,
+            "receiver_id": self.receiver_id,
+            "message": self.message,
+            "type": self.type,
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "is_read": self.is_read,
+            "is_sender_deleted": self.is_sender_deleted,
+            "is_receiver_deleted": self.is_receiver_deleted,
+        }
