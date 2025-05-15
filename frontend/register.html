@@ -1,103 +1,90 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register Page</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="css/register.css">
-    <link rel="icon" href="assets/favicon.png">
-</head>
-<body>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="css/register.css">
-    <link rel="icon" href="assets/favicon.png">
-</head>
-<body>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="css/register.css" />
+    <link rel="icon" href="assets/favicon.png" />
+  </head>
+  <body>
     <div class="background"></div>
     <div class="container-fluid h-100 d-flex flex-column">
-        <div class="row h-100 d-flex justify-content-center align-items-center">
-            <!-- Left Column with Carousel -->
-            <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center left-column">
-                <div id="carouselWelcomeRegister" class="carousel slide w-100 px-4 px-lg-5" data-bs-ride="carousel">
-                    <div class="carousel-inner rounded shadow">
-                        <div class="carousel-item active">
-                            <img src="assets/carousel1.jpg" class="d-block w-100" alt="Finance">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h5>Smart Investing</h5>
-                                <p>Join our growing investor community.</p>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="assets/carousel3.jpg" class="d-block w-100" alt="Wealth">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h5>Build Wealth</h5>
-                                <p>Your journey starts with the first step.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselWelcomeRegister" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselWelcomeRegister" data-bs-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
+      <div class="row h-100 d-flex justify-content-center align-items-center">
+        <!-- Left Column with Carousel -->
+        <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center left-column">
+          <div id="carouselWelcomeRegister" class="carousel slide w-100 px-4 px-lg-5" data-bs-ride="carousel">
+            <div class="carousel-inner rounded shadow">
+              <div class="carousel-item active">
+                <img src="assets/carousel1.jpg" class="d-block w-100" alt="Finance" />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Smart Investing</h5>
+                  <p>Join our growing investor community.</p>
                 </div>
-            </div>
-
-            <!-- Right Column - Register Form -->
-            <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center right-column">
-                <div class="register-container p-md-5 mt-5 mx-auto my-auto">
-                    <h2 class="text-light opacity-100 text-center mb-3">Register</h2>
-                    <p class="text-light opacity-75 mb-3">Create an account to unlock all features!</p>
-
-                    <form id="registerForm">
-                        <div class="mb-3 input-group">
-                            <label for="username" class="form-label input-label">Username</label>
-                            <input type="text" class="input-field position-relative w-100" id="username" placeholder="Username">
-                        </div>
-                        <div class="mb-3 input-group">
-                            <label for="email" class="form-label input-label">Email</label>
-                            <input type="email" class="input-field position-relative w-100" id="email" placeholder="Email">
-                        </div>
-                        <div class="mb-3 input-group">
-                            <label for="password" class="form-label input-label">Password</label>
-                            <div class="password-container position-relative">
-                                <input type="password" class="input-field w-100" id="password" placeholder="Min. 8 characters">
-                                <button type="button" id="togglePassword" class="eye-icon-btn">
-                                    <i class="fa fa-eye" id="eyeIcon"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mb-3 input-group">
-                            <label for="confirmPassword" class="form-label input-label">Confirm Password</label>
-                            <div class="password-container position-relative">
-                                <input type="password" class="input-field w-100" id="confirmPassword" placeholder="Confirm your password">
-                                <button type="button" id="toggleConfirmPassword" class="eye-icon-btn">
-                                    <i class="fa fa-eye" id="confirmEyeIcon"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <button type="submit" class="register-button btn w-100">Register</button>
-                        <div class="login-link text-center mt-1">
-                            Already have an account? <a href="login.html">Login</a>
-                        </div>
-                    </form>
+              </div>
+              <div class="carousel-item">
+                <img src="assets/carousel3.jpg" class="d-block w-100" alt="Wealth" />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Build Wealth</h5>
+                  <p>Your journey starts with the first step.</p>
                 </div>
+              </div>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselWelcomeRegister" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselWelcomeRegister" data-bs-slide="next">
+              <span class="carousel-control-next-icon"></span>
+            </button>
+          </div>
         </div>
+
+        <!-- Right Column - Register Form -->
+        <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center right-column">
+          <div class="register-container p-md-5 mt-5 mx-auto my-auto">
+            <h2 class="text-light opacity-100 text-center mb-3">Register</h2>
+            <p class="text-light opacity-75 mb-3">Create an account to unlock all features!</p>
+
+            <form id="registerForm">
+              <div class="mb-3 input-group">
+                <label for="username" class="form-label input-label">Username</label>
+                <input type="text" class="input-field position-relative w-100" id="username" placeholder="Username" />
+              </div>
+              <div class="mb-3 input-group">
+                <label for="email" class="form-label input-label">Email</label>
+                <input type="email" class="input-field position-relative w-100" id="email" placeholder="Email" />
+              </div>
+              <div class="mb-3 input-group">
+                <label for="password" class="form-label input-label">Password</label>
+                <div class="password-container position-relative">
+                  <input type="password" class="input-field w-100" id="password" placeholder="Min. 8 characters" />
+                  <button type="button" id="togglePassword" class="eye-icon-btn">
+                    <i class="fa fa-eye" id="eyeIcon"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="mb-3 input-group">
+                <label for="confirmPassword" class="form-label input-label">Confirm Password</label>
+                <div class="password-container position-relative">
+                  <input type="password" class="input-field w-100" id="confirmPassword" placeholder="Confirm your password" />
+                  <button type="button" id="toggleConfirmPassword" class="eye-icon-btn">
+                    <i class="fa fa-eye" id="confirmEyeIcon"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="register-button btn w-100">Register</button>
+              <div class="login-link text-center mt-1">
+                Already have an account? <a href="login.html">Login</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/register.js" type="module"></script>
-</body>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/register.js" type="module"></script>
-</body>
+  </body>
 </html>
