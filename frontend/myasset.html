@@ -19,6 +19,7 @@
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script
       type="text/javascript"
       src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"
@@ -49,11 +50,12 @@
             <div class="portfolio-header">
               <div class="portfolio-token">
                 <i class="fa-solid fa-circle-dollar-to-slot"></i>
-                <span>USDT</span>
+                <span>USD</span>
                 <i class="fas fa-chevron-down"></i>
               </div>
               <div class="portfolio-value">
-                $30,976<span class="value-decimal">.82</span>
+                $30,976
+                <span class="value-decimal">.82</span>
               </div>
             </div>
             <div class="portfolio-change positive">
@@ -68,7 +70,7 @@
               <canvas id="portfolioChart" height="120"></canvas>
             </div>
           </div>
-          <div id="doughnutChart"></div>
+          <div id="doughnutChart" class="card"></div>
 
           <div class="card exchange-card">
             <div class="exchange-header">
@@ -129,13 +131,10 @@
             <div class="section-header">
               <h2>Portfolios</h2>
               <div class="view-controls">
-                <button id="sharePortfolio" class="share-btn">
-                  <i class="fas fa-share-alt"></i> Share
-                </button>
-                <div class="sort-dropdown">
+                <!-- <div class="sort-dropdown">
                   <span>ID</span>
                   <i class="fas fa-chevron-down"></i>
-                </div>
+                </div> -->
               </div>
             </div>
             <div class="table-header">
@@ -156,13 +155,22 @@
                 Unreliaze Profit<i class="fas fa-sort"></i>
               </div>
 
-              <div class="column chart-col">Percentage</div>
+              <div class="column chart-col">Share</div>
               <div class="column action-col">Trade</div>
             </div>
           </div>
 
           <div class="assets-table">
             <div class="table-body" style="width: 100%; height: 100%"></div>
+          </div>
+        </div>
+        <div id="userListModal" class="modal">
+          <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Select a User to Share</h2>
+            <div class="user-list">
+              <!-- User list will be dynamically rendered here -->
+            </div>
           </div>
         </div>
       </div>

@@ -83,7 +83,7 @@ class Polygon:
             logging.error(f"Error fetching data for {params.symbol}: {e}")
             return None
 
-    def get_financials(self, params):
+    def get_financials(self, symbol):
         """
         https://polygon.io/docs/rest/stocks/fundamentals/financials
         Limit the number of results returned, default is 10 and max is 100.
@@ -92,17 +92,15 @@ class Polygon:
         try:
             financials = []
             for f in self.client.vx.list_stock_financials(
-                period_of_report_date_gte=params.fromDate,
-                include_sources="true",
-                order=params.order,
-                limit=params.limit,
-                sort=params.sort,
-                timeframe=params.timeframe,
+                    ticker=symbol,
+                    order="asc",
+                    limit="10",
+                    sort="filing_date",
                 ):
                 financials.append(f)
             return financials
         except Exception as e:
-            logging.error(f"Error fetching financials for {params}: {e}")
+            logging.error(f"Error fetching financials for {symbol}: {e}")
             return None
 
     def get_news(self, params):

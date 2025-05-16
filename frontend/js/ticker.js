@@ -679,6 +679,21 @@ function setupToggleWathclist(symbol) {
   });
 }
 
+function getFinancials(symbol) {
+  const financialBtn = $("#financial");
+  console.log("Financials setup");
+  financialBtn.on("click", () => {
+    console.log("Financials clicked");
+    Http.get(`/stock/${symbol}/financials`)
+      .then((response) => {
+        console.log("Financials data:", response);
+      })
+      .catch((error) => {
+        console.error("Error fetching financials data:", error);
+      });
+  });
+}
+
 $(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);
   const symbol = urlParams.get("symbol") || "META";

@@ -2,6 +2,87 @@ import Sidebar from "./sidebar.js";
 import Http from "./http.js";
 import TradeCard from "./trade.js";
 import User from "./user.js";
+
+function getAllUsers() {
+  let userList = JSON.parse(localStorage.getItem("userList")) || [];
+  if (!userList || userList.length === 0) {
+    Http.get("/chat/all/users")
+      .then((response) => {
+        localStorage.setItem("userList", JSON.stringify(response));
+        userList = response;
+      })
+      .catch((error) => {
+        console.error("Error fetching user list:", error);
+      });
+  }
+}
+
+function openUserListModal(symbol, price, avg_cost) {
+  const modal = document.getElementById("userListModal");
+  modal.style.display = "block";
+
+  // Fetch and render user list
+  const userListContainer = modal.querySelector(".user-list");
+  userListContainer.innerHTML = ""; // Clear previous content
+  Http.get("/chat/all/users")
+    .then((response) => {
+      response.forEach((user) => {
+        const userItem = document.createElement("div");
+        userItem.className = "user-item";
+        userItem.innerHTML = `
+          <img src="${Http.baseUrl}/${user.profile_img}" alt="${user.username}" />
+          <span>${user.username}</span>
+        `;
+        userItem.addEventListener("click", () => {
+          const socket = io("http://127.0.0.1:9000/chat", {
+            reconnection: false,
+            transports: ["websocket"],
+            auth: {
+              access_token: Http.getCookie("access_token_cookie"),
+              crsf_token: Http.getCookie("csrf_access_token"),
+            },
+          });
+          socket.emit("send_summary_img", {
+            sender_id: User.getInstance().id,
+            receiver_id: user.user_id,
+            message: "summary",
+            message_type: "image",
+            symbol: symbol,
+            avg_cost: avg_cost,
+            price: price,
+          });
+          closeUserListModal();
+        });
+        userListContainer.appendChild(userItem);
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching user list:", error);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("userListModal");
+  const closeBtn = modal.querySelector(".close-btn");
+  closeBtn.addEventListener("click", closeUserListModal);
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      closeUserListModal();
+    }
+  });
+  const shareButtons = document.querySelectorAll(".share-btn");
+  shareButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+  });
+});
+
+function closeUserListModal() {
+  const modal = document.getElementById("userListModal");
+  modal.style.display = "none";
+}
+
 function initViewControls() {
   const viewButtons = document.querySelectorAll(".view-btn");
 
@@ -91,11 +172,54 @@ function calculateTotalValue(assets) {
       totalValue += asset.quantity;
     }
   });
-  console.log("total value:", totalValue);
-  $(".balance-amount").text(totalValue.toFixed(2));
+  $(".portfolio-value").text(totalValue.toFixed(2));
 }
 
-function getTotalAssets() {}
+function getTotalAssets() {
+  const user = User.getInstance();
+  const assets = user.portfolio;
+  const balance = user.balance;
+  const totalAssets = [];
+  for (const symbol in assets) {
+    if (assets[symbol].quantity <= 0) {
+      continue;
+    }
+    totalAssets.push({
+      asset_id: assets[symbol].asset_id,
+      symbol: symbol,
+      type: "stock",
+      quantity: assets[symbol].quantity,
+      close: assets[symbol].price,
+      avg_cost: assets[symbol].avg_cost,
+      today_profit: assets[symbol].profit_loss,
+      profit: assets[symbol].profit_loss,
+      percentage: assets[symbol].profit_loss_percent,
+    });
+  }
+  for (const symbol in balance) {
+    if (balance[symbol].amount <= 0) {
+      continue;
+    }
+    totalAssets.push({
+      asset_id: balance[symbol].asset_id,
+      symbol: symbol,
+      type: "currency",
+      quantity: balance[symbol].amount,
+      close: balance[symbol].amount,
+      avg_cost: balance[symbol].amount,
+      today_profit: 0,
+      profit: 0,
+      percentage: 0,
+    });
+  }
+  $(".balance-amount").text(
+    balance["USD"].amount.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }),
+  );
+  calculateTotalValue(totalAssets);
+}
 
 function drawDoughnutChart(portfolio, balance) {
   var dom = document.getElementById("doughnutChart");
@@ -201,12 +325,29 @@ function popluatePortfolioTable(portfolio) {
         <div class="column price-col">${price}</div>
         <div class="column dynamic-col">${total_value}</div>
         <div class="column volume-col ${changeClass}">${profit_loss}</div>
-        <div class="column chart-col ${changeClass}">${profit_percent}</div>
+        <div class="column chart-col ${changeClass}">
+        <button id="sharePortfolio" class="share-btn column action-col">
+            <i class="fas fa-share-alt"></i> Share
+          </button></div>
         <div class="column action-col">
           <button class="action-btn" data-symbol="${symbol}" data-price="${price}">Trade</button>
         </div>
       </div>
     `);
+    row.find(".share-btn").on("click", function (e) {
+      e.stopPropagation();
+      console.log(
+        "Share button clicked for symbol:",
+        symbol,
+        "at price:",
+        price,
+        "with profit/loss:",
+        profit_loss,
+        "cost:",
+        avg_cost,
+      );
+      openUserListModal(symbol, price, avg_cost);
+    });
     row.find(".action-btn").on("click", function (e) {
       e.stopPropagation();
       const symbol = $(this).data("symbol");
@@ -228,6 +369,7 @@ function popluatePortfolioTable(portfolio) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  getAllUsers();
   getTotalAssets();
   initViewControls();
   initPortfolioChart();
