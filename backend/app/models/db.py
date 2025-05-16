@@ -170,6 +170,15 @@ class USCompany(db.Model):
     def __repr__(self):
         return f"<Company {self.name} ({self.symbol})>"
     def to_dict(self):
+        financialsMap = {}
+        if self.financials:
+            for financial in self.financials:
+                if financial:
+                    year = financial.fiscal_year
+                    quarter = financial.fiscal_period
+                    type = financial.type
+                    sub_type = financial.sub_type
+                    financialsMap[year][quarter][type][sub_type] = financial.to_dict()
         return {
             "name": self.name,
             "description": self.description,
@@ -181,6 +190,7 @@ class USCompany(db.Model):
             "phone_number": self.phone_number,
             "total_employees": self.total_employees,
             "address": self.address.to_dict() if self.address else None,
+            "financials": financialsMap,
         }
 
 class USAddress(db.Model):
@@ -326,31 +336,39 @@ class MonthlyUSMarketData(db.Model):
             "low": self.low,
             "volume": self.volume,
         }
+
+# quarterly financials
 class Financials(db.Model):
     __tablename__ = 'financials'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    company_id = Column(Integer, ForeignKey('us_companies.id'), nullable=False)
-    fiscal_year = Column(Integer, nullable=False)
-    fiscal_period = Column(String(10), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
-    filing_date = Column(Date, nullable=False)
-    total_assets = Column(Float)
-    total_liabilities = Column(Float)
-    total_equity = Column(Float)
-    current_assets = Column(Float)
-    current_liabilities = Column(Float)
-    noncurrent_assets = Column(Float)
-    noncurrent_liabilities = Column(Float)
-    net_income = Column(Float)
-    revenues = Column(Float)
-    gross_profit = Column(Float)
-    operating_income = Column(Float)
-    net_cash_flow = Column(Float)
-    source_filing_url = Column(String)
+    fiscal_period = Column(String(10), nullable=False)
+    cik = Column(String(20))
+    fiscal_year = Column(Integer, nullable=False)
+    company_id = Column(Integer, ForeignKey('us_companies.id'), nullable=False)
+    symbol = Column(String(20), ForeignKey('us_stocks.symbol'), nullable=False)
+    type = Column(String(10), nullable=False) # balance_sheet, cash_flow_statement, income_statement，etc
+    sub_type = Column(String(10), nullable=False) # e.g. wages, current_liabilities, accounts_payable
+    value = Column(Integer, nullable=False)
+    unit = Column(String(10)) # USD, CNY, etc
+    labal = Column(String(100), nullable=False) # e.g. total_assets, total_liabilities, etc
+    order = Column(Integer, nullable=False) # order of the financials
     company = db.relationship('USCompany', back_populates='financials')
+    __table_args__ = (
+        db.UniqueConstraint('company_id', 'fiscal_year', 'fiscal_period', 'type', 'sub_type', name='unique_financials'),
+        db.ForeignKeyConstraint(['company_id'], ['us_companies.id'], name='fk_financials_company_id'),
+        db.ForeignKeyConstraint(['symbol'], ['us_stocks.symbol'], name='fk_financials_symbol'),
+    )
     def __repr__(self):
         return f"<Financials {self.company_id} {self.fiscal_year} {self.fiscal_period}>"
+    def to_dict(self):
+        return {
+            "value": self.value,
+            "unit": self.unit,
+            "label": self.labal,
+            "order": self.order
+        }
 
 class News(db.Model):
     __tablename__ = 'news'

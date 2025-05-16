@@ -48,6 +48,9 @@ function initSearch(users) {
       }
     }
   });
+  searchInput.on("blur", () => {
+    searchResults.empty();
+  });
   $(document).on("click", (event) => {
     if (
       !$(event.target).closest(searchInput).length &&
@@ -62,23 +65,24 @@ function populateChatList(users) {
   const chatListContainer = $(".chat-list");
   chatListContainer.empty();
   users.forEach((user) => {
-    const unreadCount = 2;
-    const last_time = "12:00 PM";
-    const last_message = "Hello, how are you?";
+    // const unreadCount = 2;
+    // const last_time = "12:00 PM";
+    // const last_message = "Hello, how are you?";
+    // <span class="unread-badge">${unreadCount}</span>
+    // <div class="chat-time">${last_time}</div>
+    // <div class="chat-message">${last_message}</div>
+
     const img_url = `${Http.baseUrl}/${user.profile_img}`;
     const chatItem = $(`
       <div class="chat-item" data-id="${user.user_id}">
         <div class="chat-avatar">
           <img src="${img_url}" alt="${user.username}" />
-          <span class="unread-badge">${unreadCount}</span>
         </div>
         <div class="chat-info">
           <div class="chat-header">
             <div class="chat-name">${user.username}</div>
-            <div class="chat-time">${last_time}</div>
           </div>
           <div class="chat-preview">
-            <div class="chat-message">${last_message}</div>
           </div>
         </div>
         <div class="chat-options">
@@ -144,7 +148,6 @@ function getChatHistory(partnerId) {
     .then((response) => {
       const messagesContainer = $(".chat-messages");
       messagesContainer.empty();
-      console.log("Chat history response:", response);
       if (response.history.length === 0) {
         messagesContainer.append(`
           <div class="no-messages">
@@ -154,7 +157,6 @@ function getChatHistory(partnerId) {
         return;
       }
       response.history.forEach((message) => {
-        console.log(message);
         const messageHTML = `
             <div class="message-group ${message.receiver_id === partnerId ? "user" : "partner"}">
               <div class="message-bubble ${message.receiver_id === partnerId ? "user" : "partner"}">
@@ -171,6 +173,7 @@ function getChatHistory(partnerId) {
     .catch((error) => {
       console.error("Error fetching chat history:", error);
     });
+  scrollToBottom();
 }
 
 function initMessageInput() {
@@ -216,6 +219,7 @@ function sendText() {
         `;
 
     messagesContainer.append(messageHTML);
+    scrollToBottom();
     chatInput.val("");
   }
 }
@@ -233,7 +237,6 @@ function sendSummaryImg() {
     price: 155,
   });
   socket.on("summary_img_sent", (data) => {
-    console.log("Summary image sent:", data);
     const messageHTML = `
             <div class="message-group user">
                 <div class="message-bubble user">
@@ -245,6 +248,7 @@ function sendSummaryImg() {
             </div>
         `;
     messagesContainer.append(messageHTML);
+    scrollToBottom();
   });
 }
 
@@ -261,7 +265,6 @@ function initSocket() {
     socket.close();
   });
   socket.on("receive_text", (data) => {
-    console.log("Message sent:", data);
     const messagesContainer = $(".chat-messages");
     const messageHTML = `
         <div class="message-group partner">
@@ -274,9 +277,9 @@ function initSocket() {
         </div>
     `;
     messagesContainer.append(messageHTML);
+    scrollToBottom();
   });
   socket.on("receive_summary_img", (data) => {
-    console.log("New message received:", data);
     const messagesContainer = $(".chat-messages");
     const partnerId = $(".chat-item.active").data("id");
     const messageHTML = `
@@ -290,7 +293,13 @@ function initSocket() {
             </div>
         `;
     messagesContainer.append(messageHTML);
+    scrollToBottom();
   });
+}
+
+function scrollToBottom() {
+  const messagesContainer = $(".chat-messages");
+  messagesContainer.scrollTop(messagesContainer[0].scrollHeight * 100);
 }
 
 $(document).ready(function () {
@@ -299,6 +308,7 @@ $(document).ready(function () {
   getChatList();
   initSocket();
   initMessageInput();
+  scrollToBottom();
 });
 
 $(document).on("destroy", function () {

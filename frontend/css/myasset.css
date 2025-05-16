@@ -48,6 +48,10 @@
   background-color: #ececec; /* Light gray background */
   color: #000000; /* Black text for contrast */
   padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .wallet-card h2 {
@@ -99,6 +103,10 @@
 .portfolio-card {
   height: 100%;
   color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .portfolio-header {
@@ -155,6 +163,17 @@
   flex-grow: 1;
   position: relative;
   min-height: 120px;
+  margin-top: 50px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+#portfolioChart {
+  margin-top: 80px;
+  bottom: 0;
 }
 
 /* Exchange Card Styles */
@@ -461,4 +480,100 @@
 .table-body {
   overflow: scroll;
   scrollbar-width: none;
+}
+
+/* Modal container */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: var(--card-bg);
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Close button */
+.close-btn {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Modal header */
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 24px;
+  text-align: center;
+  color: #adadad;
+}
+
+/* User list container */
+.user-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+/* User item */
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.user-item:hover {
+  background-color: rgba(67, 194, 55, 0.515);
+}
+
+.user-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-item span {
+  font-size: 16px;
+  color: #f9f9f9;
+}
+
+/* Animation for modal */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

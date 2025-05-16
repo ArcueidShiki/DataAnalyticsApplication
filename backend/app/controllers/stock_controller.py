@@ -4,9 +4,9 @@ import logging
 from sqlalchemy import and_, func
 from app import db
 from datetime import datetime, timedelta
-from app.models.db import Asset, Balance, Currency, DailyUSMarketData, IntradayUSMarket, MonthlyUSMarketData, Portfolio, Sector, USAddress, USCompany, USStock, Watchlist, WeeklyUSMarketData
+from app.models.db import Asset, Balance, Currency, DailyUSMarketData, Financials, IntradayUSMarket, MonthlyUSMarketData, Portfolio, Sector, USAddress, USCompany, USStock, Watchlist, WeeklyUSMarketData
 from flask_jwt_extended import get_jwt_identity
-from flask import jsonify, make_response, request
+from flask import json, jsonify, make_response, request
 from app.utils.polygontool import polygon, Polygon
 from sqlalchemy.orm import joinedload
 
@@ -228,87 +228,154 @@ def fetch_data_from_polygon(csv_file_path, date):
     save_all_symbols(csv_file_path, date, results)
     return results
 
+def update_sic(data):
+    if data.sic_code:
+        sector = db.session.query(Sector).filter_by(code=data.sic_code).first()
+        if not sector:
+            sector = Sector(
+                code=data.sic_code,
+                description=data.sic_description
+            )
+            db.session.add(sector)
+            db.session.commit()
+
+def update_company_info(data):
+    company = db.session.query(USCompany).filter_by(name=data.name, symbol=data.ticker).first()
+    if company:
+        company.description = data.description
+        company.domain = polygon.website_to_domain(data.homepage_url)
+        company.symbol = data.ticker
+        company.sic_code = data.sic_code
+        company.list_date = datetime.strptime(data.list_date, '%Y-%m-%d').date()
+        company.phone_number = data.phone_number if data.phone_number else None
+        company.total_employees = data.total_employees if data.total_employees else None
+    else:
+        company = USCompany(
+            name=data.name,
+            description=data.description,
+            domain=polygon.website_to_domain(data.homepage_url),
+            symbol=data.ticker,
+            sic_code=data.sic_code,
+            list_date=datetime.strptime(data.list_date, '%Y-%m-%d').date(),
+            phone_number=data.phone_number if data.phone_number else None,
+            total_employees=data.total_employees if data.total_employees else None,
+        )
+        db.session.add(company)
+    db.session.commit()
+    print("company:", company)
+    return company
+
+def update_address(company, data):
+    address = db.session.query(USAddress).filter_by(company_id=company.id).first()
+    if not address:
+        address = USAddress(
+            company_id=company.id,
+            address=data.address.address1 if data.address else None,
+            city=data.address.city if data.address else None,
+            post_code=data.address.postal_code if data.address else None,
+            state=data.address.state if data.address else None,
+        )
+        db.session.add(address)
+        db.session.commit()
+
+def update_stock_info(data):
+    stock = db.session.query(USStock).filter_by(symbol=data.ticker).first()
+    if stock:
+        stock.active = data.active
+        stock.primary_exchange = data.primary_exchange
+        stock.market_cap = data.market_cap
+        stock.share_class_shares_outstanding = data.share_class_shares_outstanding
+        stock.weighted_shares_outstanding = data.weighted_shares_outstanding
+    else:
+        stock = USStock(
+            symbol=data.ticker,
+            active=data.active,
+            primary_exchange=data.primary_exchange,
+            market_cap=data.market_cap,
+            share_class_shares_outstanding=data.share_class_shares_outstanding,
+            weighted_shares_outstanding=data.weighted_shares_outstanding,
+        )
+        db.session.add(stock)
+    db.session.commit()
+
+def update_overview_info(symbol):
+    data = polygon.get_ticker_overview(symbol)
+    if data:
+        update_stock_info(data)
+        update_sic(data)
+        company = update_company_info(data)
+        update_address(company, data)
+
 def get_ticker_overview(symbol):
     try:
         stock = (
             db.session.query(USStock).join(USCompany)
                 .join(USAddress).join(Sector).filter(USStock.symbol == symbol).first()
         )
+        if stock and stock.market_cap and stock.company and stock.company.financials:
+            return jsonify(stock.to_dict()), 200
+        if not (stock and stock.company):
+            update_overview_info(symbol)
+        stock = db.session.query(USStock).filter(USStock.symbol == symbol).first()
         if stock and stock.market_cap and stock.company:
             return jsonify(stock.to_dict()), 200
-        data = polygon.get_ticker_overview(symbol)
-        if data:
-            stock = db.session.query(USStock).filter_by(symbol=data.ticker).first()
-            if stock:
-                stock.active = data.active
-                stock.primary_exchange = data.primary_exchange
-                stock.market_cap = data.market_cap
-                stock.share_class_shares_outstanding = data.share_class_shares_outstanding
-                stock.weighted_shares_outstanding = data.weighted_shares_outstanding
-            else:
-                stock = USStock(
-                    symbol=data.ticker,
-                    active=data.active,
-                    primary_exchange=data.primary_exchange,
-                    market_cap=data.market_cap,
-                    share_class_shares_outstanding=data.share_class_shares_outstanding,
-                    weighted_shares_outstanding=data.weighted_shares_outstanding,
-                )
-                db.session.add(stock)
-            db.session.commit()
-            if data.sic_code:
-                sector = db.session.query(Sector).filter_by(code=data.sic_code).first()
-                if not sector:
-                    sector = Sector(
-                        code=data.sic_code,
-                        description=data.sic_description
-                    )
-                    db.session.add(sector)
-                    db.session.commit()
-            company = db.session.query(USCompany).filter_by(name=data.name, symbol=data.ticker).first()
-            if company:
-                company.description = data.description
-                company.domain = polygon.website_to_domain(data.homepage_url)
-                company.symbol = data.ticker
-                company.sic_code = data.sic_code
-                company.list_date = datetime.strptime(data.list_date, '%Y-%m-%d').date()
-                company.phone_number = data.phone_number
-                company.total_employees = data.total_employees
-            else:
-                company = USCompany(
-                    name=data.name,
-                    description=data.description,
-                    domain=polygon.website_to_domain(data.homepage_url),
-                    symbol=data.ticker,
-                    sic_code=data.sic_code,
-                    list_date=datetime.strptime(data.list_date, '%Y-%m-%d').date(),
-                    phone_number=data.phone_number,
-                    total_employees=data.total_employees,
-                )
-                db.session.add(company)
-            db.session.commit()
-            address = db.session.query(USAddress).filter_by(company_id=company.id).first()
-            if not address:
-                address = USAddress(
-                    company_id=company.id,
-                    address=data.address.address1,
-                    city=data.address.city,
-                    post_code=data.address.postal_code,
-                    state=data.address.state,
-                )
-                db.session.add(address)
-                db.session.commit()
-        stock = (
-            db.session.query(USStock).join(USCompany)
-                .join(USAddress).join(Sector).filter(USStock.symbol == symbol).first()
-        )
-        if stock and stock.market_cap and stock.company:
-            return jsonify(stock.to_dict()), 200
+        else:
+            return jsonify({"error": "Some data missing"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 def get_financials(symbol):
-    print(symbol)
+    return get_company_financials(symbol)
+
+def get_company_financials(symbol):
+
+    company = db.session.query(USCompany).filter_by(symbol=symbol).first()
+    print("Geting financials for symbol:", symbol, company)
+    if company and company.financials:
+        print(company.financials)
+        return jsonify(company.to_dict()), 200
+    results = polygon.get_financials(symbol)
+    if not results:
+        return jsonify({"error": "No financial data found"}), 404
+    print("result:", results)
+    # Save financial data into a JSON file
+    with open("result.json", "w") as json_file:
+        json.dump(results, json_file, indent=4)
+    financials = []
+    if results:
+        for result in results:
+            print("fiscal_year:", result.fiscal_year)
+            print("fiscal_period:", result.fiscal_period)
+            financial = db.session.query(Financials).filter_by(
+                symbol=symbol,
+                fiscal_year=result.fiscal_year,
+                fiscal_period=result.fiscal_period,
+            ).first()
+            if not financial:
+                for type, details in result.financials.items():
+                    print("type:", type, "details:", details)
+                    for sub_type, detail in details.items():
+                        financial = Financials(
+                            start_date=datetime.strptime(result.start_date, "%Y-%m-%d").date(),
+                            end_date=datetime.strptime(result.end_date, "%Y-%m-%d").date(),
+                            cik=result.cik,
+                            fiscal_year=result.fiscal_year,
+                            fiscal_period=result.fiscal_period,
+                            copmany_id=company.id,
+                            symbol=symbol,
+                            type=type,
+                            sub_type=sub_type,
+                            value = detail.value,
+                            unit=detail.unit,
+                            label=detail.label,
+                            order=detail.order,
+                        )
+                        financials.append(financial)
+                db.session.bulk_save_objects(financials)
+                db.session.commit()
+            else:
+                financials.append(financial)
+
 
 def get_news(symbol):
     print(symbol)
