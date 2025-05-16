@@ -120,11 +120,11 @@ def send_summary_img(data):
     user = User.query.filter_by(id=sender_id).first()
     bg_img_path = "app/static/pl/profit.png" if price >= avg_cost else "app/static/pl/loss.png"
     date = datetime.now().strftime("%Y-%m-%d")
-    directory = f"app/static/users/summary/{sender_id}"
+    directory = f"app/static/users/summary/{sender_id}/{date}/"
     if not os.path.exists(directory):
         os.makedirs(directory)
-    output_path = f"app/static/users/summary/{sender_id}/{date}.png"
-    save_path = f"static/users/summary/{sender_id}/{date}.png"
+    output_path = f"app/static/users/summary/{sender_id}/{date}/{symbol}.png"
+    save_path = f"static/users/summary/{sender_id}/{date}/{symbol}.png"
     print("output_path:", output_path)
     create_summary_image(
         bg_image_path=bg_img_path,

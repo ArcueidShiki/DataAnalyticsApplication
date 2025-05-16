@@ -19114,6 +19114,15 @@ INSERT INTO messages VALUES(25,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','ba109f16-
 INSERT INTO messages VALUES(26,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','ba109f16-a6dc-4c08-9d4a-a748ce939e6c','33333','text','2025-05-16 11:13:04.268599',0,0,0);
 INSERT INTO messages VALUES(27,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','5a1d10a7-0bc5-4460-a8d5-58bb23bef2ec','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16.png','image','2025-05-16 12:10:49.840251',0,0,0);
 INSERT INTO messages VALUES(28,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','d78520fd-2391-405e-8e7f-d1bd6c80d999','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16.png','image','2025-05-16 12:11:39.160044',0,0,0);
+INSERT INTO messages VALUES(29,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','d78520fd-2391-405e-8e7f-d1bd6c80d999','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16.png','image','2025-05-16 13:11:52.407402',0,0,0);
+INSERT INTO messages VALUES(30,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','48079c2b-ae6b-4e8d-9e13-10c3f7ab20ef','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16/INTC.png','image','2025-05-16 13:20:38.411293',0,0,0);
+INSERT INTO messages VALUES(31,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','48079c2b-ae6b-4e8d-9e13-10c3f7ab20ef','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16/JPM.png','image','2025-05-16 13:20:48.064455',0,0,0);
+INSERT INTO messages VALUES(32,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','hello','text','2025-05-16 13:27:41.189413',0,0,0);
+INSERT INTO messages VALUES(33,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','d78520fd-2391-405e-8e7f-d1bd6c80d999','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16/XOM.png','image','2025-05-16 13:28:07.736339',0,0,0);
+INSERT INTO messages VALUES(34,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16/NVDA.png','image','2025-05-16 13:28:41.649581',0,0,0);
+INSERT INTO messages VALUES(35,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16/AAPL.png','image','2025-05-16 13:32:06.329557',0,0,0);
+INSERT INTO messages VALUES(36,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16/AAPL.png','image','2025-05-16 13:32:08.648641',0,0,0);
+INSERT INTO messages VALUES(37,'166c1a5f-eaba-42eb-bb51-0eee0940ceaa','01421e76-2596-4ee2-819b-a7aeed25badd','static/users/summary/166c1a5f-eaba-42eb-bb51-0eee0940ceaa/2025-05-16/AAPL.png','image','2025-05-16 13:32:09.988251',0,0,0);
 CREATE TABLE IF NOT EXISTS "financials" (
 	id INTEGER NOT NULL, 
 	cik VARCHAR(20), 
