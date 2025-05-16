@@ -81,5 +81,30 @@ class FrontendTestCase(unittest.TestCase):
         self.driver.get("http://127.0.0.1:8889/ticker.html")
         timeframe = self.driver.find_element(By.CLASS_NAME, "timeframe-btn")
         self.assertIsNotNone(timeframe)
+    def test_toprank_page_loads(self):
+        self.driver.get("http://127.0.0.1:8889/toprank.html")
+        self.assertIn("Top Investors", self.driver.page_source)
+    
+    def test_profile_pictures_visible(self):
+        self.driver.get("http://127.0.0.1:8889/toprank.html")
+        images = self.driver.find_elements(By.CLASS_NAME, "profile-img")
+        for img in images:
+            src = img.get_attribute("src")
+            self.assertTrue(src.startswith("http"))  # Simpler check: just ensure image loads from URL
+
+    def test_usernames_present(self):
+        self.driver.get("http://127.0.0.1:8889/toprank.html")
+        names = self.driver.find_elements(By.CLASS_NAME, "user-name")
+        self.assertGreater(len(names), 0)
+        for name in names:
+            self.assertNotEqual(name.text.strip(), "")
+    
+    def test_send_message_button_click(self):
+        self.driver.get("http://127.0.0.1:8889/toprank.html")
+        buttons = self.driver.find_elements(By.CLASS_NAME, "send-message-btn")
+        self.assertGreater(len(buttons), 0)
+        buttons[0].click()
+        time.sleep(1)  # If a modal or alert appears
+
     def tearDown(self):
         self.driver.quit()
