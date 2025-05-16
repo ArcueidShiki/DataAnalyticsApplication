@@ -106,7 +106,7 @@ function populateChatList(users) {
     chatItem.find(".fa-trash").on("click", function (e) {
       e.stopPropagation();
       chatList = users.filter((user) => user.user_id != partnerId);
-      localStorage.setItem("chatList", JSON.stringify(chatList));
+      localStorage.setItem("userList", JSON.stringify(chatList));
       chatItem.remove();
     });
     chatListContainer.append(chatItem);
@@ -129,11 +129,11 @@ function getAllUsers() {
 }
 
 function getChatList() {
-  chatList = JSON.parse(localStorage.getItem("chatList")) || [];
+  chatList = JSON.parse(localStorage.getItem("userList")) || [];
   if (chatList.length === 0) {
     Http.get("/chat/list")
       .then((response) => {
-        localStorage.setItem("chatList", JSON.stringify(response));
+        localStorage.setItem("userList", JSON.stringify(response));
         chatList = response;
       })
       .catch((error) => {
@@ -241,7 +241,7 @@ function sendSummaryImg() {
             <div class="message-group user">
                 <div class="message-bubble user">
                     <div class="message-content">
-                        <img src="${Http.baseUrl}/${data.image_url}" alt="Summary Image" />
+                        <img class="summary-img" src="${Http.baseUrl}/${data.image_url}" alt="Summary Image" />
                     </div>
                     <div class="message-time">${data.time}</div>
                 </div>
@@ -286,7 +286,7 @@ function initSocket() {
             <div class="message-group partner">
                 <div class="message-bubble partner">
                     <div class="message-content">
-                        <img src="${Http.baseUrl}/${data.image_url}" alt="Summary Image" />
+                        <img class="summary-img" src="${Http.baseUrl}/${data.image_url}" alt="Summary Image" />
                     </div>
                     <div class="message-time"></div>
                 </div>

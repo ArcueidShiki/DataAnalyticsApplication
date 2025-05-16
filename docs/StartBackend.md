@@ -74,7 +74,7 @@ sqlite3 app.db < app.dump.sql
 # consistent with version in app.dump.sql
 ```
 
-![alt text](image.png)
+![alt text](images/image.png)
 To view the app.db, start the backend and ensure you have installed the SQLite Viewer extension in VS Code or another IDE.
 
 ## Test
