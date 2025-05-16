@@ -1,0 +1,37 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .ranking-list {
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .rank-card {
+    background-color: #ffffff;
+    border-left: 5px solid #007bff;
+    transition: transform 0.2s;
+  }
+  
+  .rank-card:hover {
+    transform: scale(1.01);
+  }
+  
+  .rank-num {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  .profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .gain-text {
+    font-weight: bold;
+    color: green;
+  }
+  
