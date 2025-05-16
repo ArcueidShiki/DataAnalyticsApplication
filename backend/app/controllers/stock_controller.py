@@ -4,7 +4,7 @@ import logging
 from sqlalchemy import and_, func
 from app import db
 from datetime import datetime, timedelta
-from app.models.db import Asset, Balance, Currency, DailyUSMarketData, IntradayUSMarket, MonthlyUSMarketData, Portfolio, Sector, USAddress, USCompany, USStock, Watchlist, WeeklyUSMarketData
+from app.models.db import Asset, Balance, Currency, DailyUSMarketData, Financials, IntradayUSMarket, MonthlyUSMarketData, Portfolio, Sector, USAddress, USCompany, USStock, Watchlist, WeeklyUSMarketData
 from flask_jwt_extended import get_jwt_identity
 from flask import jsonify, make_response, request
 from app.utils.polygontool import polygon, Polygon
@@ -308,7 +308,57 @@ def get_ticker_overview(symbol):
         return jsonify({"error": str(e)}), 500
 
 def get_financials(symbol):
-    print(symbol)
+    company = db.session.query(USCompany).filter_by(symbol=symbol).options(
+        joinedload(USCompany.financials)
+    ).all()
+
+    # return all financials during all period
+    if company.financials:
+        return jsonify(company.to_dict().financials), 200
+
+    result = polygon.get_financials(symbol)
+    print(result)
+    financials = []
+    if result:
+        for item in result:
+            symbol = item.tickers[0]
+            financial = db.session.query(Financials).filter_by(
+                symbol=symbol,
+                fiscal_year=item.fiscal_year,
+                fiscal_period=item.fiscal_period,
+            ).first()
+            if not financial:
+                for type, details in item.items():
+                    for sub_type, detail in details:
+                        financial = Financials(
+                            start_date=datetime.strptime(item.start_date, "%Y-%m-%d").date(),
+                            end_date=datetime.strptime(item.end_date, "%Y-%m-%d").date(),
+                            cik=item.cik,
+                            fiscal_year=item.fiscal_year,
+                            fiscal_period=item.fiscal_period,
+                            copmany_id=company.id,
+                            symbol=symbol,
+                            type=type,
+                            sub_type=sub_type,
+                            value = detail.value,
+                            unit=detail.unit,
+                            label=detail.label,
+                            order=detail.order,
+                        )
+                        financials.append(financial)
+                db.session.bulk_save_objects(financials)
+                db.session.commit()
+            else:
+                financials.append(financial)
+
+    financialsMap = {}
+    for financial in financials:
+        year = financial.fiscal_year
+        quarter = financial.fiscal_period
+        type = financial.type
+        sub_type = financial.sub_type
+        financialsMap[year][quarter][type][sub_type] = financial.to_dict()
+    return jsonify(financialsMap), 200
 
 def get_news(symbol):
     print(symbol)
